@@ -10,7 +10,7 @@ import pydantic.v1 as pd
 from ...exceptions import DataError
 from ...log import log
 from ..base_sim.data.sim_data import AbstractSimulationData
-from ..data.data_array import CapacitanceCurveDataArray, IVCurveDataArray, SpatialDataArray
+from ..data.data_array import DCCapacitanceDataArray, DCIVCurveDataArray, SpatialDataArray
 from ..data.dataset import TetrahedralGridDataset, TriangularGridDataset, UnstructuredGridDataset
 from ..types import Ax, Literal, RealFieldVal
 from ..viz import add_ax_if_none, equal_aspect
@@ -89,15 +89,15 @@ class HeatChargeSimulationData(AbstractSimulationData):
 
         validated_dict = {}
         for key, dc in val.items():
-            if isinstance(dc, CapacitanceCurveDataArray):
-                validated_dict[key] = CapacitanceCurveDataArray(
+            if isinstance(dc, DCCapacitanceDataArray):
+                validated_dict[key] = DCCapacitanceDataArray(
                     data=dc.data,
                     dims=["Voltage (V)"],
                     coords=dc.coords,
                     attrs={"long_name": "Capacitance (fF)"},
                 )
-            elif isinstance(dc, IVCurveDataArray):
-                validated_dict[key] = IVCurveDataArray(
+            elif isinstance(dc, DCIVCurveDataArray):
+                validated_dict[key] = DCIVCurveDataArray(
                     data=dc.data,
                     dims=["Voltage (V)"],
                     coords=dc.coords,

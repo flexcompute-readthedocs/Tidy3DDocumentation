@@ -71,10 +71,14 @@ class ConvectionBC(HeatChargeBC):
 class VoltageBC(HeatChargeBC):
     """Electric potential (voltage) boundary condition.
     Sets a potential at the specified boundary.
+    In charge simulations it also accepts an array of voltages.
+    In this case, a solution for each of these voltages will
+    be computed.
 
     Example
     -------
-    >>> bc = VoltageBC(voltage=2)
+    >>> bc1 = VoltageBC(voltage=2)
+    >>> bc2 = VoltageBC(voltage=[-1, 0, 1])
     """
 
     voltage: Union[pd.FiniteFloat, Tuple[pd.FiniteFloat, ...]] = pd.Field(

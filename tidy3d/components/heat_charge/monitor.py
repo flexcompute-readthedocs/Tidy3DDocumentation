@@ -5,6 +5,7 @@ from typing import Union
 
 import pydantic.v1 as pd
 
+from ...log import log
 from ..base_sim.monitor import AbstractMonitor
 from ..types import ArrayFloat1D
 
@@ -45,25 +46,30 @@ class TemperatureMonitor(HeatChargeMonitor):
 class VoltageMonitor(HeatChargeMonitor):
     """Electric potential monitor."""
 
+    @pd.root_validator(skip_on_failure=True)
+    def check_unstructured(cls, values):
+        """Currently, we're supporting only unstructured monitors in Charge"""
+        unstructured = values["unstructured"]
+        name = values["name"]
+        if not unstructured:
+            log.warning(
+                "Currently, charge simulations support only unstructured monitors. If monitor "
+                f"'{name}' is associated with a charge simulation, please set it tu unstructured. "
+                f"This can be done with 'your_monitor = tidy3d.VoltageMonitor(unstructured=True)'"
+            )
+        return values
 
-class ChargeSimulationMonitor(HeatChargeMonitor):
-    """Charge monitor for Charge simulations."""
 
-    # NOTE: supporting unstructured only for the time being
+class FreeCarrierMonitor(HeatChargeMonitor):
+    """Free-carrier monitor for Charge simulations."""
+
+    # NOTE: for the time being supporting unstructured
     unstructured = True
 
 
-class TemporalTemperatureMonitor(HeatChargeMonitor):
-    """Monitor for time-varying temperature field."""
+class CapacitanceMonitor(HeatChargeMonitor):
+    """Capacitance monitor associated with a charge simulation."""
 
-    # NOTE: supporting unstructured only for the time being
-    unstructured = True
-
-
-class TemporalVoltageMonitor(HeatChargeMonitor):
-    """Monitor for time-varying voltage field."""
-
-    # NOTE: supporting unstructured only for the time being
     unstructured = True
 
 
@@ -71,7 +77,6 @@ class TemporalVoltageMonitor(HeatChargeMonitor):
 HeatChargeMonitorType = Union[
     TemperatureMonitor,
     VoltageMonitor,
-    TemporalTemperatureMonitor,
-    TemporalVoltageMonitor,
-    ChargeSimulationMonitor,
+    FreeCarrierMonitor,
+    CapacitanceMonitor,
 ]

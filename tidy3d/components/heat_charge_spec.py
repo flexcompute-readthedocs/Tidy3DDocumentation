@@ -3,13 +3,29 @@
 from __future__ import annotations
 
 from abc import ABC
-from typing import Optional
+from typing import Tuple
 
 import pydantic.v1 as pd
 
-from ..constants import CONDUCTIVITY, PERMITTIVITY, SPECIFIC_HEAT_CAPACITY, THERMAL_CONDUCTIVITY
+from ..constants import (
+    CONDUCTIVITY,
+    ELECTRON_VOLT,
+    PERMITTIVITY,
+    SPECIFIC_HEAT_CAPACITY,
+    THERMAL_CONDUCTIVITY,
+)
 from .base import Tidy3dBaseModel
 from .data.data_array import SpatialDataArray
+from .heat_charge.charge_settings import (
+    AugerRecombination,
+    BandgapNarrowingModelType,
+    CaugheyThomasMobility,
+    MobilityModelType,
+    RadiativeRecombination,
+    RecombinationModelType,
+    SlotboomNarrowingModel,
+    SRHRecombination,
+)
 from .types import Union
 
 
@@ -84,6 +100,7 @@ class ConductorSpec(ChargeSpec):
     """
 
     conductivity: pd.PositiveFloat = pd.Field(
+        1,
         title="Electric conductivity",
         description=f"Electric conductivity of material in units of {CONDUCTIVITY}.",
         units=CONDUCTIVITY,
@@ -92,39 +109,70 @@ class ConductorSpec(ChargeSpec):
 
 class SemiConductorSpec(ConductorSpec):
     """
-    This class adds acceptors and donors to the Conductor specification.
+    This class is used to define semiconductors.
 
     Notes
     -----
-        Both acceptors and donors can be either None, a positive number or an 'xarray.DataArray'.
+        Both acceptors and donors can be either a positive number or an 'xarray.DataArray'.
+        Default values are those for Silicon
     """
 
-    acceptors: Optional[Union[pd.NonNegativeFloat, SpatialDataArray]] = pd.Field(
-        None,
+    nc: pd.PositiveFloat = pd.Field(
+        2.86e19,
+        title="Effective density of electron states",
+        description="Effective density of electron states",
+        units="cm^(-3)",
+    )
+
+    nv: pd.PositiveFloat = pd.Field(
+        3.1e19,
+        title="Effective density of hole states",
+        description="Effective density of hole states",
+        units="cm^(-3)",
+    )
+
+    eg: pd.PositiveFloat = pd.Field(
+        1.11,
+        title="Band-gap energy",
+        description="Band-gap energy",
+        units=ELECTRON_VOLT,
+    )
+
+    chi: float = pd.Field(
+        4.05, title="Electron affinity", description="Electron affinity", units=ELECTRON_VOLT
+    )
+
+    mobility_model: MobilityModelType = pd.Field(
+        CaugheyThomasMobility(),
+        title="Mobility model",
+        description="Mobility model",
+    )
+
+    recombination_model: Tuple[RecombinationModelType, ...] = pd.Field(
+        (SRHRecombination(), AugerRecombination(), RadiativeRecombination()),
+        title="Recombination models",
+        description="Array containing the recombination models to be applied to the material.",
+    )
+
+    bandgap_model: BandgapNarrowingModelType = pd.Field(
+        SlotboomNarrowingModel(),
+        title="Bandgap narrowing model.",
+        description="Bandgap narrowing model.",
+    )
+
+    acceptors: Union[pd.NonNegativeFloat, SpatialDataArray] = pd.Field(
+        0,
         title="Doping: Acceptor concentration",
         description="Units of 1/cm^3",
         units="1/cm^3",
     )
 
-    donors: Optional[Union[pd.NonNegativeFloat, SpatialDataArray]] = pd.Field(
-        None,
+    donors: Union[pd.NonNegativeFloat, SpatialDataArray] = pd.Field(
+        0,
         title="Doping: Donor concentration",
         description="Units of 1/cm^3",
         units="1/cm^3",
     )
-
-    # validators
-    @pd.validator("acceptors", always=True)
-    def check_acceptors(cls, val):
-        """Test validator"""
-        # print("Current acceptor: ", val)
-        return val
-
-    @pd.validator("donors", always=True)
-    def check_donors(cls, val):
-        """Test validator"""
-        # print("Current donor: ", val)
-        return val
 
 
 ThermalSpecType = Union[FluidSpec, SolidSpec]
