@@ -1193,6 +1193,36 @@ class ChargeDataArray(DataArray):
     _dims = ("n", "p")
 
 
+class IVCurveDataArray(DataArray):
+    """Semiconductor I-V curve data array.
+
+    Example
+    -------
+    >>> I = [0. 0, 1, 4]
+    >>> V = [-1, -0.5, 0, 0.5]
+    >>> td = IVCurveDataArray(data=I, coords={"Voltage (V)": V})
+    """
+
+    __slots__ = ()
+    _dims = ("Voltage (V)",)
+    _data_attrs = {"long_name": "Current (A)"}
+
+
+class CapacitanceCurveDataArray(DataArray):
+    """Semiconductor C-V curve data array.
+
+    Example
+    -------
+    >>> C = [0. 0, 1, 4]
+    >>> V = [-1, -0.5, 0, 0.5]
+    >>> td = CapacitanceCurveDataArray(data=C, coords={"Voltage (V)": V})
+    """
+
+    __slots__ = ()
+    _dims = ("Voltage (V)",)
+    _data_attrs = {"long_name": "Capacitance (fF)"}
+
+
 class PointDataArray(DataArray):
     """A two-dimensional array that stores coordinates of a collection of points.
     Dimension ``index`` denotes the index of a point in the collection, and dimension ``axis``
@@ -1282,6 +1312,8 @@ DATA_ARRAY_TYPES = [
     EMEModeIndexDataArray,
     EMEFreqModeDataArray,
     ChargeDataArray,
+    IVCurveDataArray,
+    CapacitanceCurveDataArray,
     PointDataArray,
     CellDataArray,
     IndexedDataArray,

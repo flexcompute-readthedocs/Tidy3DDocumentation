@@ -10,6 +10,84 @@ from tidy3d.exceptions import DataError
 from ..utils import assert_log_level
 
 
+class CHARGE_SIMULATION:
+    """This class contains all elements to be tested"""
+
+    # dimensions semiconductors
+    width = 0.2  # um
+    hight = 0.2  # um
+    z_dim = width / 2
+
+    # simulation size
+    sim_size = (3 * width, 2 * hight, z_dim)
+
+    # doping
+    acceptors = 1e17
+    donors = 5e17
+
+    # define semiconductor materials
+    Si_p = td.Medium(
+        electric_spec=td.SemiConductorSpec(
+            conductivity=1,
+            permittivity=11.7,
+            donors=0,
+            acceptors=acceptors,
+        ),
+        name="Si_p",
+    )
+
+    Si_n = td.Medium(
+        electric_spec=td.SemiConductorSpec(
+            conductivity=1,
+            permittivity=11.7,
+            donors=donors,
+            acceptors=0,
+        ),
+        name="Si_n",
+    )
+
+    SiO2 = td.Medium(
+        electric_spec=td.InsulatorSpec(permittivity=3.9),
+        name="SiO2",
+    )
+
+    # define structures
+    oxide = td.Structure(
+        geometry=td.Box(center=(0, 0, 0), size=sim_size), medium=SiO2, name="oxide"
+    )
+
+    p_side = td.Structure(
+        geometry=td.Box(center=(-width / 2, 0, 0), size=(width, hight, z_dim)),
+        medium=Si_p,
+        name="p_side",
+    )
+
+    n_side = td.Structure(
+        geometry=td.Box(center=(width / 2, 0, 0), size=(width, hight, z_dim)),
+        medium=Si_n,
+        name="n_side",
+    )
+
+    # define BCs
+    bc_p = td.HeatChargeBoundarySpec(
+        condition=td.VoltageBC(voltage=0),
+        placement=td.MediumMediumInterface(mediums=[SiO2.name, Si_p.name]),
+    )
+
+    bc_n = td.HeatChargeBoundarySpec(
+        condition=td.VoltageBC(voltage=0),
+        placement=td.MediumMediumInterface(mediums=[SiO2.name, Si_n.name]),
+    )
+
+    # monitors
+    charge_global_mnt = td.ChargeSimulationMonitor(
+        center=(0, 0, 0), size=(td.inf, td.inf, td.inf), name="charge_global_mnt", unstructured=True
+    )
+
+    # DevSim settings
+    devsim_settings = td.DevsimConvergenceSettings(relTol=1e5, absTol=1e3, maxIters=400, dV=1)
+
+
 def make_heat_charge_mediums():
     """Creates mediums with different specs"""
     fluid_medium = td.Medium(
@@ -714,3 +792,68 @@ def test_sim_data():
 
     with pytest.raises(pd.ValidationError):
         _ = heat_sim_data.updated_copy(simulation=sim)
+
+
+def test_unsteady_spec():
+    """Make sure the unsteady spec is working appropriately."""
+
+    heat_sim = make_heat_charge_heat_sim()
+    cond_sim = make_heat_charge_cond_sim()
+
+    time_spec = td.UnsteadySpec(time_step=1, total_time_steps=2, initial_temperature=1)
+
+    # normal case, shouldn't raise error
+    _ = heat_sim.updated_copy(time_spec=time_spec)
+
+    # negative time-step
+    with pytest.raises(pd.ValidationError):
+        _ = time_spec.updated_copy(time_step=-0.1)
+
+    # negative total number of time-steps
+    with pytest.raises(pd.ValidationError):
+        _ = time_spec.updated_copy(total_time_steps=-1)
+
+    # EQS
+    time_spec2 = time_spec.updated_copy(initial_voltage=2, initial_temperature=None)
+    _ = cond_sim.updated_copy(time_spec=time_spec2)
+
+    # check with mixed simulation
+    bc = list(heat_sim.boundary_spec)
+    bc.extend(cond_sim.boundary_spec)
+    structures = list(heat_sim.structures)
+    structures.extend(list(cond_sim.structures))
+    heat_sim2 = heat_sim.updated_copy(structures=list(set(structures)), boundary_spec=bc)
+    _ = heat_sim2.updated_copy(time_spec=time_spec)
+
+
+def test_charge_simulation():
+    """Make sure charge simulation produces the correct errors when needed."""
+
+    sim = td.HeatChargeSimulation(
+        structures=[CHARGE_SIMULATION.oxide, CHARGE_SIMULATION.p_side, CHARGE_SIMULATION.n_side],
+        medium=td.Medium(heat_spec=td.FluidSpec(), name="air"),
+        monitors=[CHARGE_SIMULATION.charge_global_mnt],
+        center=(0, 0, 0),
+        size=CHARGE_SIMULATION.sim_size,
+        grid_spec=td.UniformUnstructuredGrid(dl=0.05),
+        boundary_spec=[CHARGE_SIMULATION.bc_n, CHARGE_SIMULATION.bc_p],
+        devsim_settings=[CHARGE_SIMULATION.devsim_settings],
+    )
+
+    # at least one ChargeSimulationMonitor should be added
+    with pytest.raises(pd.ValidationError):
+        _ = sim.updated_copy(monitors=[])
+
+    # at least 2 VoltageBCs should be defined
+    with pytest.raises(pd.ValidationError):
+        _ = sim.updated_copy(boundary_spec=[CHARGE_SIMULATION.bc_n])
+
+    # define ChargeSimulation with no Semiconductor materials
+    medium = td.Medium(
+        electric_spec=td.ConductorSpec(permittivity=1, conductivity=1),
+        name="medium",
+    )
+    new_structures = [struct.updated_copy(medium=medium) for struct in sim.structures]
+
+    with pytest.raises(pd.ValidationError):
+        _ = sim.updated_copy(structures=new_structures)

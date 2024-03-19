@@ -2,7 +2,7 @@
 
 from __future__ import annotations
 
-from typing import Tuple
+from typing import Dict, Optional, Tuple
 
 import numpy as np
 import pydantic.v1 as pd
@@ -10,7 +10,7 @@ import pydantic.v1 as pd
 from ...exceptions import DataError
 from ...log import log
 from ..base_sim.data.sim_data import AbstractSimulationData
-from ..data.data_array import SpatialDataArray
+from ..data.data_array import CapacitanceCurveDataArray, IVCurveDataArray, SpatialDataArray
 from ..data.dataset import TetrahedralGridDataset, TriangularGridDataset, UnstructuredGridDataset
 from ..types import Ax, Literal, RealFieldVal
 from ..viz import add_ax_if_none, equal_aspect
@@ -74,6 +74,36 @@ class HeatChargeSimulationData(AbstractSimulationData):
         description="List of :class:`.MonitorData` instances "
         "associated with the monitors of the original :class:`.Simulation`.",
     )
+
+    device_characteristics: Optional[Dict] = pd.Field(
+        None,
+        title="Device characteristics",
+        description="Data characterizing the device. Current characteristics include: "
+        "'iv_curve' for and I-V curve and 'cv_curve' for a capacitance curve.",
+    )
+
+    @pd.validator("device_characteristics", pre=True)
+    def validate_device_characteristics(cls, val):
+        if val is None:
+            return val
+
+        validated_dict = {}
+        for key, dc in val.items():
+            if isinstance(dc, CapacitanceCurveDataArray):
+                validated_dict[key] = CapacitanceCurveDataArray(
+                    data=dc.data,
+                    dims=["Voltage (V)"],
+                    coords=dc.coords,
+                    attrs={"long_name": "Capacitance (fF)"},
+                )
+            elif isinstance(dc, IVCurveDataArray):
+                validated_dict[key] = IVCurveDataArray(
+                    data=dc.data,
+                    dims=["Voltage (V)"],
+                    coords=dc.coords,
+                    attrs={"long_name": "Current (A)"},
+                )
+        return validated_dict
 
     @equal_aspect
     @add_ax_if_none

@@ -4,19 +4,26 @@ from __future__ import annotations
 
 import copy
 from abc import ABC, abstractmethod
-from typing import Optional, Tuple, Union
+from typing import Dict, Optional, Tuple, Union
 
 import numpy as np
 import pydantic.v1 as pd
 
 from ...constants import KELVIN, VOLT
 from ...log import log
-from ..base import skip_if_fields_missing
+from ..base import Tidy3dBaseModel, cached_property, skip_if_fields_missing
 from ..base_sim.data.monitor_data import AbstractMonitorData
-from ..data.data_array import SpatialDataArray
-from ..data.dataset import TetrahedralGridDataset, TriangularGridDataset
+from ..data.data_array import CapacitanceCurveDataArray, SpatialDataArray
+from ..data.dataset import IndexedDataArray, TetrahedralGridDataset, TriangularGridDataset
 from ..types import Coordinate, ScalarSymmetry, annotate_type
-from .monitor import HeatChargeMonitorType, TemperatureMonitor, VoltageMonitor
+from .monitor import (
+    ChargeSimulationMonitor,
+    HeatChargeMonitorType,
+    TemperatureMonitor,
+    TemporalTemperatureMonitor,
+    TemporalVoltageMonitor,
+    VoltageMonitor,
+)
 
 FieldDataset = Union[
     SpatialDataArray, annotate_type(Union[TriangularGridDataset, TetrahedralGridDataset])
@@ -53,8 +60,8 @@ class HeatChargeMonitorData(AbstractMonitorData, ABC):
     def field_name(self, val: str) -> str:
         """Gets the name of the fields to be plot."""
 
-    # def _symmetry_expanded_copy(self, property: FieldDataset) -> FieldDataset:
-    def _symmetry_expanded_copy(self, property):
+    # def _symmetry_expanded_copy(self, property):
+    def _symmetry_expanded_copy(self, property: FieldDataset) -> FieldDataset:
         """Return the property with symmetry applied."""
 
         # no symmetry
@@ -235,4 +242,220 @@ class VoltageData(HeatChargeMonitorData):
         return self.updated_copy(voltage=new_phi, symmetry=(0, 0, 0))
 
 
-HeatChargeMonitorDataType = Union[TemperatureData, VoltageData]
+class HeatChargeDataset(Tidy3dBaseModel):
+    """Class that deals with parameter-depending fields."""
+
+    base_data: FieldDataset = pd.Field(title="Base data", description="Spatial dataset")
+
+    field_series: Dict[str, Tuple[IndexedDataArray, ...]] = pd.Field(
+        title="Field series", description="Dictionary of field solutions. "
+    )
+
+    doping: Dict[str, IndexedDataArray] = pd.Field(
+        title="Doping", description="Dictionary containing the doping distributions."
+    )
+
+    parameter_array: Tuple[pd.FiniteFloat, ...] = pd.Field(
+        title="Parameter array",
+        description="Array containing the parameter values at which the field series are stored.",
+    )
+
+    @cached_property
+    def num_fields_saved(self):
+        """Number of fields stored"""
+        return len(self.parameter_array)
+
+    def get_field(self, field: str, loc: int):
+        """Returns the field specified by 'field' stored at the position specified by 'loc'"""
+
+        assert loc < self.num_fields_saved
+        return self.base_data.updated_copy(values=self.field_series[field][loc])
+
+    def get_doping(self, doping_type: str = "Acceptors"):
+        """Returns the doping specified by 'doping_type'. This, can take the values:
+        'Acceptors' or 'Donors'"""
+
+        return self.base_data.updated_copy(values=self.doping[doping_type])
+
+    @pd.root_validator(skip_on_failure=True)
+    def check_data_and_params_have_same_length(cls, values):
+        """Check that both field series and parameter array have the same length."""
+
+        field_series = values["field_series"]
+        parameter_array = values["parameter_array"]
+        for key in field_series.keys():
+            assert len(field_series[key]) == len(parameter_array)
+
+        return values
+
+
+class ChargeSimulationData(HeatChargeMonitorData):
+    """Class that stores Charge simulation data.
+    Example
+    -------
+    ...
+    """
+
+    monitor: Union[ChargeSimulationMonitor] = pd.Field(
+        ..., title="Monitor", description="Data associated with a Charge simulation."
+    )
+
+    data_series: Optional[HeatChargeDataset] = pd.Field(
+        None, title="Data series", description="Contains the data."
+    )
+
+    capacitance_curve: Optional[Dict[str, CapacitanceCurveDataArray]] = pd.Field(
+        None,
+        title="Capacitance curve",
+        description="Small signal capacitance associated to the monitor.",
+    )
+
+    @pd.validator("data_series", always=True)
+    @skip_if_fields_missing(["monitor"])
+    def warn_no_data(cls, val, values):
+        """Warn if no data provided."""
+
+        mnt = values.get("monitor")
+
+        if val is None:
+            log.warning(
+                f"No data is available for monitor '{mnt.name}'. This is typically caused by "
+                "monitor not intersecting any solid medium."
+            )
+
+        return val
+
+    @property
+    def symmetry_expanded_copy(self) -> ChargeSimulationData:
+        """Return copy of self with symmetry applied."""
+
+        new_series = {}
+
+        for key, data in self.data_series.field_series.items():
+            new_series[key] = self._symmetry_expanded_copy(property=data)
+
+        return self.updated_copy(data_series=self.data_series.updated_copy(field_series=new_series))
+
+    def field_name(self, val: str) -> str:
+        """Gets the name of the fields to be plot."""
+        if val == "abs^2":
+            return "|V|², Electrons², Holes², Donors², Acceptors²"
+        else:
+            return "V, Electrons, Holes, Donors, Acceptors"
+
+
+class TemporalHeatChargeDataset(Tidy3dBaseModel):
+    """Class to deal with time-varying device fields."""
+
+    base_data: FieldDataset = pd.Field(title="Base data", description="Spatial dataset")
+
+    field_time_series: Tuple[IndexedDataArray, ...] = pd.Field(
+        title="Field time-series", description="Field values at different time steps."
+    )
+
+    time_steps_array: Tuple[pd.NonNegativeInt, ...] = pd.Field(
+        title="Time stes array",
+        description="Array containing the time steps at which the field is stored.",
+    )
+
+    @cached_property
+    def num_time_steps(self):
+        """Number of time steps in series"""
+        return len(self.field_time_series)
+
+    def return_time_step(self, time_step: int):
+        """Add a little description"""
+
+        assert time_step < self.num_time_steps
+        return self.base_data.updated_copy(values=self.field_time_series[time_step])
+
+    @pd.root_validator(skip_on_failure=True)
+    def check_data_and_times_have_same_length(cls, values):
+        """Check that both time series and data series have the same length."""
+
+        field_time_series = values["field_time_series"]
+        time_steps_array = values["time_steps_array"]
+        assert len(field_time_series) == len(time_steps_array)
+
+        return values
+
+
+class TemporalData(HeatChargeMonitorData):
+    """Data associated with a :class:`TemporalVoltageMonitor`: spatial voltage field.
+
+    Example
+    -------
+    >>> import tidy3d as td
+    >>> import numpy as np
+    >>> temp_data = td.SpatialDataArray(
+    ...     np.ones((2, 3, 4)), coords={"x": [0, 1], "y": [0, 1, 2], "z": [0, 1, 2, 3]}
+    ... )
+    >>> vals = [temp_data.values, temp_data.values]
+    >>> time_steps = [0, 1]
+    >>> time_dataset = td.TemporalDeviceDataset(
+    ...     base_data=temp_data,
+    ...     field_time_series=vals,
+    ...     time_steps_array=time_steps
+    ... )
+    >>> temp_mnt = td.TemporalTemperatureMonitor(size=(1, 2, 3), name="temperature")
+    >>> temp_mnt_data = TemporalData(
+    ...     monitor=temp_mnt, time_series=time_dataset, symmetry=(0, 1, 0), symmetry_center=(0, 0, 0)
+    ... )
+    >>> temp_mnt_data_expanded = temp_mnt_data.symmetry_expanded_copy
+    """
+
+    monitor: Union[TemporalTemperatureMonitor, TemporalVoltageMonitor] = pd.Field(
+        ..., title="Monitor", description="Time-varying temperature or voltage monitor."
+    )
+
+    time_series: Optional[TemporalHeatChargeDataset] = pd.Field(
+        None,
+        title="time series",
+        description="Container for time-varying data. This can contain either "
+        f"temperature ({KELVIN}) or voltage ({VOLT}) data",
+    )
+
+    @pd.validator("time_series", always=True)
+    @skip_if_fields_missing(["monitor"])
+    def warn_no_data(cls, val, values):
+        """Warn if no data provided."""
+
+        mnt = values.get("monitor")
+
+        if val is None:
+            log.warning(
+                f"No data is available for monitor '{mnt.name}'. This is typically caused by "
+                "monitor not intersecting any solid medium."
+            )
+
+        return val
+
+    @property
+    def symmetry_expanded_copy(self) -> TemporalData:
+        """Return copy of self with symmetry applied."""
+
+        new_time_series = []
+
+        for n in range(self.time_series.num_time_steps):
+            data = self.time_series.return_time_step(n)
+            new_time_series.append((self._symmetry_expanded_copy(property=data)).values)
+
+        return self.updated_copy(
+            time_series=self.time_series.updated_copy(field_time_series=new_time_series)
+        )
+
+    def field_name(self, val: str) -> str:
+        """Gets the name of the fields to be plot."""
+        if val == "abs^2":
+            if isinstance(self.monitor, TemporalTemperatureMonitor):
+                return "|T|², K²"
+            elif isinstance(self.monitor, TemporalVoltageMonitor):
+                return "|V|², sigma²"
+        else:
+            if isinstance(self.monitor, TemporalTemperatureMonitor):
+                return "T, K"
+            elif isinstance(self.monitor, TemporalVoltageMonitor):
+                return "V, sigma"
+
+
+HeatChargeMonitorDataType = Union[TemperatureData, VoltageData, TemporalData, ChargeSimulationData]

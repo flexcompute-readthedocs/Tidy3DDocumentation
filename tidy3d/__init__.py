@@ -38,6 +38,7 @@ from .components.boundary import (
 # data
 from .components.data.data_array import (
     AxialRatioDataArray,
+    CapacitanceCurveDataArray,
     CellDataArray,
     ChargeDataArray,
     DiffractionDataArray,
@@ -54,6 +55,7 @@ from .components.data.data_array import (
     FluxTimeDataArray,
     HeatDataArray,
     IndexedDataArray,
+    IVCurveDataArray,
     ModeAmpsDataArray,
     ModeIndexDataArray,
     PointDataArray,
@@ -142,17 +144,31 @@ from .components.heat_charge.boundary import (
     TemperatureBC,
     VoltageBC,
 )
+from .components.heat_charge.devsim_settings import DevsimConvergenceSettings
 from .components.heat_charge.grid import DistanceUnstructuredGrid, UniformUnstructuredGrid
 from .components.heat_charge.heat.simulation import HeatSimulation
 from .components.heat_charge.monitor import TemperatureMonitor, VoltageMonitor
-from .components.heat_charge.monitor_data import TemperatureData, VoltageData
+from .components.heat_charge.monitor_data import (
+    ChargeSimulationMonitor,
+    TemperatureData,
+    TemporalTemperatureMonitor,
+    TemporalVoltageMonitor,
+    VoltageData,
+)
 from .components.heat_charge.sim_data import HeatChargeSimulationData, HeatSimulationData
 from .components.heat_charge.simulation import HeatChargeSimulation
 from .components.heat_charge.source import HeatFromElectricSource, HeatSource, UniformHeatSource
+from .components.heat_charge.time_spec import SteadySpec, UnsteadySpec
 
 # heat
 # heat
-from .components.heat_charge_spec import ConductorSpec, FluidSpec, InsulatorSpec, SolidSpec
+from .components.heat_charge_spec import (
+    ConductorSpec,
+    FluidSpec,
+    InsulatorSpec,
+    SemiConductorSpec,
+    SolidSpec,
+)
 
 # lumped elements
 from .components.lumped_element import (
@@ -499,7 +515,10 @@ __all__ = [
     "FluidSpec",
     "SolidSpec",
     "ConductorSpec",
+    "SemiConductorSpec",
     "InsulatorSpec",
+    "SteadySpec",
+    "UnsteadySpec",
     "HeatSimulation",
     "HeatSimulationData",
     "TemperatureBC",
@@ -514,13 +533,17 @@ __all__ = [
     "HeatFromElectricSource",
     "UniformUnstructuredGrid",
     "DistanceUnstructuredGrid",
+    "ChargeSimulationMonitor",
     "TemperatureData",
     "TemperatureMonitor",
     "HeatChargeSimulation",
     "HeatChargeSimulationData",
+    "DevsimConvergenceSettings",
     "VoltageData",
     "HeatChargeBoundarySpec",
     "VoltageMonitor",
+    "TemporalTemperatureMonitor",
+    "TemporalVoltageMonitor",
     "SpaceTimeModulation",
     "SpaceModulation",
     "ContinuousWaveTimeModulation",
@@ -528,6 +551,8 @@ __all__ = [
     "PointDataArray",
     "CellDataArray",
     "IndexedDataArray",
+    "IVCurveDataArray",
+    "CapacitanceCurveDataArray",
     "TriangularGridDataset",
     "TetrahedralGridDataset",
     "medium_from_nk",
