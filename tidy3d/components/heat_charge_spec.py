@@ -114,7 +114,7 @@ class SemiConductorSpec(ConductorSpec):
     Notes
     -----
         Both acceptors and donors can be either a positive number or an 'xarray.DataArray'.
-        Default values are those for Silicon
+        Default values for parameters and models are those appropriate for Silicon
     """
 
     nc: pd.PositiveFloat = pd.Field(
