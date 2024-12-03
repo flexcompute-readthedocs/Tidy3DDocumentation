@@ -381,7 +381,7 @@ class CapacitanceData(HeatChargeMonitorData):
 
     monitor: CapacitanceMonitor = pd.Field(
         ...,
-        title="Capactiance monitor",
+        title="Capacitance monitor",
         description="Capacitance data associated with a Charge simulation.",
     )
 
