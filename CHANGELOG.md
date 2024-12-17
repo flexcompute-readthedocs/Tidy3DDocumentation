@@ -5,7 +5,7 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## [2.8.0rc1]
+## [2.8.0rc1] - 2024-12-17
 
 ### Added
 - Support for differentiation with respect to `ComplexPolySlab.vertices`.
@@ -1458,10 +1458,8 @@ which fields are to be projected is now determined automatically based on the me
 - A large number of small improvements and bug fixes.
 
 [Unreleased]: https://github.com/flexcompute/tidy3d/compare/v2.8.0rc1...pre/2.8
-[2.8.0rc1]: https://github.com/flexcompute/tidy3d/compare/v2.7.1...v2.8.0rc1
-[Unreleased]: https://github.com/flexcompute/tidy3d/compare/v2.7.7...develop
-[Unreleased]: https://github.com/flexcompute/tidy3d/compare/v2.7.8...develop
-[2.7.8]: https://github.com/flexcompute/tidy3d/compare/v2.7.6...v2.7.7
+[2.8.0rc1]: https://github.com/flexcompute/tidy3d/compare/v2.7.8...v2.8.0rc1
+[2.7.8]: https://github.com/flexcompute/tidy3d/compare/v2.7.7...v2.7.8
 [2.7.7]: https://github.com/flexcompute/tidy3d/compare/v2.7.6...v2.7.7
 [2.7.6]: https://github.com/flexcompute/tidy3d/compare/v2.7.5...v2.7.6
 [2.7.5]: https://github.com/flexcompute/tidy3d/compare/v2.7.4...v2.7.5

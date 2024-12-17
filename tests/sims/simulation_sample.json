@@ -19,11 +19,46 @@
         "nonlinear_spec": null,
         "modulation_spec": null,
         "heat_spec": null,
+        "electric_spec": null,
         "type": "Medium",
         "permittivity": 1.0,
         "conductivity": 0.0
     },
     "structures": [
+        {
+            "attrs": {},
+            "geometry": {
+                "attrs": {},
+                "type": "Cylinder",
+                "axis": 2,
+                "sidewall_angle": 0.0,
+                "reference_plane": "middle",
+                "radius": 1.0,
+                "center": [
+                    -1.0,
+                    0.0,
+                    0.0
+                ],
+                "length": 1.0
+            },
+            "name": "traced_dieletric_cylinder",
+            "background_permittivity": null,
+            "background_medium": null,
+            "type": "Structure",
+            "medium": {
+                "attrs": {},
+                "name": "dieletric",
+                "frequency_range": null,
+                "allow_gain": false,
+                "nonlinear_spec": null,
+                "modulation_spec": null,
+                "heat_spec": null,
+                "electric_spec": null,
+                "type": "Medium",
+                "permittivity": 2.0,
+                "conductivity": 0.0
+            }
+        },
         {
             "attrs": {},
             "geometry": {
@@ -41,6 +76,8 @@
                 ]
             },
             "name": "traced_dieletric_box",
+            "background_permittivity": null,
+            "background_medium": null,
             "type": "Structure",
             "medium": {
                 "attrs": {},
@@ -50,6 +87,7 @@
                 "nonlinear_spec": null,
                 "modulation_spec": null,
                 "heat_spec": null,
+                "electric_spec": null,
                 "type": "Medium",
                 "permittivity": 2.0,
                 "conductivity": 0.0
@@ -84,6 +122,8 @@
                 ]
             },
             "name": "traced custom polyslab",
+            "background_permittivity": null,
+            "background_medium": null,
             "type": "Structure",
             "medium": {
                 "attrs": {},
@@ -93,6 +133,7 @@
                 "nonlinear_spec": null,
                 "modulation_spec": null,
                 "heat_spec": null,
+                "electric_spec": null,
                 "type": "CustomMedium",
                 "interp_method": "nearest",
                 "subpixel": false,
@@ -118,6 +159,8 @@
                 ]
             },
             "name": "dieletric_box",
+            "background_permittivity": null,
+            "background_medium": null,
             "type": "Structure",
             "medium": {
                 "attrs": {},
@@ -127,6 +170,7 @@
                 "nonlinear_spec": null,
                 "modulation_spec": null,
                 "heat_spec": null,
+                "electric_spec": null,
                 "type": "Medium",
                 "permittivity": 2.0,
                 "conductivity": 0.0
@@ -149,6 +193,8 @@
                 ]
             },
             "name": "lossy_box",
+            "background_permittivity": null,
+            "background_medium": null,
             "type": "Structure",
             "medium": {
                 "attrs": {},
@@ -158,6 +204,7 @@
                 "nonlinear_spec": null,
                 "modulation_spec": null,
                 "heat_spec": null,
+                "electric_spec": null,
                 "type": "Medium",
                 "permittivity": 1.0,
                 "conductivity": 3.0
@@ -176,6 +223,8 @@
                 ]
             },
             "name": "sellmeier_sphere",
+            "background_permittivity": null,
+            "background_medium": null,
             "type": "Structure",
             "medium": {
                 "attrs": {},
@@ -185,6 +234,7 @@
                 "nonlinear_spec": null,
                 "modulation_spec": null,
                 "heat_spec": null,
+                "electric_spec": null,
                 "type": "Sellmeier",
                 "coeffs": [
                     [
@@ -215,6 +265,8 @@
                 ]
             },
             "name": "lorentz_box",
+            "background_permittivity": null,
+            "background_medium": null,
             "type": "Structure",
             "medium": {
                 "attrs": {},
@@ -224,6 +276,7 @@
                 "nonlinear_spec": null,
                 "modulation_spec": null,
                 "heat_spec": null,
+                "electric_spec": null,
                 "type": "Lorentz",
                 "eps_inf": 2.0,
                 "coeffs": [
@@ -252,6 +305,8 @@
                 ]
             },
             "name": null,
+            "background_permittivity": null,
+            "background_medium": null,
             "type": "Structure",
             "medium": {
                 "attrs": {},
@@ -261,6 +316,7 @@
                 "nonlinear_spec": null,
                 "modulation_spec": null,
                 "heat_spec": null,
+                "electric_spec": null,
                 "type": "Debye",
                 "eps_inf": 2.0,
                 "coeffs": [
@@ -283,6 +339,8 @@
                 }
             },
             "name": null,
+            "background_permittivity": null,
+            "background_medium": null,
             "type": "Structure",
             "medium": {
                 "attrs": {},
@@ -292,6 +350,7 @@
                 "nonlinear_spec": null,
                 "modulation_spec": null,
                 "heat_spec": null,
+                "electric_spec": null,
                 "type": "Debye",
                 "eps_inf": 2.0,
                 "coeffs": [
@@ -319,6 +378,8 @@
                 ]
             },
             "name": "drude_box",
+            "background_permittivity": null,
+            "background_medium": null,
             "type": "Structure",
             "medium": {
                 "attrs": {},
@@ -328,6 +389,7 @@
                 "nonlinear_spec": null,
                 "modulation_spec": null,
                 "heat_spec": null,
+                "electric_spec": null,
                 "type": "Drude",
                 "eps_inf": 2.0,
                 "coeffs": [
@@ -355,6 +417,8 @@
                 ]
             },
             "name": null,
+            "background_permittivity": null,
+            "background_medium": null,
             "type": "Structure",
             "medium": {
                 "attrs": {},
@@ -364,6 +428,7 @@
                 "nonlinear_spec": null,
                 "modulation_spec": null,
                 "heat_spec": null,
+                "electric_spec": null,
                 "type": "Medium2D",
                 "ss": {
                     "attrs": {},
@@ -373,6 +438,7 @@
                     "nonlinear_spec": null,
                     "modulation_spec": null,
                     "heat_spec": null,
+                    "electric_spec": null,
                     "type": "PoleResidue",
                     "eps_inf": 1.0,
                     "poles": [
@@ -396,6 +462,7 @@
                     "nonlinear_spec": null,
                     "modulation_spec": null,
                     "heat_spec": null,
+                    "electric_spec": null,
                     "type": "PoleResidue",
                     "eps_inf": 1.0,
                     "poles": [
@@ -430,6 +497,8 @@
                 ]
             },
             "name": null,
+            "background_permittivity": null,
+            "background_medium": null,
             "type": "Structure",
             "medium": {
                 "attrs": {},
@@ -439,6 +508,7 @@
                 "nonlinear_spec": null,
                 "modulation_spec": null,
                 "heat_spec": null,
+                "electric_spec": null,
                 "type": "Medium2D",
                 "ss": {
                     "attrs": {},
@@ -448,6 +518,7 @@
                     "nonlinear_spec": null,
                     "modulation_spec": null,
                     "heat_spec": null,
+                    "electric_spec": null,
                     "type": "PECMedium"
                 },
                 "tt": {
@@ -458,6 +529,7 @@
                     "nonlinear_spec": null,
                     "modulation_spec": null,
                     "heat_spec": null,
+                    "electric_spec": null,
                     "type": "PECMedium"
                 }
             }
@@ -479,6 +551,8 @@
                 ]
             },
             "name": null,
+            "background_permittivity": null,
+            "background_medium": null,
             "type": "Structure",
             "medium": {
                 "attrs": {},
@@ -488,6 +562,7 @@
                 "nonlinear_spec": null,
                 "modulation_spec": null,
                 "heat_spec": null,
+                "electric_spec": null,
                 "type": "AnisotropicMedium",
                 "xx": {
                     "attrs": {},
@@ -497,6 +572,7 @@
                     "nonlinear_spec": null,
                     "modulation_spec": null,
                     "heat_spec": null,
+                    "electric_spec": null,
                     "type": "PECMedium"
                 },
                 "yy": {
@@ -507,6 +583,7 @@
                     "nonlinear_spec": null,
                     "modulation_spec": null,
                     "heat_spec": null,
+                    "electric_spec": null,
                     "type": "Medium",
                     "permittivity": 1.0,
                     "conductivity": 0.0
@@ -519,6 +596,7 @@
                     "nonlinear_spec": null,
                     "modulation_spec": null,
                     "heat_spec": null,
+                    "electric_spec": null,
                     "type": "Medium",
                     "permittivity": 1.0,
                     "conductivity": 0.0
@@ -548,6 +626,8 @@
                 ]
             },
             "name": "pec_group",
+            "background_permittivity": null,
+            "background_medium": null,
             "type": "Structure",
             "medium": {
                 "attrs": {},
@@ -557,6 +637,7 @@
                 "nonlinear_spec": null,
                 "modulation_spec": null,
                 "heat_spec": null,
+                "electric_spec": null,
                 "type": "PECMedium"
             }
         },
@@ -577,6 +658,8 @@
                 "length": 2.0
             },
             "name": "anisotopic_cylinder",
+            "background_permittivity": null,
+            "background_medium": null,
             "type": "Structure",
             "medium": {
                 "attrs": {},
@@ -586,6 +669,7 @@
                 "nonlinear_spec": null,
                 "modulation_spec": null,
                 "heat_spec": null,
+                "electric_spec": null,
                 "type": "AnisotropicMedium",
                 "xx": {
                     "attrs": {},
@@ -595,6 +679,7 @@
                     "nonlinear_spec": null,
                     "modulation_spec": null,
                     "heat_spec": null,
+                    "electric_spec": null,
                     "type": "Medium",
                     "permittivity": 1.0,
                     "conductivity": 0.0
@@ -607,6 +692,7 @@
                     "nonlinear_spec": null,
                     "modulation_spec": null,
                     "heat_spec": null,
+                    "electric_spec": null,
                     "type": "Medium",
                     "permittivity": 2.0,
                     "conductivity": 0.0
@@ -619,6 +705,7 @@
                     "nonlinear_spec": null,
                     "modulation_spec": null,
                     "heat_spec": null,
+                    "electric_spec": null,
                     "type": "Medium",
                     "permittivity": 3.0,
                     "conductivity": 0.0
@@ -654,6 +741,8 @@
                 ]
             },
             "name": "pole_slab",
+            "background_permittivity": null,
+            "background_medium": null,
             "type": "Structure",
             "medium": {
                 "attrs": {},
@@ -663,6 +752,7 @@
                 "nonlinear_spec": null,
                 "modulation_spec": null,
                 "heat_spec": null,
+                "electric_spec": null,
                 "type": "PoleResidue",
                 "eps_inf": 1.0,
                 "poles": [
@@ -696,6 +786,8 @@
                 ]
             },
             "name": null,
+            "background_permittivity": null,
+            "background_medium": null,
             "type": "Structure",
             "medium": {
                 "attrs": {},
@@ -705,6 +797,7 @@
                 "nonlinear_spec": null,
                 "modulation_spec": null,
                 "heat_spec": null,
+                "electric_spec": null,
                 "type": "CustomMedium",
                 "interp_method": "nearest",
                 "subpixel": false,
@@ -730,6 +823,8 @@
                 ]
             },
             "name": null,
+            "background_permittivity": null,
+            "background_medium": null,
             "type": "Structure",
             "medium": {
                 "attrs": {},
@@ -739,6 +834,7 @@
                 "nonlinear_spec": null,
                 "modulation_spec": null,
                 "heat_spec": null,
+                "electric_spec": null,
                 "type": "CustomDrude",
                 "eps_inf": "SpatialDataArray",
                 "coeffs": [
@@ -768,6 +864,8 @@
                 ]
             },
             "name": null,
+            "background_permittivity": null,
+            "background_medium": null,
             "type": "Structure",
             "medium": {
                 "attrs": {},
@@ -777,6 +875,7 @@
                 "nonlinear_spec": null,
                 "modulation_spec": null,
                 "heat_spec": null,
+                "electric_spec": null,
                 "type": "CustomLorentz",
                 "eps_inf": "SpatialDataArray",
                 "coeffs": [
@@ -807,6 +906,8 @@
                 ]
             },
             "name": null,
+            "background_permittivity": null,
+            "background_medium": null,
             "type": "Structure",
             "medium": {
                 "attrs": {},
@@ -816,6 +917,7 @@
                 "nonlinear_spec": null,
                 "modulation_spec": null,
                 "heat_spec": null,
+                "electric_spec": null,
                 "type": "CustomDebye",
                 "eps_inf": "SpatialDataArray",
                 "coeffs": [
@@ -845,6 +947,8 @@
                 ]
             },
             "name": null,
+            "background_permittivity": null,
+            "background_medium": null,
             "type": "Structure",
             "medium": {
                 "attrs": {},
@@ -854,6 +958,7 @@
                 "nonlinear_spec": null,
                 "modulation_spec": null,
                 "heat_spec": null,
+                "electric_spec": null,
                 "type": "CustomPoleResidue",
                 "eps_inf": "SpatialDataArray",
                 "poles": [
@@ -883,6 +988,8 @@
                 ]
             },
             "name": null,
+            "background_permittivity": null,
+            "background_medium": null,
             "type": "Structure",
             "medium": {
                 "attrs": {},
@@ -892,6 +999,7 @@
                 "nonlinear_spec": null,
                 "modulation_spec": null,
                 "heat_spec": null,
+                "electric_spec": null,
                 "type": "CustomSellmeier",
                 "coeffs": [
                     [
@@ -920,6 +1028,8 @@
                 ]
             },
             "name": null,
+            "background_permittivity": null,
+            "background_medium": null,
             "type": "Structure",
             "medium": {
                 "attrs": {},
@@ -929,6 +1039,7 @@
                 "nonlinear_spec": null,
                 "modulation_spec": null,
                 "heat_spec": null,
+                "electric_spec": null,
                 "type": "CustomMedium",
                 "interp_method": "nearest",
                 "subpixel": false,
@@ -960,6 +1071,8 @@
                 ]
             },
             "name": null,
+            "background_permittivity": null,
+            "background_medium": null,
             "type": "Structure",
             "medium": {
                 "attrs": {},
@@ -969,6 +1082,7 @@
                 "nonlinear_spec": null,
                 "modulation_spec": null,
                 "heat_spec": null,
+                "electric_spec": null,
                 "type": "CustomDrude",
                 "eps_inf": {
                     "attrs": {},
@@ -1016,6 +1130,8 @@
                 ]
             },
             "name": null,
+            "background_permittivity": null,
+            "background_medium": null,
             "type": "Structure",
             "medium": {
                 "attrs": {},
@@ -1025,6 +1141,7 @@
                 "nonlinear_spec": null,
                 "modulation_spec": null,
                 "heat_spec": null,
+                "electric_spec": null,
                 "type": "CustomLorentz",
                 "eps_inf": {
                     "attrs": {},
@@ -1079,6 +1196,8 @@
                 ]
             },
             "name": null,
+            "background_permittivity": null,
+            "background_medium": null,
             "type": "Structure",
             "medium": {
                 "attrs": {},
@@ -1088,6 +1207,7 @@
                 "nonlinear_spec": null,
                 "modulation_spec": null,
                 "heat_spec": null,
+                "electric_spec": null,
                 "type": "CustomDebye",
                 "eps_inf": {
                     "attrs": {},
@@ -1135,6 +1255,8 @@
                 ]
             },
             "name": null,
+            "background_permittivity": null,
+            "background_medium": null,
             "type": "Structure",
             "medium": {
                 "attrs": {},
@@ -1144,6 +1266,7 @@
                 "nonlinear_spec": null,
                 "modulation_spec": null,
                 "heat_spec": null,
+                "electric_spec": null,
                 "type": "CustomPoleResidue",
                 "eps_inf": {
                     "attrs": {},
@@ -1191,6 +1314,8 @@
                 ]
             },
             "name": null,
+            "background_permittivity": null,
+            "background_medium": null,
             "type": "Structure",
             "medium": {
                 "attrs": {},
@@ -1200,6 +1325,7 @@
                 "nonlinear_spec": null,
                 "modulation_spec": null,
                 "heat_spec": null,
+                "electric_spec": null,
                 "type": "CustomSellmeier",
                 "coeffs": [
                     [
@@ -1240,6 +1366,8 @@
                 ]
             },
             "name": null,
+            "background_permittivity": null,
+            "background_medium": null,
             "type": "Structure",
             "medium": {
                 "attrs": {},
@@ -1254,6 +1382,7 @@
                 },
                 "modulation_spec": null,
                 "heat_spec": null,
+                "electric_spec": null,
                 "type": "Medium",
                 "permittivity": 1.0,
                 "conductivity": 0.0
@@ -1276,6 +1405,8 @@
                 ]
             },
             "name": null,
+            "background_permittivity": null,
+            "background_medium": null,
             "type": "Structure",
             "medium": {
                 "attrs": {},
@@ -1319,6 +1450,7 @@
                 },
                 "modulation_spec": null,
                 "heat_spec": null,
+                "electric_spec": null,
                 "type": "Medium",
                 "permittivity": 1.0,
                 "conductivity": 0.0
@@ -1353,6 +1485,8 @@
                 ]
             },
             "name": null,
+            "background_permittivity": null,
+            "background_medium": null,
             "type": "Structure",
             "medium": {
                 "attrs": {},
@@ -1362,6 +1496,7 @@
                 "nonlinear_spec": null,
                 "modulation_spec": null,
                 "heat_spec": null,
+                "electric_spec": null,
                 "type": "PoleResidue",
                 "eps_inf": 1.0,
                 "poles": [
@@ -1390,6 +1525,8 @@
                 }
             },
             "name": "dieletric_mesh",
+            "background_permittivity": null,
+            "background_medium": null,
             "type": "Structure",
             "medium": {
                 "attrs": {},
@@ -1399,6 +1536,7 @@
                 "nonlinear_spec": null,
                 "modulation_spec": null,
                 "heat_spec": null,
+                "electric_spec": null,
                 "type": "Medium",
                 "permittivity": 5.0,
                 "conductivity": 0.0
@@ -1431,6 +1569,8 @@
                 ]
             },
             "name": null,
+            "background_permittivity": null,
+            "background_medium": null,
             "type": "Structure",
             "medium": {
                 "attrs": {},
@@ -1440,6 +1580,7 @@
                 "nonlinear_spec": null,
                 "modulation_spec": null,
                 "heat_spec": null,
+                "electric_spec": null,
                 "type": "Medium",
                 "permittivity": 5.0,
                 "conductivity": 0.0
@@ -1481,6 +1622,8 @@
                 }
             },
             "name": "clip_operation",
+            "background_permittivity": null,
+            "background_medium": null,
             "type": "Structure",
             "medium": {
                 "attrs": {},
@@ -1490,6 +1633,7 @@
                 "nonlinear_spec": null,
                 "modulation_spec": null,
                 "heat_spec": null,
+                "electric_spec": null,
                 "type": "Medium",
                 "permittivity": 3.0,
                 "conductivity": 0.0
@@ -1542,6 +1686,8 @@
                 ]
             },
             "name": "transformed_box",
+            "background_permittivity": null,
+            "background_medium": null,
             "type": "Structure",
             "medium": {
                 "attrs": {},
@@ -1551,6 +1697,7 @@
                 "nonlinear_spec": null,
                 "modulation_spec": null,
                 "heat_spec": null,
+                "electric_spec": null,
                 "type": "Medium",
                 "permittivity": 1.5,
                 "conductivity": 0.0
@@ -1656,9 +1803,10 @@
                 "filter_pol": null,
                 "angle_theta": 0.0,
                 "angle_phi": 0.0,
-                "precision": "single",
+                "precision": "auto",
                 "bend_radius": null,
                 "bend_axis": null,
+                "bend_angle_rotation": false,
                 "track_freq": "central",
                 "group_index_step": false,
                 "type": "ModeSpec"
@@ -1692,7 +1840,11 @@
             "direction": "+",
             "angle_theta": 0.0,
             "angle_phi": 0.0,
-            "pol_angle": 0.1
+            "pol_angle": 0.1,
+            "angular_spec": {
+                "attrs": {},
+                "type": "FixedInPlaneKSpec"
+            }
         },
         {
             "attrs": {},
@@ -2147,7 +2299,7 @@
                 1,
                 1
             ],
-            "colocate": false,
+            "colocate": true,
             "freqs": [
                 200000000000000.0,
                 250000000000000.0
@@ -2170,9 +2322,10 @@
                 "filter_pol": null,
                 "angle_theta": 0.0,
                 "angle_phi": 0.0,
-                "precision": "single",
+                "precision": "auto",
                 "bend_radius": null,
                 "bend_axis": null,
+                "bend_angle_rotation": false,
                 "track_freq": "central",
                 "group_index_step": false,
                 "type": "ModeSpec"
@@ -2600,6 +2753,158 @@
         },
         {
             "attrs": {},
+            "type": "DirectivityMonitor",
+            "center": [
+                0.0,
+                0.0,
+                0.0
+            ],
+            "size": [
+                0.0,
+                2.0,
+                2.0
+            ],
+            "name": "directivity",
+            "interval_space": [
+                1,
+                1,
+                1
+            ],
+            "colocate": true,
+            "freqs": [
+                250000000000000.0,
+                300000000000000.0
+            ],
+            "apodization": {
+                "attrs": {},
+                "start": null,
+                "end": null,
+                "width": null,
+                "type": "ApodizationSpec"
+            },
+            "normal_dir": "+",
+            "exclude_surfaces": null,
+            "custom_origin": [
+                1.0,
+                2.0,
+                3.0
+            ],
+            "far_field_approx": true,
+            "window_size": [
+                0.0,
+                0.0
+            ],
+            "medium": null,
+            "proj_distance": 1000000.0,
+            "theta": [
+                0.7853981633974483,
+                0.8012647929610331,
+                0.8171314225246179,
+                0.8329980520882028,
+                0.8488646816517875,
+                0.8647313112153724,
+                0.8805979407789571,
+                0.896464570342542,
+                0.9123311999061268,
+                0.9281978294697116,
+                0.9440644590332964,
+                0.9599310885968813,
+                0.975797718160466,
+                0.9916643477240509,
+                1.0075309772876357,
+                1.0233976068512205,
+                1.0392642364148053,
+                1.05513086597839,
+                1.070997495541975,
+                1.0868641251055597,
+                1.1027307546691445,
+                1.1185973842327295,
+                1.1344640137963142,
+                1.150330643359899,
+                1.1661972729234837,
+                1.1820639024870687,
+                1.1979305320506535,
+                1.2137971616142382,
+                1.2296637911778232,
+                1.245530420741408,
+                1.2613970503049927,
+                1.2772636798685775,
+                1.2931303094321622,
+                1.3089969389957472,
+                1.324863568559332,
+                1.340730198122917,
+                1.3565968276865017,
+                1.3724634572500864,
+                1.3883300868136712,
+                1.404196716377256,
+                1.4200633459408407,
+                1.4359299755044257,
+                1.4517966050680104,
+                1.4676632346315954,
+                1.4835298641951802,
+                1.499396493758765,
+                1.5152631233223497,
+                1.5311297528859344,
+                1.5469963824495194,
+                1.5628630120131042,
+                1.5787296415766892,
+                1.594596271140274,
+                1.6104629007038587,
+                1.6263295302674434,
+                1.6421961598310282,
+                1.658062789394613,
+                1.673929418958198,
+                1.6897960485217827,
+                1.7056626780853676,
+                1.7215293076489524,
+                1.7373959372125372,
+                1.753262566776122,
+                1.7691291963397067,
+                1.7849958259032914,
+                1.8008624554668764,
+                1.8167290850304612,
+                1.8325957145940461,
+                1.8484623441576309,
+                1.8643289737212156,
+                1.8801956032848004,
+                1.8960622328483854,
+                1.9119288624119701,
+                1.9277954919755549,
+                1.9436621215391396,
+                1.9595287511027246,
+                1.9753953806663094,
+                1.9912620102298941,
+                2.007128639793479,
+                2.0229952693570636,
+                2.038861898920649,
+                2.054728528484233,
+                2.0705951580478184,
+                2.086461787611403,
+                2.102328417174988,
+                2.1181950467385726,
+                2.1340616763021574,
+                2.1499283058657426,
+                2.165794935429327,
+                2.181661564992912,
+                2.197528194556497,
+                2.2133948241200816,
+                2.2292614536836663,
+                2.245128083247251,
+                2.2609947128108363,
+                2.2768613423744206,
+                2.292727971938006,
+                2.3085946015015906,
+                2.3244612310651753,
+                2.34032786062876,
+                2.356194490192345
+            ],
+            "phi": [
+                0.0,
+                0.5235987755982988
+            ]
+        },
+        {
+            "attrs": {},
             "type": "DiffractionMonitor",
             "center": [
                 0.0,
@@ -2776,6 +3081,8 @@
                     ]
                 },
                 "name": null,
+                "background_permittivity": null,
+                "background_medium": null,
                 "type": "Structure",
                 "medium": {
                     "attrs": {},
@@ -2785,6 +3092,7 @@
                     "nonlinear_spec": null,
                     "modulation_spec": null,
                     "heat_spec": null,
+                    "electric_spec": null,
                     "type": "Medium",
                     "permittivity": 2.0,
                     "conductivity": 0.0
@@ -2794,9 +3102,32 @@
         "snapping_points": [],
         "type": "GridSpec"
     },
-    "version": "2.7.0",
-    "lumped_elements": [],
+    "version": "2.8.0rc1",
+    "plot_length_units": "\u03bcm",
+    "lumped_elements": [
+        {
+            "attrs": {},
+            "type": "LumpedResistor",
+            "center": [
+                2.0,
+                2.0,
+                0.0
+            ],
+            "size": [
+                0.2,
+                0.2,
+                0.0
+            ],
+            "name": "Resistor",
+            "num_grid_cells": 3,
+            "voltage_axis": 0,
+            "snap_perimeter_to_grid": true,
+            "resistance": 42.0
+        }
+    ],
     "subpixel": false,
+    "simulation_type": "tidy3d",
+    "post_norm": 1.0,
     "courant": 0.8,
     "normalize_index": 0,
     "shutoff": 0.0001,
