@@ -870,7 +870,7 @@ class Scene(Tidy3dBaseModel):
             return ax
 
         need_filtered_shaped = False
-        if property == "eps": 
+        if property == "eps":
             need_filtered_shaped = alpha < 1 and not isinstance(self.medium, AbstractCustomMedium)
         if property in ["donors", "acceptors", "doping"]:
             need_filtered_shaped = alpha < 1
@@ -1733,7 +1733,6 @@ class Scene(Tidy3dBaseModel):
 
         acceptors_lims = [1e50, -1e50]
         donors_lims = [1e50, -1e50]
-        
 
         for struct in [self.background_structure] + list(self.structures):
             if isinstance(struct.medium.electric_spec, SemiConductorSpec):
