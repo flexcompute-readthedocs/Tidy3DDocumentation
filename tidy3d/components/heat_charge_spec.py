@@ -77,7 +77,7 @@ class ChargeSpec(AbstractHeatChargeSpec):
     )
 
 
-class InsulatorSpec(ChargeSpec):
+class ChargeInsulatorMedium(ChargeSpec):
     """Insulating medium. Conduction simulations will not solve for electric
     potential in a structure that has a medium with this 'electric_spec'.
 
@@ -90,12 +90,12 @@ class InsulatorSpec(ChargeSpec):
     """
 
 
-class ConductorSpec(ChargeSpec):
+class ChargeConductorMedium(ChargeSpec):
     """Conductor medium for conduction simulations.
 
     Example
     -------
-    >>> solid = ConductorSpec(conductivity=3)
+    >>> solid = ChargeConductorMedium(conductivity=3)
 
     Note: relative permittivity will be assumed 1 if no value is specified.
     """
@@ -108,7 +108,7 @@ class ConductorSpec(ChargeSpec):
     )
 
 
-class SemiConductorSpec(ConductorSpec):
+class SemiconductorMedium(ChargeConductorMedium):
     """
     This class is used to define semiconductors.
 
@@ -177,4 +177,4 @@ class SemiConductorSpec(ConductorSpec):
 
 
 ThermalSpecType = Union[FluidSpec, SolidSpec]
-ElectricSpecType = Union[InsulatorSpec, ConductorSpec, SemiConductorSpec]
+ElectricSpecType = Union[ChargeInsulatorMedium, ChargeConductorMedium, SemiconductorMedium]

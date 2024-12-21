@@ -27,7 +27,7 @@ from .geometry.utils import flatten_groups, traverse_geometries
 from .grid.grid import Coords, Grid
 from .heat_charge.doping import ConstantDoping, GaussianDoping
 from .heat_charge.viz import HEAT_SOURCE_CMAP
-from .heat_charge_spec import ConductorSpec, SemiConductorSpec, SolidSpec
+from .heat_charge_spec import ChargeConductorMedium, SemiconductorMedium, SolidSpec
 from .medium import (
     AbstractCustomMedium,
     AbstractPerturbationMedium,
@@ -916,7 +916,7 @@ class Scene(Tidy3dBaseModel):
 
         for medium, shape in medium_shapes:
             if property in ["doping", "acceptors", "donors"]:
-                if not isinstance(medium.electric_spec, SemiConductorSpec):
+                if not isinstance(medium.electric_spec, SemiconductorMedium):
                     ax = self._plot_shape_structure_heat_charge_property(
                         alpha=alpha,
                         medium=medium,
@@ -1488,7 +1488,9 @@ class Scene(Tidy3dBaseModel):
             cond_list = [medium.heat_spec.conductivity for medium in medium_list]
         elif property == "electric_conductivity":
             medium_list = [
-                medium for medium in medium_list if isinstance(medium.electric_spec, ConductorSpec)
+                medium
+                for medium in medium_list
+                if isinstance(medium.electric_spec, ChargeConductorMedium)
             ]
             cond_list = [medium.electric_spec.conductivity for medium in medium_list]
 
@@ -1533,7 +1535,7 @@ class Scene(Tidy3dBaseModel):
         if property == "heat_conductivity" and isinstance(medium.heat_spec, SolidSpec):
             cond_medium = medium.heat_spec.conductivity
         elif property == "electric_conductivity" and isinstance(
-            medium.electric_spec, ConductorSpec
+            medium.electric_spec, ChargeConductorMedium
         ):
             cond_medium = medium.electric_spec.conductivity
         elif property == "doping":
@@ -1735,7 +1737,7 @@ class Scene(Tidy3dBaseModel):
         donors_lims = [1e50, -1e50]
 
         for struct in [self.background_structure] + list(self.structures):
-            if isinstance(struct.medium.electric_spec, SemiConductorSpec):
+            if isinstance(struct.medium.electric_spec, SemiconductorMedium):
                 electric_spec = struct.medium.electric_spec
                 for doping, limits in zip(
                     [electric_spec.acceptors, electric_spec.donors], [acceptors_lims, donors_lims]

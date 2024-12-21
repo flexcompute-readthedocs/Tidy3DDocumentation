@@ -180,10 +180,10 @@ from .components.heat_charge.source import HeatFromElectricSource, HeatSource, U
 # heat
 # heat
 from .components.heat_charge_spec import (
-    ConductorSpec,
+    ChargeConductorMedium,
+    ChargeInsulatorMedium,
     FluidSpec,
-    InsulatorSpec,
-    SemiConductorSpec,
+    SemiconductorMedium,
     SolidSpec,
 )
 
@@ -532,9 +532,9 @@ __all__ = [
     "SimulationBoundary",
     "FluidSpec",
     "SolidSpec",
-    "ConductorSpec",
-    "SemiConductorSpec",
-    "InsulatorSpec",
+    "ChargeConductorMedium",
+    "SemiconductorMedium",
+    "ChargeInsulatorMedium",
     "HeatSimulation",
     "HeatSimulationData",
     "HeatChargeSimulationData",

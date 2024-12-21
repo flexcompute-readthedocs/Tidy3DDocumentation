@@ -22,7 +22,7 @@ from ..bc_placement import (
     StructureStructureInterface,
 )
 from ..geometry.base import Box
-from ..heat_charge_spec import ConductorSpec, SemiConductorSpec, SolidSpec
+from ..heat_charge_spec import ChargeConductorMedium, SemiconductorMedium, SolidSpec
 from ..scene import Scene
 from ..structure import Structure
 from ..types import TYPE_TAG_STR, Ax, Bound, ScalarSymmetry, Shapely, annotate_type
@@ -48,9 +48,9 @@ from .monitor import (
 )
 from .source import (
     GlobalHeatChargeSource,
-    HeatChargeSourceType,
     HeatFromElectricSource,
     HeatSource,
+    TCADSourceTypes,
     UniformHeatSource,
 )
 from .viz import (
@@ -142,7 +142,7 @@ class HeatChargeSimulation(AbstractSimulation):
     ... )
     """
 
-    sources: Tuple[HeatChargeSourceType, ...] = pd.Field(
+    sources: Tuple[TCADSourceTypes, ...] = pd.Field(
         (),
         title="Heat and Charge sources",
         description="List of heat and/or charge sources.",
@@ -238,7 +238,7 @@ class HeatChargeSimulation(AbstractSimulation):
                     isinstance(medium.heat_spec, SolidSpec) for medium in medium_set
                 )
                 crosses_elec_spec = any(
-                    isinstance(medium.electric_spec, ConductorSpec) for medium in medium_set
+                    isinstance(medium.electric_spec, ChargeConductorMedium) for medium in medium_set
                 )
             else:
                 # approximate check for volumetric objects based on bounding boxes
@@ -251,7 +251,7 @@ class HeatChargeSimulation(AbstractSimulation):
                 crosses_elec_spec = any(
                     obj.intersects(structure.geometry)
                     for structure in total_structures
-                    if isinstance(structure.medium.electric_spec, ConductorSpec)
+                    if isinstance(structure.medium.electric_spec, ChargeConductorMedium)
                 )
 
             if not crosses_solid:
@@ -291,7 +291,7 @@ class HeatChargeSimulation(AbstractSimulation):
             monitor_names = [f"'{val[ind].name}'" for ind in failed_volt_mnt]
             raise SetupError(
                 f"Monitors {monitor_names} do not cross any conducting materials "
-                "('electric_spec=ConductorSpec(...)'). The voltage is only stored inside conducting "
+                "('electric_spec=ChargeConductorMedium(...)'). The voltage is only stored inside conducting "
                 "materials. Thus, no information will be recorded in these monitors."
             )
 
@@ -533,7 +533,7 @@ class HeatChargeSimulation(AbstractSimulation):
             elif sim_type == TCADAnalysisTypes.CONDUCTION:
                 if len(failed_elect_idx) > 0:
                     raise SetupError(
-                        "No conducting materials ('ConductorSpec') are detected in conduction simulation. Solution domain is empty."
+                        "No conducting materials ('ChargeConductorMedium') are detected in conduction simulation. Solution domain is empty."
                     )
 
         return values
@@ -546,7 +546,7 @@ class HeatChargeSimulation(AbstractSimulation):
 
         # make sure mediums with doping have been defined
         for structure in structures:
-            if isinstance(structure.medium.electric_spec, SemiConductorSpec):
+            if isinstance(structure.medium.electric_spec, SemiconductorMedium):
                 if (
                     structure.medium.electric_spec.donors is not None
                     or structure.medium.electric_spec.acceptors is not None
@@ -1288,7 +1288,7 @@ class HeatChargeSimulation(AbstractSimulation):
 
     def _get_structure_source_plot_params(
         self,
-        source: HeatChargeSourceType,
+        source: TCADSourceTypes,
         source_min: float,
         source_max: float,
         alpha: float = None,
@@ -1313,7 +1313,7 @@ class HeatChargeSimulation(AbstractSimulation):
 
     def _plot_shape_structure_source(
         self,
-        source: HeatChargeSourceType,
+        source: TCADSourceTypes,
         shape: Shapely,
         source_min: float,
         source_max: float,
@@ -1386,7 +1386,7 @@ class HeatChargeSimulation(AbstractSimulation):
         """
         simulation_types = []
 
-        # NOTE: for the time being, if a simulation has SemiConductorSpec
+        # NOTE: for the time being, if a simulation has SemiconductorMedium
         # then we consider it of being a 'TCADAnalysisTypes.CHARGE'
         if self._check_if_semiconductor_present(self.structures):
             return [TCADAnalysisTypes.CHARGE]
