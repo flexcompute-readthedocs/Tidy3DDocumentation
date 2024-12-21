@@ -10,12 +10,16 @@ import pydantic.v1 as pd
 from ...exceptions import DataError
 from ...log import log
 from ..base_sim.data.sim_data import AbstractSimulationData
-from ..data.data_array import DCCapacitanceDataArray, DCIVCurveDataArray, SpatialDataArray
+from ..data.data_array import (
+    SpatialDataArray,
+    SteadyCapacitanceVoltageDataArray,
+    SteadyCurrentVoltageDataArray,
+)
 from ..data.utils import TetrahedralGridDataset, TriangularGridDataset, UnstructuredGridDataset
 from ..types import Ax, Literal, RealFieldVal
 from ..viz import add_ax_if_none, equal_aspect
 from .heat.simulation import HeatSimulation
-from .monitor_data import HeatChargeMonitorDataType, TemperatureData, VoltageData
+from .monitor_data import SteadyVoltageData, TCADMonitorDataTypes, TemperatureData
 from .simulation import HeatChargeSimulation
 
 
@@ -68,7 +72,7 @@ class HeatChargeSimulationData(AbstractSimulationData):
         description="Original :class:`.HeatChargeSimulation` associated with the data.",
     )
 
-    data: Tuple[HeatChargeMonitorDataType, ...] = pd.Field(
+    data: Tuple[TCADMonitorDataTypes, ...] = pd.Field(
         ...,
         title="Monitor Data",
         description="List of :class:`.MonitorData` instances "
@@ -89,15 +93,15 @@ class HeatChargeSimulationData(AbstractSimulationData):
 
         validated_dict = {}
         for key, dc in val.items():
-            if isinstance(dc, DCCapacitanceDataArray):
-                validated_dict[key] = DCCapacitanceDataArray(
+            if isinstance(dc, SteadyCapacitanceVoltageDataArray):
+                validated_dict[key] = SteadyCapacitanceVoltageDataArray(
                     data=dc.data,
                     dims=["Voltage (V)"],
                     coords=dc.coords,
                     attrs={"long_name": "Capacitance (fF)"},
                 )
-            elif isinstance(dc, DCIVCurveDataArray):
-                validated_dict[key] = DCIVCurveDataArray(
+            elif isinstance(dc, SteadyCurrentVoltageDataArray):
+                validated_dict[key] = SteadyCurrentVoltageDataArray(
                     data=dc.data,
                     dims=["Voltage (V)"],
                     coords=dc.coords,
@@ -166,7 +170,7 @@ class HeatChargeSimulationData(AbstractSimulationData):
         if field_name is None:
             if isinstance(monitor_data, TemperatureData):
                 field_name = "temperature"
-            elif isinstance(monitor_data, VoltageData):
+            elif isinstance(monitor_data, SteadyVoltageData):
                 field_name = "voltage"
 
         if field_name not in monitor_data.field_components.keys():
@@ -181,12 +185,12 @@ class HeatChargeSimulationData(AbstractSimulationData):
 
         if isinstance(monitor_data, TemperatureData):
             property_to_plot = "heat_conductivity"
-        elif isinstance(monitor_data, VoltageData):
+        elif isinstance(monitor_data, SteadyVoltageData):
             property_to_plot = "electric_conductivity"
         else:
             raise DataError(
                 f"Monitor '{monitor_name}' (type '{monitor_data.monitor.type}') is not a "
-                f"supported monitor. Supported monitors are 'TemperatureData', 'VoltageData'."
+                f"supported monitor. Supported monitors are 'TemperatureData', 'SteadyVoltageData'."
             )
 
         if scale == "log":
