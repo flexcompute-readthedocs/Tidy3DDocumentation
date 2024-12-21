@@ -7,35 +7,44 @@ from typing import Tuple
 
 import pydantic.v1 as pd
 
-from ..constants import (
+from tidy3d.components.base import Tidy3dBaseModel
+from tidy3d.components.data.data_array import SpatialDataArray
+from tidy3d.components.medium import AbstractMedium
+from tidy3d.components.tcad.doping import DopingBoxType
+from tidy3d.components.tcad.types import (
+    AugerRecombination,
+    BandGapModelTypes,
+    CaugheyThomasMobility,
+    MobilityModelTypes,
+    RadiativeRecombination,
+    RecombinationModelTypes,
+    ShockleyReedHallRecombination,
+    SlotboomNarrowingBandGap,
+)
+from tidy3d.components.types import Union
+from tidy3d.constants import (
     CONDUCTIVITY,
     ELECTRON_VOLT,
     PERMITTIVITY,
     SPECIFIC_HEAT_CAPACITY,
     THERMAL_CONDUCTIVITY,
 )
-from .base import Tidy3dBaseModel
-from .data.data_array import SpatialDataArray
-from .heat_charge.charge_settings import (
-    AugerRecombination,
-    BandgapNarrowingModelType,
-    CaugheyThomasMobility,
-    MobilityModelType,
-    RadiativeRecombination,
-    RecombinationModelType,
-    SlotboomNarrowingModel,
-    SRHRecombination,
-)
-from .heat_charge.doping import DopingBoxType
-from .types import Union
 
 
 # Liquid class
-class AbstractHeatChargeSpec(ABC, Tidy3dBaseModel):
+class AbstractHeatMedium(ABC, Tidy3dBaseModel):
     """Abstract heat material specification."""
 
+    @property
+    def heat(self):
+        """
+        This means that a heat medium has been defined inherently within this solver medium.
+        This provides interconnection with the `MultiPhysicsMedium` higher-dimensional classes.
+        """
+        return self
 
-class FluidSpec(AbstractHeatChargeSpec):
+
+class FluidSpec(AbstractHeatMedium):
     """Fluid medium. Heat simulations will not solve for temperature
     in a structure that has a medium with this 'heat_spec'.
 
@@ -45,7 +54,7 @@ class FluidSpec(AbstractHeatChargeSpec):
     """
 
 
-class SolidSpec(AbstractHeatChargeSpec):
+class SolidSpec(AbstractHeatMedium):
     """Solid medium for heat simulations.
 
     Example
@@ -69,17 +78,25 @@ class SolidSpec(AbstractHeatChargeSpec):
     )
 
 
-class ChargeSpec(AbstractHeatChargeSpec):
+class AbstractChargeMedium(AbstractMedium):
     """Abstract class for Charge specifications"""
 
     permittivity: float = pd.Field(
         1.0, ge=1.0, title="Permittivity", description="Relative permittivity.", units=PERMITTIVITY
     )
 
+    @property
+    def charge(self):
+        """
+        This means that a charge medium has been defined inherently within this solver medium.
+        This provides interconnection with the `MultiPhysicsMedium` higher-dimensional classes.
+        """
+        return self
 
-class InsulatorSpec(ChargeSpec):
+
+class ChargeInsulatorMedium(AbstractChargeMedium):
     """Insulating medium. Conduction simulations will not solve for electric
-    potential in a structure that has a medium with this 'electric_spec'.
+    potential in a structure that has a medium with this 'charge'.
 
     Example
     -------
@@ -90,12 +107,12 @@ class InsulatorSpec(ChargeSpec):
     """
 
 
-class ConductorSpec(ChargeSpec):
+class ChargeConductorMedium(AbstractChargeMedium):
     """Conductor medium for conduction simulations.
 
     Example
     -------
-    >>> solid = ConductorSpec(conductivity=3)
+    >>> solid = ChargeConductorMedium(conductivity=3)
 
     Note: relative permittivity will be assumed 1 if no value is specified.
     """
@@ -108,7 +125,7 @@ class ConductorSpec(ChargeSpec):
     )
 
 
-class SemiConductorSpec(ConductorSpec):
+class SemiconductorMedium(ChargeConductorMedium):
     """
     This class is used to define semiconductors.
 
@@ -143,20 +160,20 @@ class SemiConductorSpec(ConductorSpec):
         4.05, title="Electron affinity", description="Electron affinity", units=ELECTRON_VOLT
     )
 
-    mobility_model: MobilityModelType = pd.Field(
+    mobility: MobilityModelTypes = pd.Field(
         CaugheyThomasMobility(),
         title="Mobility model",
         description="Mobility model",
     )
 
-    recombination_model: Tuple[RecombinationModelType, ...] = pd.Field(
-        (SRHRecombination(), AugerRecombination(), RadiativeRecombination()),
+    recombination: Tuple[RecombinationModelTypes, ...] = pd.Field(
+        (ShockleyReedHallRecombination(), AugerRecombination(), RadiativeRecombination()),
         title="Recombination models",
         description="Array containing the recombination models to be applied to the material.",
     )
 
-    bandgap_model: BandgapNarrowingModelType = pd.Field(
-        SlotboomNarrowingModel(),
+    bandgap: BandGapModelTypes = pd.Field(
+        SlotboomNarrowingBandGap(),
         title="Bandgap narrowing model.",
         description="Bandgap narrowing model.",
     )
@@ -177,4 +194,4 @@ class SemiConductorSpec(ConductorSpec):
 
 
 ThermalSpecType = Union[FluidSpec, SolidSpec]
-ElectricSpecType = Union[InsulatorSpec, ConductorSpec, SemiConductorSpec]
+ElectricSpecType = Union[ChargeInsulatorMedium, ChargeConductorMedium, SemiconductorMedium]

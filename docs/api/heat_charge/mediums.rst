@@ -9,8 +9,8 @@ Material Thermal/Charge Specification
 
    tidy3d.FluidSpec
    tidy3d.SolidSpec
-   tidy3d.ConductorSpec
-   tidy3d.InsulatorSpec
+   tidy3d.ChargeConductorMedium
+   tidy3d.ChargeInsulatorMedium
 
 
 Thermal Perturbation Specification

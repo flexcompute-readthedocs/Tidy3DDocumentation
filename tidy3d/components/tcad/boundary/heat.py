@@ -7,10 +7,10 @@ from typing import Tuple, Union
 
 import pydantic.v1 as pd
 
-from ...constants import CURRENT_DENSITY, HEAT_FLUX, HEAT_TRANSFER_COEFF, KELVIN, VOLT
-from ..base import Tidy3dBaseModel
-from ..bc_placement import BCPlacementType
-from ..types import TYPE_TAG_STR
+from tidy3d.components.base import Tidy3dBaseModel
+from tidy3d.components.bc_placement import BCPlacementType
+from tidy3d.components.types import TYPE_TAG_STR
+from tidy3d.constants import CURRENT_DENSITY, HEAT_FLUX, HEAT_TRANSFER_COEFF, KELVIN, VOLT
 
 
 class HeatChargeBC(ABC, Tidy3dBaseModel):
@@ -114,7 +114,7 @@ class InsulatingBC(HeatChargeBC):
     """
 
 
-HeatChargeBoundaryConditionType = Union[
+HeatChargeBCTypes = Union[
     TemperatureBC, HeatFluxBC, ConvectionBC, VoltageBC, CurrentBC, InsulatingBC
 ]
 
@@ -137,7 +137,7 @@ class HeatChargeBoundarySpec(Tidy3dBaseModel):
         discriminator=TYPE_TAG_STR,
     )
 
-    condition: HeatChargeBoundaryConditionType = pd.Field(
+    condition: HeatChargeBCTypes = pd.Field(
         title="Boundary Conditions",
         description="Boundary conditions to apply at the selected location.",
         discriminator=TYPE_TAG_STR,

@@ -7,9 +7,9 @@ from typing import Tuple, Union
 
 import pydantic.v1 as pd
 
-from ...constants import MICROMETER
-from ...exceptions import ValidationError
-from ..base import Tidy3dBaseModel, skip_if_fields_missing
+from tidy3d.components.base import Tidy3dBaseModel, skip_if_fields_missing
+from tidy3d.constants import MICROMETER
+from tidy3d.exceptions import ValidationError
 
 
 class UnstructuredGrid(Tidy3dBaseModel, ABC):

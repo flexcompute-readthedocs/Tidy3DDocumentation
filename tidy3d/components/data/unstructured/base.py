@@ -4,7 +4,7 @@ from __future__ import annotations
 
 import numbers
 from abc import ABC, abstractmethod
-from typing import Tuple, Union
+from typing import Literal, Tuple, Union
 
 import numpy as np
 import pydantic.v1 as pd
@@ -15,7 +15,7 @@ from ....exceptions import DataError, Tidy3dNotImplementedError, ValidationError
 from ....log import log
 from ....packaging import requires_vtk, vtk
 from ...base import cached_property, skip_if_fields_missing
-from ...types import ArrayLike, Axis, Bound, Literal
+from ...types import ArrayLike, Axis, Bound
 from ..data_array import (
     DATA_ARRAY_MAP,
     CellDataArray,
@@ -781,9 +781,11 @@ class UnstructuredGridDataset(Dataset, np.lib.mixins.NDArrayOperatorsMixin, ABC)
         x: Union[float, ArrayLike] = None,
         y: Union[float, ArrayLike] = None,
         z: Union[float, ArrayLike] = None,
-        fill_value: Union[float, Literal[extrapolate]] = None,  # TODO: an array if multiple fields?
+        fill_value: Union[
+            float, Literal["extrapolate"]
+        ] = None,  # TODO: an array if multiple fields?
         use_vtk: bool = False,
-        method: Literal[linear, nearest] = "linear",
+        method: Literal["linear", "nearest"] = "linear",
         max_samples_per_step: int = DEFAULT_MAX_SAMPLES_PER_STEP,
         max_cells_per_step: int = DEFAULT_MAX_CELLS_PER_STEP,
         rel_tol: float = DEFAULT_TOLERANCE_CELL_FINDING,
@@ -901,9 +903,11 @@ class UnstructuredGridDataset(Dataset, np.lib.mixins.NDArrayOperatorsMixin, ABC)
         x: Union[float, ArrayLike],
         y: Union[float, ArrayLike],
         z: Union[float, ArrayLike],
-        fill_value: Union[float, Literal[extrapolate]] = None,  # TODO: an array if multiple fields?
+        fill_value: Union[
+            float, Literal["extrapolate"]
+        ] = None,  # TODO: an array if multiple fields?
         use_vtk: bool = False,
-        method: Literal[linear, nearest] = "linear",
+        method: Literal["linear", "nearest"] = "linear",
         max_samples_per_step: int = DEFAULT_MAX_SAMPLES_PER_STEP,
         max_cells_per_step: int = DEFAULT_MAX_CELLS_PER_STEP,
         rel_tol: float = DEFAULT_TOLERANCE_CELL_FINDING,
@@ -1601,7 +1605,7 @@ class UnstructuredGridDataset(Dataset, np.lib.mixins.NDArrayOperatorsMixin, ABC)
         x: Union[float, ArrayLike] = None,
         y: Union[float, ArrayLike] = None,
         z: Union[float, ArrayLike] = None,
-        method: Literal[None, nearest, pad, ffill, backfill, bfill] = None,
+        method: Literal["None", "nearest", "pad", "ffill", "backfill", "bfill"] = None,
         **sel_kwargs,
     ) -> Union[UnstructuredGridDataset, XrDataArray]:
         """Extract/interpolate data along one or more spatial or non-spatial directions. Must provide at least one argument

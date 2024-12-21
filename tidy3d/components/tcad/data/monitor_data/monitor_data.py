@@ -9,26 +9,26 @@ from typing import Dict, Optional, Tuple, Union
 import numpy as np
 import pydantic.v1 as pd
 
-from ...constants import KELVIN, VOLT
-from ...log import log
-from ..base import skip_if_fields_missing
-from ..base_sim.data.monitor_data import AbstractMonitorData
-from ..data.data_array import (
+from tidy3d.components.base import skip_if_fields_missing
+from tidy3d.components.base_sim.data.monitor_data import AbstractMonitorData
+from tidy3d.components.data.data_array import (
     DataArray,
-    DCCapacitanceDataArray,
     IndexedDataArray,
     IndexVoltageDataArray,
     SpatialDataArray,
+    SteadyCapacitanceVoltageDataArray,
 )
-from ..data.utils import TetrahedralGridDataset, TriangularGridDataset
-from ..types import TYPE_TAG_STR, Coordinate, ScalarSymmetry, annotate_type
-from .monitor import (
-    CapacitanceMonitor,
-    FreeCarrierMonitor,
-    HeatChargeMonitorType,
+from tidy3d.components.data.utils import TetrahedralGridDataset, TriangularGridDataset
+from tidy3d.components.tcad.monitors.heat import (
+    SteadyCapacitanceMonitor,
+    SteadyFreeChargeCarrierMonitor,
+    SteadyVoltageMonitor,
+    TCADMonitorTypes,
     TemperatureMonitor,
-    VoltageMonitor,
 )
+from tidy3d.components.types import TYPE_TAG_STR, Coordinate, ScalarSymmetry, annotate_type
+from tidy3d.constants import KELVIN, VOLT
+from tidy3d.log import log
 
 FieldDataset = Union[
     SpatialDataArray, annotate_type(Union[TriangularGridDataset, TetrahedralGridDataset])
@@ -39,7 +39,7 @@ UnstructuredFieldType = Union[TriangularGridDataset, TetrahedralGridDataset]
 class HeatChargeMonitorData(AbstractMonitorData, ABC):
     """Abstract base class of objects that store data pertaining to a single :class:`HeatChargeMonitor`."""
 
-    monitor: HeatChargeMonitorType = pd.Field(
+    monitor: TCADMonitorTypes = pd.Field(
         ...,
         title="Monitor",
         description="Monitor associated with the data.",
@@ -211,24 +211,24 @@ class TemperatureData(HeatChargeMonitorData):
         return self.updated_copy(temperature=new_temp, symmetry=(0, 0, 0))
 
 
-class VoltageData(HeatChargeMonitorData):
-    """Data associated with a :class:`VoltageMonitor`: spatial electric potential field.
+class SteadyVoltageData(HeatChargeMonitorData):
+    """Data associated with a :class:`SteadyVoltageMonitor`: spatial electric potential field.
 
     Example
     -------
-    >>> from tidy3d import VoltageMonitor, SpatialDataArray
+    >>> from tidy3d import SteadyVoltageMonitor, SpatialDataArray
     >>> import numpy as np
     >>> voltage_data = SpatialDataArray(
     ...     np.ones((2, 3, 4)), coords={"x": [0, 1], "y": [0, 1, 2], "z": [0, 1, 2, 3]}
     ... )
-    >>> voltage_mnt = VoltageMonitor(size=(1, 2, 3), name="voltage")
-    >>> voltage_mnt_data = VoltageData(
+    >>> voltage_mnt = SteadyVoltageMonitor(size=(1, 2, 3), name="voltage")
+    >>> voltage_mnt_data = SteadyVoltageData(
     ...     monitor=voltage_mnt, voltage=voltage_data, symmetry=(0, 1, 0), symmetry_center=(0, 0, 0)
     ... )
     >>> voltage_mnt_data_expanded = voltage_mnt_data.symmetry_expanded_copy
     """
 
-    monitor: VoltageMonitor = pd.Field(
+    monitor: SteadyVoltageMonitor = pd.Field(
         ..., title="Monitor", description="Electric potential monitor associated with the data."
     )
 
@@ -276,24 +276,24 @@ class VoltageData(HeatChargeMonitorData):
         if isinstance(val, TetrahedralGridDataset) or isinstance(val, TriangularGridDataset):
             if not isinstance(val.values, IndexedDataArray):
                 raise ValueError(
-                    f"Monitor {mnt} of type 'VoltageMonitor' cannot be associated with data arrays "
+                    f"Monitor {mnt} of type 'SteadyVoltageMonitor' cannot be associated with data arrays "
                     "of type 'IndexVoltageDataArray'."
                 )
 
         return val
 
     @property
-    def symmetry_expanded_copy(self) -> VoltageData:
+    def symmetry_expanded_copy(self) -> SteadyVoltageData:
         """Return copy of self with symmetry applied."""
 
         new_phi = self._symmetry_expanded_copy(property=self.voltage)
         return self.updated_copy(voltage=new_phi, symmetry=(0, 0, 0))
 
 
-class PotentialData(HeatChargeMonitorData):
+class SteadyPotentialData(HeatChargeMonitorData):
     """Class that stores electric potential from a charge simulation."""
 
-    monitor: VoltageMonitor = pd.Field(
+    monitor: SteadyVoltageMonitor = pd.Field(
         ...,
         title="Voltage monitor",
         description="Electric potential monitor associated with a Charge simulation.",
@@ -336,14 +336,14 @@ class PotentialData(HeatChargeMonitorData):
         if isinstance(val, TetrahedralGridDataset) or isinstance(val, TriangularGridDataset):
             if not isinstance(val.values, IndexVoltageDataArray):
                 raise ValueError(
-                    f"Monitor {mnt} of type 'VoltageMonitor' is not associated with data arrays "
+                    f"Monitor {mnt} of type 'SteadyVoltageMonitor' is not associated with data arrays "
                     "of type 'IndexVoltageDataArray' and cannot be associated with an applied voltage."
                 )
 
         return val
 
     @property
-    def symmetry_expanded_copy(self) -> PotentialData:
+    def symmetry_expanded_copy(self) -> SteadyPotentialData:
         """Return copy of self with symmetry applied."""
 
         new_potential = self._symmetry_expanded_copy(property=self.potential)
@@ -357,10 +357,10 @@ class PotentialData(HeatChargeMonitorData):
             return "V"
 
 
-class FreeCarrierData(HeatChargeMonitorData):
+class SteadyFreeCarrierData(HeatChargeMonitorData):
     """Class that stores free carrier concentration in Charge simulations."""
 
-    monitor: FreeCarrierMonitor = pd.Field(
+    monitor: SteadyFreeChargeCarrierMonitor = pd.Field(
         ...,
         title="Free carrier monitor",
         description="Free carrier data associated with a Charge simulation.",
@@ -419,7 +419,7 @@ class FreeCarrierData(HeatChargeMonitorData):
         return values
 
     @property
-    def symmetry_expanded_copy(self) -> FreeCarrierData:
+    def symmetry_expanded_copy(self) -> SteadyFreeCarrierData:
         """Return copy of self with symmetry applied."""
 
         new_electrons = self._symmetry_expanded_copy(property=self.electrons)
@@ -439,22 +439,22 @@ class FreeCarrierData(HeatChargeMonitorData):
             return "Electrons, Holes"
 
 
-class CapacitanceData(HeatChargeMonitorData):
+class SteadyCapacitanceData(HeatChargeMonitorData):
     """Class that stores capacitance data from a Charge simulation."""
 
-    monitor: CapacitanceMonitor = pd.Field(
+    monitor: SteadyCapacitanceMonitor = pd.Field(
         ...,
         title="Capacitance monitor",
         description="Capacitance data associated with a Charge simulation.",
     )
 
-    hole_capacitance: DCCapacitanceDataArray = pd.Field(
+    hole_capacitance: SteadyCapacitanceVoltageDataArray = pd.Field(
         None,
         title="Hole capacitance",
         description="Small signal capacitance (dQh/dV) associated to the monitor.",
     )
 
-    electron_capacitance: DCCapacitanceDataArray = pd.Field(
+    electron_capacitance: SteadyCapacitanceVoltageDataArray = pd.Field(
         None,
         title="Electron capacitance",
         description="Small signal capacitance (dQe/dV) associated to the monitor.",
@@ -480,6 +480,10 @@ class CapacitanceData(HeatChargeMonitorData):
         return ""
 
 
-HeatChargeMonitorDataType = Union[
-    TemperatureData, VoltageData, PotentialData, FreeCarrierData, CapacitanceData
+TCADMonitorDataTypes = Union[
+    TemperatureData,
+    SteadyVoltageData,
+    SteadyPotentialData,
+    SteadyFreeCarrierData,
+    SteadyCapacitanceData,
 ]

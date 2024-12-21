@@ -7,13 +7,13 @@ from typing import Tuple, Union
 
 import pydantic.v1 as pd
 
-from ...constants import VOLUMETRIC_HEAT_RATE
-from ...exceptions import SetupError
-from ...log import log
-from ..base import cached_property
-from ..base_sim.source import AbstractSource
-from ..viz import PlotParams
-from .viz import plot_params_heat_source
+from tidy3d.components.base import cached_property
+from tidy3d.components.base_sim.source import AbstractSource
+from tidy3d.components.tcad.viz import plot_params_heat_source
+from tidy3d.components.viz import PlotParams
+from tidy3d.constants import VOLUMETRIC_HEAT_RATE
+from tidy3d.exceptions import SetupError
+from tidy3d.log import log
 
 
 class AbstractHeatChargeSource(AbstractSource, ABC):
@@ -98,4 +98,4 @@ class UniformHeatSource(HeatSource):
         return values
 
 
-HeatChargeSourceType = Union[HeatSource, HeatFromElectricSource, UniformHeatSource]
+TCADSourceTypes = Union[HeatSource, HeatFromElectricSource, UniformHeatSource]

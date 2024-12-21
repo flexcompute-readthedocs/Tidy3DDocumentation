@@ -5,9 +5,9 @@ from typing import Union
 
 import pydantic.v1 as pd
 
-from ...log import log
-from ..base_sim.monitor import AbstractMonitor
-from ..types import ArrayFloat1D
+from tidy3d.components.base_sim.monitor import AbstractMonitor
+from tidy3d.components.types import ArrayFloat1D
+from tidy3d.log import log
 
 BYTES_REAL = 4
 
@@ -43,7 +43,7 @@ class TemperatureMonitor(HeatChargeMonitor):
     """Temperature monitor."""
 
 
-class VoltageMonitor(HeatChargeMonitor):
+class SteadyVoltageMonitor(HeatChargeMonitor):
     """Electric potential monitor."""
 
     @pd.root_validator(skip_on_failure=True)
@@ -55,28 +55,28 @@ class VoltageMonitor(HeatChargeMonitor):
             log.warning(
                 "Currently, charge simulations support only unstructured monitors. If monitor "
                 f"'{name}' is associated with a charge simulation, please set it tu unstructured. "
-                f"This can be done with 'your_monitor = tidy3d.VoltageMonitor(unstructured=True)'"
+                f"This can be done with 'your_monitor = tidy3d.SteadyVoltageMonitor(unstructured=True)'"
             )
         return values
 
 
-class FreeCarrierMonitor(HeatChargeMonitor):
+class SteadyFreeChargeCarrierMonitor(HeatChargeMonitor):
     """Free-carrier monitor for Charge simulations."""
 
     # NOTE: for the time being supporting unstructured
     unstructured = True
 
 
-class CapacitanceMonitor(HeatChargeMonitor):
+class SteadyCapacitanceMonitor(HeatChargeMonitor):
     """Capacitance monitor associated with a charge simulation."""
 
     unstructured = True
 
 
 # types of monitors that are accepted by heat simulation
-HeatChargeMonitorType = Union[
+TCADMonitorTypes = Union[
     TemperatureMonitor,
-    VoltageMonitor,
-    FreeCarrierMonitor,
-    CapacitanceMonitor,
+    SteadyVoltageMonitor,
+    SteadyFreeChargeCarrierMonitor,
+    SteadyCapacitanceMonitor,
 ]

@@ -1,6 +1,6 @@
 """utilities for heat solver plotting"""
 
-from ..viz import PlotParams
+from tidy3d.components.viz import PlotParams
 
 """ Constants """
 

@@ -2,6 +2,54 @@
 
 # grid
 # apodization
+# heat
+# heat
+from tidy3d.components.material.tcad.heat import (
+    ChargeConductorMedium,
+    ChargeInsulatorMedium,
+    FluidSpec,
+    SemiconductorMedium,
+    SolidSpec,
+)
+from tidy3d.components.tcad.boundary.heat import (
+    ConvectionBC,
+    CurrentBC,
+    HeatBoundarySpec,
+    HeatChargeBoundarySpec,
+    HeatFluxBC,
+    InsulatingBC,
+    TemperatureBC,
+    VoltageBC,
+)
+from tidy3d.components.tcad.data.monitor_data.monitor_data import (
+    SteadyCapacitanceData,
+    SteadyFreeCarrierData,
+    SteadyPotentialData,
+    SteadyVoltageData,
+    TemperatureData,
+)
+from tidy3d.components.tcad.data.sim_data import HeatChargeSimulationData, HeatSimulationData
+from tidy3d.components.tcad.doping import ConstantDoping, GaussianDoping
+from tidy3d.components.tcad.grid import DistanceUnstructuredGrid, UniformUnstructuredGrid
+from tidy3d.components.tcad.monitors.heat import (
+    SteadyCapacitanceMonitor,
+    SteadyFreeChargeCarrierMonitor,
+    SteadyVoltageMonitor,
+    TemperatureMonitor,
+)
+from tidy3d.components.tcad.simulation.heat import HeatSimulation
+from tidy3d.components.tcad.simulation.heat_charge import HeatChargeSimulation
+from tidy3d.components.tcad.source.heat import HeatFromElectricSource, HeatSource, UniformHeatSource
+from tidy3d.components.tcad.types import (
+    AugerRecombination,
+    CaugheyThomasMobility,
+    ChargeToleranceSpec,
+    DCSpec,
+    RadiativeRecombination,
+    ShockleyReedHallRecombination,
+    SlotboomNarrowingBandGap,
+)
+
 from .components.apodization import ApodizationSpec
 
 # boundary placement for other solvers
@@ -40,8 +88,6 @@ from .components.data.data_array import (
     AxialRatioDataArray,
     CellDataArray,
     ChargeDataArray,
-    DCCapacitanceDataArray,
-    DCIVCurveDataArray,
     DiffractionDataArray,
     DirectivityDataArray,
     EMECoefficientDataArray,
@@ -66,6 +112,8 @@ from .components.data.data_array import (
     ScalarModeFieldDataArray,
     SpatialDataArray,
     SpatialVoltageDataArray,
+    SteadyCapacitanceVoltageDataArray,
+    SteadyCurrentVoltageDataArray,
 )
 from .components.data.dataset import (
     FieldDataset,
@@ -137,54 +185,6 @@ from .components.grid.grid_spec import (
     CustomGridBoundaries,
     GridSpec,
     UniformGrid,
-)
-from .components.heat_charge.boundary import (
-    ConvectionBC,
-    CurrentBC,
-    HeatBoundarySpec,
-    HeatChargeBoundarySpec,
-    HeatFluxBC,
-    InsulatingBC,
-    TemperatureBC,
-    VoltageBC,
-)
-from .components.heat_charge.charge_settings import (
-    AugerRecombination,
-    CaugheyThomasMobility,
-    ChargeToleranceSpec,
-    DCSpec,
-    RadiativeRecombination,
-    SlotboomNarrowingModel,
-    SRHRecombination,
-)
-from .components.heat_charge.doping import ConstantDoping, GaussianDoping
-from .components.heat_charge.grid import DistanceUnstructuredGrid, UniformUnstructuredGrid
-from .components.heat_charge.heat.simulation import HeatSimulation
-from .components.heat_charge.monitor import (
-    CapacitanceMonitor,
-    FreeCarrierMonitor,
-    TemperatureMonitor,
-    VoltageMonitor,
-)
-from .components.heat_charge.monitor_data import (
-    CapacitanceData,
-    FreeCarrierData,
-    PotentialData,
-    TemperatureData,
-    VoltageData,
-)
-from .components.heat_charge.sim_data import HeatChargeSimulationData, HeatSimulationData
-from .components.heat_charge.simulation import HeatChargeSimulation
-from .components.heat_charge.source import HeatFromElectricSource, HeatSource, UniformHeatSource
-
-# heat
-# heat
-from .components.heat_charge_spec import (
-    ConductorSpec,
-    FluidSpec,
-    InsulatorSpec,
-    SemiConductorSpec,
-    SolidSpec,
 )
 
 # lumped elements
@@ -532,9 +532,9 @@ __all__ = [
     "SimulationBoundary",
     "FluidSpec",
     "SolidSpec",
-    "ConductorSpec",
-    "SemiConductorSpec",
-    "InsulatorSpec",
+    "ChargeConductorMedium",
+    "SemiconductorMedium",
+    "ChargeInsulatorMedium",
     "HeatSimulation",
     "HeatSimulationData",
     "HeatChargeSimulationData",
@@ -553,23 +553,23 @@ __all__ = [
     "TemperatureData",
     "TemperatureMonitor",
     "HeatChargeSimulation",
-    "PotentialData",
-    "FreeCarrierData",
-    "CapacitanceData",
+    "SteadyPotentialData",
+    "SteadyFreeCarrierData",
+    "SteadyCapacitanceData",
     "ChargeToleranceSpec",
     "DCSpec",
     "CaugheyThomasMobility",
-    "SlotboomNarrowingModel",
-    "SRHRecombination",
+    "SlotboomNarrowingBandGap",
+    "ShockleyReedHallRecombination",
     "AugerRecombination",
     "RadiativeRecombination",
     "ConstantDoping",
     "GaussianDoping",
-    "VoltageData",
+    "SteadyVoltageData",
     "HeatChargeBoundarySpec",
-    "VoltageMonitor",
-    "FreeCarrierMonitor",
-    "CapacitanceMonitor",
+    "SteadyVoltageMonitor",
+    "SteadyFreeChargeCarrierMonitor",
+    "SteadyCapacitanceMonitor",
     "SpaceTimeModulation",
     "SpaceModulation",
     "ContinuousWaveTimeModulation",
@@ -578,8 +578,8 @@ __all__ = [
     "CellDataArray",
     "IndexedDataArray",
     "IndexVoltageDataArray",
-    "DCIVCurveDataArray",
-    "DCCapacitanceDataArray",
+    "SteadyCurrentVoltageDataArray",
+    "SteadyCapacitanceVoltageDataArray",
     "TriangularGridDataset",
     "TetrahedralGridDataset",
     "medium_from_nk",

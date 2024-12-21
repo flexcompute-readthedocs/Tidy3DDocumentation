@@ -5,8 +5,8 @@ from typing import Optional, Union
 
 import pydantic.v1 as pd
 
-from ...constants import KELVIN, SECOND, VOLT
-from ..base import Tidy3dBaseModel
+from tidy3d.components.base import Tidy3dBaseModel
+from tidy3d.constants import KELVIN, SECOND, VOLT
 
 
 class TimeBaseSpec(Tidy3dBaseModel, ABC):

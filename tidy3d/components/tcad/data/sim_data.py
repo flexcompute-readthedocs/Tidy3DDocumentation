@@ -7,16 +7,28 @@ from typing import Dict, Optional, Tuple
 import numpy as np
 import pydantic.v1 as pd
 
-from ...exceptions import DataError
-from ...log import log
-from ..base_sim.data.sim_data import AbstractSimulationData
-from ..data.data_array import DCCapacitanceDataArray, DCIVCurveDataArray, SpatialDataArray
-from ..data.utils import TetrahedralGridDataset, TriangularGridDataset, UnstructuredGridDataset
-from ..types import Ax, Literal, RealFieldVal
-from ..viz import add_ax_if_none, equal_aspect
-from .heat.simulation import HeatSimulation
-from .monitor_data import HeatChargeMonitorDataType, TemperatureData, VoltageData
-from .simulation import HeatChargeSimulation
+from tidy3d.components.base_sim.data.sim_data import AbstractSimulationData
+from tidy3d.components.data.data_array import (
+    SpatialDataArray,
+    SteadyCapacitanceVoltageDataArray,
+    SteadyCurrentVoltageDataArray,
+)
+from tidy3d.components.data.utils import (
+    TetrahedralGridDataset,
+    TriangularGridDataset,
+    UnstructuredGridDataset,
+)
+from tidy3d.components.tcad.data.monitor_data.monitor_data import (
+    SteadyVoltageData,
+    TCADMonitorDataTypes,
+    TemperatureData,
+)
+from tidy3d.components.tcad.simulation.heat import HeatSimulation
+from tidy3d.components.tcad.simulation.heat_charge import HeatChargeSimulation
+from tidy3d.components.types import Ax, Literal, RealFieldVal
+from tidy3d.components.viz import add_ax_if_none, equal_aspect
+from tidy3d.exceptions import DataError
+from tidy3d.log import log
 
 
 class HeatChargeSimulationData(AbstractSimulationData):
@@ -68,7 +80,7 @@ class HeatChargeSimulationData(AbstractSimulationData):
         description="Original :class:`.HeatChargeSimulation` associated with the data.",
     )
 
-    data: Tuple[HeatChargeMonitorDataType, ...] = pd.Field(
+    data: Tuple[TCADMonitorDataTypes, ...] = pd.Field(
         ...,
         title="Monitor Data",
         description="List of :class:`.MonitorData` instances "
@@ -89,15 +101,15 @@ class HeatChargeSimulationData(AbstractSimulationData):
 
         validated_dict = {}
         for key, dc in val.items():
-            if isinstance(dc, DCCapacitanceDataArray):
-                validated_dict[key] = DCCapacitanceDataArray(
+            if isinstance(dc, SteadyCapacitanceVoltageDataArray):
+                validated_dict[key] = SteadyCapacitanceVoltageDataArray(
                     data=dc.data,
                     dims=["Voltage (V)"],
                     coords=dc.coords,
                     attrs={"long_name": "Capacitance (fF)"},
                 )
-            elif isinstance(dc, DCIVCurveDataArray):
-                validated_dict[key] = DCIVCurveDataArray(
+            elif isinstance(dc, SteadyCurrentVoltageDataArray):
+                validated_dict[key] = SteadyCurrentVoltageDataArray(
                     data=dc.data,
                     dims=["Voltage (V)"],
                     coords=dc.coords,
@@ -166,7 +178,7 @@ class HeatChargeSimulationData(AbstractSimulationData):
         if field_name is None:
             if isinstance(monitor_data, TemperatureData):
                 field_name = "temperature"
-            elif isinstance(monitor_data, VoltageData):
+            elif isinstance(monitor_data, SteadyVoltageData):
                 field_name = "voltage"
 
         if field_name not in monitor_data.field_components.keys():
@@ -181,12 +193,12 @@ class HeatChargeSimulationData(AbstractSimulationData):
 
         if isinstance(monitor_data, TemperatureData):
             property_to_plot = "heat_conductivity"
-        elif isinstance(monitor_data, VoltageData):
+        elif isinstance(monitor_data, SteadyVoltageData):
             property_to_plot = "electric_conductivity"
         else:
             raise DataError(
                 f"Monitor '{monitor_name}' (type '{monitor_data.monitor.type}') is not a "
-                f"supported monitor. Supported monitors are 'TemperatureData', 'VoltageData'."
+                f"supported monitor. Supported monitors are 'TemperatureData', 'SteadyVoltageData'."
             )
 
         if scale == "log":

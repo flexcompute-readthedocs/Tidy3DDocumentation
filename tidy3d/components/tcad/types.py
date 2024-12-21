@@ -5,9 +5,9 @@ from typing import Optional
 
 import pydantic.v1 as pd
 
-from ...constants import VOLT
-from ..base import Tidy3dBaseModel
-from ..types import Union
+from tidy3d.components.base import Tidy3dBaseModel
+from tidy3d.components.types import Union
+from tidy3d.constants import VOLT
 
 
 class AbstractDevsimStruct(ABC, Tidy3dBaseModel):
@@ -166,7 +166,7 @@ class RadiativeRecombination(Tidy3dBaseModel):
     )
 
 
-class SRHRecombination(Tidy3dBaseModel):
+class ShockleyReedHallRecombination(Tidy3dBaseModel):
     """This class defines the parameters for the Shockley-Reed-Hall recombination model.
     NOTE: currently, lifetimes are considered constant (not dependent on temp. nor doping)
     NOTE: default values are those appropriate for Silicon."""
@@ -179,7 +179,7 @@ class SRHRecombination(Tidy3dBaseModel):
 
 
 # Band-gap narrowing models
-class SlotboomNarrowingModel(Tidy3dBaseModel):
+class SlotboomNarrowingBandGap(Tidy3dBaseModel):
     """This class specifies the parameters for the Slotboom model for band-gap narrowing.
 
     Reference
@@ -206,6 +206,8 @@ class SlotboomNarrowingModel(Tidy3dBaseModel):
 
 ChargeToleranceType = Union[ChargeToleranceSpec]
 ChargeRegimeType = Union[DCSpec]
-MobilityModelType = Union[CaugheyThomasMobility]
-RecombinationModelType = Union[AugerRecombination, RadiativeRecombination, SRHRecombination]
-BandgapNarrowingModelType = Union[SlotboomNarrowingModel]
+MobilityModelTypes = Union[CaugheyThomasMobility]
+RecombinationModelTypes = Union[
+    AugerRecombination, RadiativeRecombination, ShockleyReedHallRecombination
+]
+BandGapModelTypes = Union[SlotboomNarrowingBandGap]
