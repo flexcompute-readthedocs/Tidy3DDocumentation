@@ -42,6 +42,7 @@ from .data.dataset import (
     ElectromagneticFieldDataset,
     PermittivityDataset,
 )
+from .data.unstructured.base import UnstructuredGridDataset
 from .data.utils import (
     CustomSpatialDataType,
     CustomSpatialDataTypeAnnotated,
@@ -50,7 +51,6 @@ from .data.utils import (
     _ones_like,
     _zeros_like,
 )
-from .data.unstructured.base import UnstructuredGridDataset
 from .data.validators import validate_no_nans
 from .dispersion_fitter import (
     LOSS_CHECK_MAX,

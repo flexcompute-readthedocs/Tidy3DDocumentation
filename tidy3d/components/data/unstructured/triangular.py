@@ -2,7 +2,7 @@
 
 from __future__ import annotations
 
-from typing import Dict, Union
+from typing import Dict, Literal, Union
 
 import numpy as np
 import pydantic.v1 as pd
@@ -15,7 +15,7 @@ from ....exceptions import DataError
 from ....log import log
 from ....packaging import requires_vtk, vtk
 from ...base import cached_property
-from ...types import ArrayLike, Ax, Axis, Bound, Literal
+from ...types import ArrayLike, Ax, Axis, Bound
 from ...viz import add_ax_if_none, equal_aspect, plot_params_grid
 from ..data_array import (
     CellDataArray,
@@ -433,7 +433,7 @@ class TriangularGridDataset(UnstructuredGridDataset):
         x: Union[float, ArrayLike] = None,
         y: Union[float, ArrayLike] = None,
         z: Union[float, ArrayLike] = None,
-        method: Literal[None, "nearest", "pad", "ffill", "backfill", "bfill"] = None,
+        method: Literal["None", "nearest", "pad", "ffill", "backfill", "bfill"] = None,
         **sel_kwargs,
     ) -> XrDataArray:
         """Extract/interpolate data along one or more spatial or non-spatial directions. Must provide at least one argument

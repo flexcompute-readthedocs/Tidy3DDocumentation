@@ -511,4 +511,3 @@ class TimeDataset(Dataset):
     values: TimeDataArray = pd.Field(
         ..., title="Values", description="Values as a function of time."
     )
-
