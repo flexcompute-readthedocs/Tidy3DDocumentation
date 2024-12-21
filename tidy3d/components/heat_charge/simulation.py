@@ -9,6 +9,12 @@ import numpy as np
 import pydantic.v1 as pd
 from matplotlib import colormaps
 
+from tidy3d.components.material.tcad.heat import (
+    ChargeConductorMedium,
+    SemiconductorMedium,
+    SolidSpec,
+)
+
 from ...constants import VOLUMETRIC_HEAT_RATE, inf
 from ...exceptions import SetupError
 from ...log import log
@@ -22,7 +28,6 @@ from ..bc_placement import (
     StructureStructureInterface,
 )
 from ..geometry.base import Box
-from ..heat_charge_spec import ChargeConductorMedium, SemiconductorMedium, SolidSpec
 from ..scene import Scene
 from ..structure import Structure
 from ..types import TYPE_TAG_STR, Ax, Bound, ScalarSymmetry, Shapely, annotate_type

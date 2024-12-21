@@ -10,6 +10,12 @@ import matplotlib.pylab as plt
 import pydantic.v1 as pd
 from mpl_toolkits.axes_grid1 import make_axes_locatable
 
+from tidy3d.components.material.tcad.heat import (
+    ChargeConductorMedium,
+    SemiconductorMedium,
+    SolidSpec,
+)
+
 from ..constants import CONDUCTIVITY, THERMAL_CONDUCTIVITY, inf
 from ..exceptions import SetupError, Tidy3dError
 from ..log import log
@@ -27,7 +33,6 @@ from .geometry.utils import flatten_groups, traverse_geometries
 from .grid.grid import Coords, Grid
 from .heat_charge.doping import ConstantDoping, GaussianDoping
 from .heat_charge.viz import HEAT_SOURCE_CMAP
-from .heat_charge_spec import ChargeConductorMedium, SemiconductorMedium, SolidSpec
 from .medium import (
     AbstractCustomMedium,
     AbstractPerturbationMedium,

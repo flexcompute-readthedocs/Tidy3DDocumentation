@@ -1,5 +1,5 @@
 from tidy3d.components.base import Tidy3dBaseModel
-from tidy3d.components.mediums.solver_types import (
+from tidy3d.components.material.solver_types import (
     ChargeMediumTypes,
     ElectricalMediumTypes,
     HeatMediumTypes,

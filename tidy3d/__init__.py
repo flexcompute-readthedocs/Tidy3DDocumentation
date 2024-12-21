@@ -2,6 +2,16 @@
 
 # grid
 # apodization
+# heat
+# heat
+from tidy3d.components.material.tcad.heat import (
+    ChargeConductorMedium,
+    ChargeInsulatorMedium,
+    FluidSpec,
+    SemiconductorMedium,
+    SolidSpec,
+)
+
 from .components.apodization import ApodizationSpec
 
 # boundary placement for other solvers
@@ -176,16 +186,6 @@ from .components.heat_charge.monitor_data import (
 from .components.heat_charge.sim_data import HeatChargeSimulationData, HeatSimulationData
 from .components.heat_charge.simulation import HeatChargeSimulation
 from .components.heat_charge.source import HeatFromElectricSource, HeatSource, UniformHeatSource
-
-# heat
-# heat
-from .components.heat_charge_spec import (
-    ChargeConductorMedium,
-    ChargeInsulatorMedium,
-    FluidSpec,
-    SemiconductorMedium,
-    SolidSpec,
-)
 
 # lumped elements
 from .components.lumped_element import (

@@ -17,6 +17,8 @@ import pydantic.v1 as pd
 import xarray as xr
 from scipy import signal
 
+from tidy3d.components.material.tcad.heat import ThermalSpecType
+
 from ..constants import (
     C_0,
     CONDUCTIVITY,
@@ -61,7 +63,6 @@ from .dispersion_fitter import (
 )
 from .geometry.base import Geometry
 from .grid.grid import Coords, Grid
-from .heat_charge_spec import ThermalSpecType
 from .parameter_perturbation import (
     IndexPerturbation,
     ParameterPerturbation,
