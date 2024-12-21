@@ -238,7 +238,7 @@ class HeatChargeSimulation(AbstractSimulation):
                     isinstance(medium.heat_spec, SolidSpec) for medium in medium_set
                 )
                 crosses_elec_spec = any(
-                    isinstance(medium.electric_spec, ChargeConductorMedium) for medium in medium_set
+                    isinstance(medium.charge, ChargeConductorMedium) for medium in medium_set
                 )
             else:
                 # approximate check for volumetric objects based on bounding boxes
@@ -251,7 +251,7 @@ class HeatChargeSimulation(AbstractSimulation):
                 crosses_elec_spec = any(
                     obj.intersects(structure.geometry)
                     for structure in total_structures
-                    if isinstance(structure.medium.electric_spec, ChargeConductorMedium)
+                    if isinstance(structure.medium.charge, ChargeConductorMedium)
                 )
 
             if not crosses_solid:
@@ -291,7 +291,7 @@ class HeatChargeSimulation(AbstractSimulation):
             monitor_names = [f"'{val[ind].name}'" for ind in failed_volt_mnt]
             raise SetupError(
                 f"Monitors {monitor_names} do not cross any conducting materials "
-                "('electric_spec=ChargeConductorMedium(...)'). The voltage is only stored inside conducting "
+                "('charge=ChargeConductorMedium(...)'). The voltage is only stored inside conducting "
                 "materials. Thus, no information will be recorded in these monitors."
             )
 
@@ -546,10 +546,10 @@ class HeatChargeSimulation(AbstractSimulation):
 
         # make sure mediums with doping have been defined
         for structure in structures:
-            if isinstance(structure.medium.electric_spec, SemiconductorMedium):
+            if isinstance(structure.medium.charge, SemiconductorMedium):
                 if (
-                    structure.medium.electric_spec.donors is not None
-                    or structure.medium.electric_spec.acceptors is not None
+                    structure.medium.charge.donors is not None
+                    or structure.medium.charge.acceptors is not None
                 ):
                     return True
         return charge_sim
@@ -1402,7 +1402,7 @@ class HeatChargeSimulation(AbstractSimulation):
 
         # check for conduction simulation
         electric_spec_present = any(
-            structure.medium.electric_spec is not None for structure in self.structures
+            structure.medium.charge is not None for structure in self.structures
         )
 
         electric_BCs_present = any(
@@ -1412,8 +1412,8 @@ class HeatChargeSimulation(AbstractSimulation):
         if electric_BCs_present and not electric_spec_present:
             raise SetupError(
                 "Electric BC were specified but no structure in the simulation has "
-                "a defined '.medium.electric_spec'. Structures with "
-                "'.medium.electric_spec=None' are treated as insulators, thus, "
+                "a defined '.medium.charge'. Structures with "
+                "'.medium.charge=None' are treated as insulators, thus, "
                 "the solution domain is empty."
             )
         elif electric_BCs_present and electric_spec_present:

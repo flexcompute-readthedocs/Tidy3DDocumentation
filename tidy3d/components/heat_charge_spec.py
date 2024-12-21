@@ -79,7 +79,7 @@ class ChargeSpec(AbstractHeatChargeSpec):
 
 class ChargeInsulatorMedium(ChargeSpec):
     """Insulating medium. Conduction simulations will not solve for electric
-    potential in a structure that has a medium with this 'electric_spec'.
+    potential in a structure that has a medium with this 'charge'.
 
     Example
     -------

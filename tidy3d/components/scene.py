@@ -916,7 +916,7 @@ class Scene(Tidy3dBaseModel):
 
         for medium, shape in medium_shapes:
             if property in ["doping", "acceptors", "donors"]:
-                if not isinstance(medium.electric_spec, SemiconductorMedium):
+                if not isinstance(medium.charge, SemiconductorMedium):
                     ax = self._plot_shape_structure_heat_charge_property(
                         alpha=alpha,
                         medium=medium,
@@ -1488,11 +1488,9 @@ class Scene(Tidy3dBaseModel):
             cond_list = [medium.heat_spec.conductivity for medium in medium_list]
         elif property == "electric_conductivity":
             medium_list = [
-                medium
-                for medium in medium_list
-                if isinstance(medium.electric_spec, ChargeConductorMedium)
+                medium for medium in medium_list if isinstance(medium.charge, ChargeConductorMedium)
             ]
-            cond_list = [medium.electric_spec.conductivity for medium in medium_list]
+            cond_list = [medium.charge.conductivity for medium in medium_list]
 
         cond_min = min(cond_list)
         cond_max = max(cond_list)
@@ -1535,9 +1533,9 @@ class Scene(Tidy3dBaseModel):
         if property == "heat_conductivity" and isinstance(medium.heat_spec, SolidSpec):
             cond_medium = medium.heat_spec.conductivity
         elif property == "electric_conductivity" and isinstance(
-            medium.electric_spec, ChargeConductorMedium
+            medium.charge, ChargeConductorMedium
         ):
-            cond_medium = medium.electric_spec.conductivity
+            cond_medium = medium.charge.conductivity
         elif property == "doping":
             cond_medium = None
 
@@ -1737,8 +1735,8 @@ class Scene(Tidy3dBaseModel):
         donors_lims = [1e50, -1e50]
 
         for struct in [self.background_structure] + list(self.structures):
-            if isinstance(struct.medium.electric_spec, SemiconductorMedium):
-                electric_spec = struct.medium.electric_spec
+            if isinstance(struct.medium.charge, SemiconductorMedium):
+                electric_spec = struct.medium.charge
                 for doping, limits in zip(
                     [electric_spec.acceptors, electric_spec.donors], [acceptors_lims, donors_lims]
                 ):
@@ -1810,7 +1808,7 @@ class Scene(Tidy3dBaseModel):
             np.zeros(X.shape),  # and 1 for donors
         ]
 
-        electric_spec = medium.electric_spec
+        electric_spec = medium.charge
         for n, doping in enumerate([electric_spec.acceptors, electric_spec.donors]):
             if isinstance(doping, float):
                 struct_doping[n] = struct_doping[n] + doping

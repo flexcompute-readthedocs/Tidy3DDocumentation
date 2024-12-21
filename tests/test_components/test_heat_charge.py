@@ -85,7 +85,7 @@ def test_heat_charge_medium():
         _ = solid_medium.heat_spec.updated_copy(conductivity=-1)
 
     with pytest.raises(pd.ValidationError):
-        _ = solid_medium.electric_spec.updated_copy(conductivity=-1)
+        _ = solid_medium.charge.updated_copy(conductivity=-1)
 
 
 def make_heat_charge_structures():
@@ -570,7 +570,7 @@ def test_heat_charge_sim(log_capture):  # noqa: F811
     with pytest.raises(pd.ValidationError):
         _ = heat_sim.updated_copy(structures=[fluid_structure, solid_struct_noHeat])
 
-    # fail if assigning structs without electric_spec
+    # fail if assigning structs without charge
     with pytest.raises(pd.ValidationError):
         _ = cond_sim.updated_copy(structures=[insulator, solid_struct_noElect])
 
