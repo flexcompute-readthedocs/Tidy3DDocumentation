@@ -3,7 +3,7 @@
 from __future__ import annotations
 
 from enum import Enum
-from typing import Dict, List, Optional, Tuple, Union
+from typing import Dict, List, Tuple, Union
 
 import numpy as np
 import pydantic.v1 as pd
@@ -14,6 +14,7 @@ from tidy3d.components.material.tcad.heat import (
     SemiconductorMedium,
     SolidSpec,
 )
+from tidy3d.components.spice.types import ElectricalAnalysisTypes, TransferFunctionDC
 
 from ...constants import VOLUMETRIC_HEAT_RATE, inf
 from ...exceptions import SetupError
@@ -42,7 +43,6 @@ from .boundary import (
     TemperatureBC,
     VoltageBC,
 )
-from .charge_settings import ChargeRegimeType, ChargeToleranceSpec, ChargeToleranceType
 from .grid import DistanceUnstructuredGrid, UniformUnstructuredGrid, UnstructuredGridType
 from .monitor import (
     SteadyCapacitanceMonitor,
@@ -181,15 +181,8 @@ class HeatChargeSimulation(AbstractSimulation):
         "Each element can be ``0`` (symmetry off) or ``1`` (symmetry on).",
     )
 
-    charge_tolerance: ChargeToleranceType = pd.Field(
-        ChargeToleranceSpec(), title="Charge settings.", description="Some Charge settings."
-    )
-
-    charge_regime: Optional[ChargeRegimeType] = pd.Field(
-        None,
-        title="Charge regime.",
-        description="Determined the regime in a Charge simulation. Currently it "
-        "accepts DCSpec (for DC simulations) only.",
+    electrical_analysis: ElectricalAnalysisTypes = pd.Field(
+        TransferFunctionDC(), title="Charge settings.", description="Some Charge settings."
     )
 
     @pd.validator("structures", always=True)
