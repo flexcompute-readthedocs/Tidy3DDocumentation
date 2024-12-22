@@ -9,9 +9,12 @@ from tidy3d.components.material.tcad.charge import (
     ChargeInsulatorMedium,
     SemiconductorMedium,
 )
-from tidy3d.components.material.tcad.heat import FluidSpec, SolidSpec
+from tidy3d.components.material.tcad.heat import ThermalSpecType
+from tidy3d.components.medium import MediumType, MediumType3D
 
-OpticalMediumTypes = None
-ElectricalMediumTypes = None
-HeatMediumTypes = ThermalSpecType = Union[FluidSpec, SolidSpec]
+OpticalMediumTypes = MediumType
+ElectricalMediumTypes = MediumType
+HeatMediumTypes = ThermalSpecType
 ChargeMediumTypes = Union[ChargeConductorMedium, ChargeInsulatorMedium, SemiconductorMedium]
+
+OpticalMediumTypes3D = ElectricalMediumTypes3D = ChargeMediumTypes3D = MediumType3D

@@ -19,42 +19,50 @@ from tidy3d.components.bc_placement import (
     StructureStructureInterface,
 )
 from tidy3d.components.geometry.base import Box
-from tidy3d.components.material.tcad.heat import (
+from tidy3d.components.material.tcad.charge import (
     ChargeConductorMedium,
+    ChargeInsulatorMedium,
     SemiconductorMedium,
+)
+from tidy3d.components.material.tcad.heat import (
     SolidSpec,
 )
+from tidy3d.components.material.types import MultiPhysicsMediumTypes3D
 from tidy3d.components.scene import Scene
 from tidy3d.components.spice.types import ElectricalAnalysisTypes, TransferFunctionDC
 from tidy3d.components.structure import Structure
-from tidy3d.components.tcad.boundary.heat import (
-    ConvectionBC,
-    CurrentBC,
+from tidy3d.components.tcad.boundary.specification import (
     HeatBoundarySpec,
     HeatChargeBoundarySpec,
-    HeatFluxBC,
-    InsulatingBC,
-    TemperatureBC,
-    VoltageBC,
 )
 from tidy3d.components.tcad.grid import (
     DistanceUnstructuredGrid,
     UniformUnstructuredGrid,
     UnstructuredGridType,
 )
-from tidy3d.components.tcad.monitors.heat import (
+from tidy3d.components.tcad.monitors.charge import (
     SteadyCapacitanceMonitor,
     SteadyFreeChargeCarrierMonitor,
     SteadyVoltageMonitor,
-    TCADMonitorTypes,
+)
+from tidy3d.components.tcad.monitors.heat import (
     TemperatureMonitor,
 )
-from tidy3d.components.tcad.source.heat import (
+from tidy3d.components.tcad.source.abstract import (
     GlobalHeatChargeSource,
+)
+from tidy3d.components.tcad.types import (
+    ConvectionBC,
+    CurrentBC,
+    HeatChargeMonitorTypes,
+    HeatChargeSourceTypes,
+    HeatFluxBC,
     HeatFromElectricSource,
     HeatSource,
-    TCADSourceTypes,
+    InsulatingBC,
+    TemperatureBC,
     UniformHeatSource,
+    VoltageBC,
 )
 from tidy3d.components.tcad.viz import (
     CHARGE_BC_INSULATOR,
@@ -150,13 +158,23 @@ class HeatChargeSimulation(AbstractSimulation):
     ... )
     """
 
-    sources: Tuple[TCADSourceTypes, ...] = pd.Field(
+    medium: MultiPhysicsMediumTypes3D = pd.Field(
+        ChargeInsulatorMedium(),
+        title="Background Medium",
+        description="Background medium of simulation, defaults to `ChargeInsulatorMedium` if not specified.",
+        discriminator=TYPE_TAG_STR,
+    )
+    """
+    Background medium of simulation, defaults to `ChargeInsulatorMedium` if not specified.
+    """
+
+    sources: Tuple[HeatChargeSourceTypes, ...] = pd.Field(
         (),
         title="Heat and Charge sources",
         description="List of heat and/or charge sources.",
     )
 
-    monitors: Tuple[annotate_type(TCADMonitorTypes), ...] = pd.Field(
+    monitors: Tuple[annotate_type(HeatChargeMonitorTypes), ...] = pd.Field(
         (),
         title="Monitors",
         description="Monitors in the simulation.",
@@ -366,7 +384,7 @@ class HeatChargeSimulation(AbstractSimulation):
 
         for bc in val:
             if isinstance(bc.condition, VoltageBC):
-                voltages = bc.condition.voltage
+                voltages = bc.condition.source.values
 
                 if isinstance(voltages, tuple):
                     if len(voltages) > 1:
@@ -1289,7 +1307,7 @@ class HeatChargeSimulation(AbstractSimulation):
 
     def _get_structure_source_plot_params(
         self,
-        source: TCADSourceTypes,
+        source: HeatChargeSourceTypes,
         source_min: float,
         source_max: float,
         alpha: float = None,
@@ -1314,7 +1332,7 @@ class HeatChargeSimulation(AbstractSimulation):
 
     def _plot_shape_structure_source(
         self,
-        source: TCADSourceTypes,
+        source: HeatChargeSourceTypes,
         shape: Shapely,
         source_min: float,
         source_max: float,
