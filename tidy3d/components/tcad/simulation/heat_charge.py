@@ -52,12 +52,12 @@ from tidy3d.components.tcad.source.abstract import (
 from tidy3d.components.tcad.types import (
     ConvectionBC,
     CurrentBC,
+    HeatChargeMonitorTypes,
+    HeatChargeSourceTypes,
     HeatFluxBC,
     HeatFromElectricSource,
     HeatSource,
     InsulatingBC,
-    TCADMonitorTypes,
-    TCADSourceTypes,
     TemperatureBC,
     UniformHeatSource,
     VoltageBC,
@@ -156,13 +156,13 @@ class HeatChargeSimulation(AbstractSimulation):
     ... )
     """
 
-    sources: Tuple[TCADSourceTypes, ...] = pd.Field(
+    sources: Tuple[HeatChargeSourceTypes, ...] = pd.Field(
         (),
         title="Heat and Charge sources",
         description="List of heat and/or charge sources.",
     )
 
-    monitors: Tuple[annotate_type(TCADMonitorTypes), ...] = pd.Field(
+    monitors: Tuple[annotate_type(HeatChargeMonitorTypes), ...] = pd.Field(
         (),
         title="Monitors",
         description="Monitors in the simulation.",
@@ -1295,7 +1295,7 @@ class HeatChargeSimulation(AbstractSimulation):
 
     def _get_structure_source_plot_params(
         self,
-        source: TCADSourceTypes,
+        source: HeatChargeSourceTypes,
         source_min: float,
         source_max: float,
         alpha: float = None,
@@ -1320,7 +1320,7 @@ class HeatChargeSimulation(AbstractSimulation):
 
     def _plot_shape_structure_source(
         self,
-        source: TCADSourceTypes,
+        source: HeatChargeSourceTypes,
         shape: Shapely,
         source_min: float,
         source_max: float,

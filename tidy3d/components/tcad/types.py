@@ -26,13 +26,13 @@ RecombinationModelTypes = Union[
 BandGapModelTypes = Union[SlotboomNarrowingBandGap]
 
 # types of monitors that are accepted by heat simulation
-TCADMonitorTypes = Union[
+HeatChargeMonitorTypes = Union[
     TemperatureMonitor,
     SteadyVoltageMonitor,
     SteadyFreeChargeCarrierMonitor,
     SteadyCapacitanceMonitor,
 ]
-TCADSourceTypes = Union[HeatSource, HeatFromElectricSource, UniformHeatSource]
+HeatChargeSourceTypes = Union[HeatSource, HeatFromElectricSource, UniformHeatSource]
 HeatChargeBCTypes = Union[
     TemperatureBC, HeatFluxBC, ConvectionBC, VoltageBC, CurrentBC, InsulatingBC
 ]
