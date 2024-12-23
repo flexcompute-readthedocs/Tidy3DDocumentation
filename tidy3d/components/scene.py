@@ -17,6 +17,7 @@ from tidy3d.components.material.tcad.charge import (
 from tidy3d.components.material.tcad.heat import (
     SolidSpec,
 )
+from tidy3d.components.material.types import MultiPhysicsMediumTypes3D, StructureMediumTypes
 from tidy3d.components.tcad.doping import ConstantDoping, GaussianDoping
 from tidy3d.components.tcad.viz import HEAT_SOURCE_CMAP
 
@@ -40,8 +41,6 @@ from .medium import (
     AbstractPerturbationMedium,
     Medium,
     Medium2D,
-    MediumType,
-    MediumType3D,
 )
 from .structure import Structure
 from .types import (
@@ -91,7 +90,7 @@ class Scene(Tidy3dBaseModel):
     ... )
     """
 
-    medium: MediumType3D = pd.Field(
+    medium: MultiPhysicsMediumTypes3D = pd.Field(
         Medium(),
         title="Background Medium",
         description="Background medium of scene, defaults to vacuum if not specified.",
@@ -216,7 +215,7 @@ class Scene(Tidy3dBaseModel):
         return Box(center=self.center, size=self.size)
 
     @cached_property
-    def mediums(self) -> Set[MediumType]:
+    def mediums(self) -> Set[StructureMediumTypes]:
         """Returns set of distinct :class:`.AbstractMedium` in scene.
 
         Returns
@@ -229,7 +228,7 @@ class Scene(Tidy3dBaseModel):
         return list(medium_dict.keys())
 
     @cached_property
-    def medium_map(self) -> Dict[MediumType, pd.NonNegativeInt]:
+    def medium_map(self) -> Dict[StructureMediumTypes, pd.NonNegativeInt]:
         """Returns dict mapping medium to index in material.
         ``medium_map[medium]`` returns unique global index of :class:`.AbstractMedium` in scene.
 
@@ -250,7 +249,7 @@ class Scene(Tidy3dBaseModel):
     @staticmethod
     def intersecting_media(
         test_object: Box, structures: Tuple[Structure, ...]
-    ) -> Tuple[MediumType, ...]:
+    ) -> Tuple[StructureMediumTypes, ...]:
         """From a given list of structures, returns a list of :class:`.AbstractMedium` associated
         with those structures that intersect with the ``test_object``, if it is a surface, or its
         surfaces, if it is a volume.

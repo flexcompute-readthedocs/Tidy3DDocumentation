@@ -20,3 +20,7 @@ class MultiPhysicsMedium(Tidy3dBaseModel):
     electrical: Optional[ElectricalMediumTypes]
     heat: Optional[HeatMediumTypes]
     charge: Optional[ChargeMediumTypes]
+
+    @property
+    def heat_spec(self):
+        return self.heat

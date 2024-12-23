@@ -384,7 +384,7 @@ class HeatChargeSimulation(AbstractSimulation):
 
         for bc in val:
             if isinstance(bc.condition, VoltageBC):
-                voltages = bc.condition.voltage
+                voltages = bc.condition.source.values
 
                 if isinstance(voltages, tuple):
                     if len(voltages) > 1:

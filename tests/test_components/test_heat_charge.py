@@ -42,11 +42,13 @@ def mediums():
         name="fluid_medium",
     )
     solid_medium = td.MultiPhysicsMedium(
-        permittivity=5,
-        conductivity=0.01,
-        heat_spec=td.SolidSpec(
-            capacity=2,
-            conductivity=3,
+        optical=td.Medium(
+            permittivity=5,
+            conductivity=0.01,
+            heat_spec=td.SolidSpec(
+                capacity=2,
+                conductivity=3,
+            ),
         ),
         charge=td.ChargeConductorMedium(
             conductivity=1,
@@ -142,7 +144,7 @@ def boundary_conditions():
     bc_temp = td.TemperatureBC(temperature=300)
     bc_flux = td.HeatFluxBC(flux=20)
     bc_conv = td.ConvectionBC(ambient_temperature=400, transfer_coeff=0.2)
-    bc_volt = td.VoltageBC(voltage=1)
+    bc_volt = td.VoltageBC(source=td.DCTransferSource(values=1))
     bc_current = td.CurrentBC(current_density=3e-1)
 
     return [bc_temp, bc_flux, bc_conv, bc_volt, bc_current]
@@ -464,7 +466,7 @@ def test_heat_charge_bcs_validation(boundary_conditions):
 
     # Invalid VoltageBC: infinite voltage
     with pytest.raises(pd.ValidationError):
-        td.VoltageBC(voltage=td.inf)
+        td.VoltageBC(source=td.DCTransferSource(values=[td.inf]))
 
     # Invalid CurrentBC: infinite current density
     with pytest.raises(pd.ValidationError):
@@ -685,14 +687,14 @@ class TestCharge:
     @pytest.fixture(scope="class")
     def bc_p(self, SiO2, Si_p):
         return td.HeatChargeBoundarySpec(
-            condition=td.VoltageBC(voltage=0),
+            condition=td.VoltageBC(source=td.DCTransferSource(values=[0])),
             placement=td.MediumMediumInterface(mediums=[SiO2.name, Si_p.name]),
         )
 
     @pytest.fixture(scope="class")
     def bc_n(self, SiO2, Si_n):
         return td.HeatChargeBoundarySpec(
-            condition=td.VoltageBC(voltage=0),
+            condition=td.VoltageBC(source=td.DCTransferSource(values=[0])),
             placement=td.MediumMediumInterface(mediums=[SiO2.name, Si_n.name]),
         )
 
@@ -810,7 +812,8 @@ def test_heat_charge_sim_bounds(shift_amount, log_level, caplog):
             ],
             boundary_spec=[
                 td.HeatChargeBoundarySpec(
-                    condition=td.VoltageBC(voltage=1), placement=td.SimulationBoundary()
+                    condition=td.VoltageBC(source=td.DCTransferSource(values=[1])),
+                    placement=td.SimulationBoundary(),
                 )
             ],
             grid_spec=td.UniformUnstructuredGrid(dl=0.1),
@@ -851,7 +854,8 @@ def test_sim_structure_extent(box_size, log_level, caplog):
             medium=td.MultiPhysicsMedium(charge=td.ChargeConductorMedium(conductivity=1)),
             boundary_spec=[
                 td.HeatChargeBoundarySpec(
-                    placement=td.SimulationBoundary(), condition=td.VoltageBC(voltage=1)
+                    placement=td.SimulationBoundary(),
+                    condition=td.VoltageBC(source=td.DCTransferSource(values=1)),
                 )
             ],
             grid_spec=td.UniformUnstructuredGrid(dl=0.1),
@@ -1083,7 +1087,7 @@ def test_heat_charge_bcs_validation(boundary_conditions):
 
     # Invalid VoltageBC: infinite voltage
     with pytest.raises(pd.ValidationError):
-        td.VoltageBC(voltage=td.inf)
+        td.VoltageBC(source=td.DCTransferSource(values=td.inf))
 
     # Invalid CurrentBC: infinite current density
     with pytest.raises(pd.ValidationError):

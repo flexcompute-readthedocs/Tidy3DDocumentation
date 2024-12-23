@@ -19,16 +19,17 @@ Examples:
 
 """
 
-from typing import Union
+from typing import Optional, Union
+
+import pydantic as pd
 
 from tidy3d.components.base import Tidy3dBaseModel
-from tidy3d.constants import AMP, VOLT
 
 
 class DCTransferSource(Tidy3dBaseModel):
-    name: str
-    values: list = []
-    units: Union[VOLT, AMP] = VOLT
+    name: Optional[str]
+    values: Union[pd.FiniteFloat, list[pd.FiniteFloat]] = []
+    # units: Union[VOLT, AMP] = VOLT
 
 
 MultiDCTransferSource = list[DCTransferSource]

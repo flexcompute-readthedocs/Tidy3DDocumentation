@@ -18,8 +18,8 @@ class VoltageBC(HeatChargeBC):
 
     Example
     -------
-    >>> bc1 = VoltageBC(voltage=2)
-    >>> bc2 = VoltageBC(voltage=[-1, 0, 1])
+    >>> bc1 = VoltageBC(source=2)
+    >>> bc2 = VoltageBC(source=[-1, 0, 1])
     """
 
     source: DCTransferSource = pd.Field(

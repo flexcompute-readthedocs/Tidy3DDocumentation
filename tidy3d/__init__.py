@@ -10,6 +10,7 @@ from tidy3d.components.material.tcad.heat import (
     FluidSpec,
     SolidSpec,
 )
+from tidy3d.components.spice.sources.dc import DCTransferSource, MultiDCTransferSource
 from tidy3d.components.tcad.boundary.specification import (
     HeatBoundarySpec,
     HeatChargeBoundarySpec,
@@ -619,4 +620,6 @@ __all__ = [
     "FixedAngleSpec",
     "FixedInPlaneKSpec",
     "MultiPhysicsMedium",
+    "DCTransferSource",
+    "MultiDCTransferSource",
 ]
