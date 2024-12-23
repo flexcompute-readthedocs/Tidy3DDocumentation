@@ -726,9 +726,9 @@ class AbstractMedium(ABC, Tidy3dBaseModel):
     heat_spec: Optional[ThermalSpecType] = pd.Field(
         None,
         title="Heat Specification",
-        description="Specification of the medium heat properties. They are used for solving "
-        "the heat equation via the ``HeatSimulation`` interface. Such simulations can be used for "
-        "investigating the influence of heat propagation on the properties of optical systems. "
+        description="DEPRECIATED: Use `td.MultiPhysicsMedium`. Specification of the medium heat properties. They are "
+        "used for solving the heat equation via the ``HeatSimulation`` interface. Such simulations can be"
+        "used for investigating the influence of heat propagation on the properties of optical systems. "
         "Once the temperature distribution in the system is found using ``HeatSimulation`` object, "
         "``Simulation.perturbed_mediums_copy()`` can be used to convert mediums with perturbation "
         "models defined into spatially dependent custom mediums. "
@@ -836,6 +836,7 @@ class AbstractMedium(ABC, Tidy3dBaseModel):
 
     @abstractmethod
     def eps_model(self, frequency: float) -> complex:
+        # TODO this should be moved out of here into FDTD Simulation Mediums?
         """Complex-valued permittivity as a function of frequency.
 
         Parameters
@@ -926,6 +927,7 @@ class AbstractMedium(ABC, Tidy3dBaseModel):
     @cached_property
     @abstractmethod
     def n_cfl(self):
+        # TODO this should be moved out of here into FDTD Simulation Mediums?
         """To ensure a stable FDTD simulation, it is essential to select an appropriate
         time step size in accordance with the CFL condition. The maximal time step
         size is inversely proportional to the speed of light in the medium, and thus

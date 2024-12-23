@@ -1,5 +1,6 @@
 """Tidy3d package imports"""
 
+from tidy3d.components.material.multi_physics import MultiPhysicsMedium
 from tidy3d.components.material.tcad.charge import (
     ChargeConductorMedium,
     ChargeInsulatorMedium,
@@ -617,4 +618,5 @@ __all__ = [
     "EMEFreqSweep",
     "FixedAngleSpec",
     "FixedInPlaneKSpec",
+    "MultiPhysicsMedium",
 ]

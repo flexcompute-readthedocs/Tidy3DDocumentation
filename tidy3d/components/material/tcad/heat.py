@@ -41,7 +41,7 @@ class AbstractHeatMedium(ABC, Tidy3dBaseModel):
         return ValueError(f"An `optical` medium does not exist in this Medium definition: {self}")
 
 
-class FluidSpec(AbstractHeatMedium):
+class FluidMedium(AbstractHeatMedium):
     """Fluid medium. Heat simulations will not solve for temperature
     in a structure that has a medium with this 'heat_spec'.
 
@@ -51,7 +51,10 @@ class FluidSpec(AbstractHeatMedium):
     """
 
 
-class SolidSpec(AbstractHeatMedium):
+FluidSpec = FluidMedium
+
+
+class SolidMedium(AbstractHeatMedium):
     """Solid medium for heat simulations.
 
     Example
@@ -75,5 +78,7 @@ class SolidSpec(AbstractHeatMedium):
     )
 
 
-ThermalSpecType = Union[FluidSpec, SolidSpec]
-# Note this needs to remain here to avoid circuilar imports in the new medium structure.
+SolidSpec = SolidMedium
+
+ThermalSpecType = Union[FluidSpec, SolidSpec, SolidMedium, FluidMedium]
+# Note this needs to remain here to avoid circular imports in the new medium structure.

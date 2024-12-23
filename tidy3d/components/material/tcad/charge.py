@@ -42,6 +42,13 @@ class AbstractChargeMedium(AbstractMedium):
         """
         return self
 
+    def eps_model(self, frequency: float) -> complex:
+        # TODO just pass it directly for charge simulations
+        return self.permittivity
+
+    def n_cfl(self):
+        return None
+
 
 class ChargeInsulatorMedium(AbstractChargeMedium):
     """
