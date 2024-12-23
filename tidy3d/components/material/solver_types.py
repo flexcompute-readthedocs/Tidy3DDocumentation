@@ -10,9 +10,11 @@ from tidy3d.components.material.tcad.charge import (
     SemiconductorMedium,
 )
 from tidy3d.components.material.tcad.heat import ThermalSpecType
-from tidy3d.components.medium import MediumType
+from tidy3d.components.medium import MediumType, MediumType3D
 
 OpticalMediumTypes = MediumType
 ElectricalMediumTypes = MediumType
 HeatMediumTypes = ThermalSpecType
 ChargeMediumTypes = Union[ChargeConductorMedium, ChargeInsulatorMedium, SemiconductorMedium]
+
+OpticalMediumTypes3D = ElectricalMediumTypes3D = ChargeMediumTypes3D = MediumType3D

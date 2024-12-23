@@ -21,11 +21,13 @@ from tidy3d.components.bc_placement import (
 from tidy3d.components.geometry.base import Box
 from tidy3d.components.material.tcad.charge import (
     ChargeConductorMedium,
+    ChargeInsulatorMedium,
     SemiconductorMedium,
 )
 from tidy3d.components.material.tcad.heat import (
     SolidSpec,
 )
+from tidy3d.components.material.types import MultiPhysicsMediumTypes3D
 from tidy3d.components.scene import Scene
 from tidy3d.components.spice.types import ElectricalAnalysisTypes, TransferFunctionDC
 from tidy3d.components.structure import Structure
@@ -154,6 +156,16 @@ class HeatChargeSimulation(AbstractSimulation):
     ...     ],
     ...     monitors=[TemperatureMonitor(size=(1, 2, 3), name="sample")],
     ... )
+    """
+
+    medium: MultiPhysicsMediumTypes3D = pd.Field(
+        ChargeInsulatorMedium(),
+        title="Background Medium",
+        description="Background medium of simulation, defaults to `ChargeInsulatorMedium` if not specified.",
+        discriminator=TYPE_TAG_STR,
+    )
+    """
+    Background medium of simulation, defaults to `ChargeInsulatorMedium` if not specified.
     """
 
     sources: Tuple[HeatChargeSourceTypes, ...] = pd.Field(
