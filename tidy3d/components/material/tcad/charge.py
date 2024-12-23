@@ -82,7 +82,7 @@ class ChargeConductorMedium(AbstractChargeMedium):
     )
 
 
-class SemiconductorMedium(ChargeConductorMedium):
+class SemiconductorMedium(AbstractChargeMedium):
     """
     This class is used to define semiconductors.
 

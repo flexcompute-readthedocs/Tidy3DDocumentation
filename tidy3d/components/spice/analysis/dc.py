@@ -2,12 +2,12 @@
 This class defines standard SPICE electrical_analysis types (electrical simulations configurations).
 """
 
-from typing import Optional
+from typing import Optional, Union
 
 import pydantic.v1 as pd
 
 from tidy3d.components.base import Tidy3dBaseModel
-from tidy3d.components.spice.sources.dc import MultiStaticTransferSourceDC
+from tidy3d.components.spice.sources.dc import DCTransferSource, MultiDCTransferSource
 
 
 class OperatingPointDC(Tidy3dBaseModel):
@@ -35,7 +35,8 @@ class TransferFunctionDC(Tidy3dBaseModel):
     >>> charge_settings = td.ChargeToleranceSpec(abs_tol=1e8, rel_tol=1e-10, max_iters=30)
     """
 
-    sources: Optional[MultiStaticTransferSourceDC] = []  # todo accept a single source
+    sources: Union[MultiDCTransferSource, DCTransferSource] = []  # todo accept a single source
+
     absolute_tolerance: Optional[pd.PositiveFloat] = pd.Field(
         default=1e10,
         title="Absolute tolerance.",

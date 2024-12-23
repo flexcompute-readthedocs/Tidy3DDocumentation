@@ -2,10 +2,9 @@
 
 from __future__ import annotations
 
-from typing import Tuple, Union
-
 import pydantic.v1 as pd
 
+from tidy3d.components.spice.sources.dc import DCTransferSource
 from tidy3d.components.tcad.boundary.abstract import HeatChargeBC
 from tidy3d.constants import CURRENT_DENSITY, VOLT
 
@@ -23,7 +22,7 @@ class VoltageBC(HeatChargeBC):
     >>> bc2 = VoltageBC(voltage=[-1, 0, 1])
     """
 
-    voltage: Union[pd.FiniteFloat, Tuple[pd.FiniteFloat, ...]] = pd.Field(
+    source: DCTransferSource = pd.Field(
         title="Voltage",
         description="Electric potential to be applied at the specified boundary.",
         units=VOLT,
@@ -36,6 +35,7 @@ class CurrentBC(HeatChargeBC):
     Example
     -------
     >>> bc = CurrentBC(current_density=1)
+    # TODO Marc how can we make this a current source spice?
     """
 
     current_density: pd.FiniteFloat = pd.Field(
