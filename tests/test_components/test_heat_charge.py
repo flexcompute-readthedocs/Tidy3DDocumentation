@@ -142,7 +142,7 @@ def boundary_conditions():
     bc_temp = td.TemperatureBC(temperature=300)
     bc_flux = td.HeatFluxBC(flux=20)
     bc_conv = td.ConvectionBC(ambient_temperature=400, transfer_coeff=0.2)
-    bc_volt = td.VoltageBC(source=td.DCTransferSource(values=1))
+    bc_volt = td.VoltageBC(source=td.DCTransferSource(values=[1]))
     bc_current = td.CurrentBC(current_density=3e-1)
 
     return [bc_temp, bc_flux, bc_conv, bc_volt, bc_current]
@@ -538,22 +538,19 @@ def test_grid_spec_validation(grid_specs):
         distance_grid.updated_copy(distance_interface=2, distance_bulk=1)
 
 
-def test_heat_charge_sources(caplog, structures):
+def test_heat_charge_sources(log_capture, structures):
     """Tests whether heat-charge sources can be created and associated warnings."""
     # this shouldn't issue warning
-    with caplog.at_level("WARNING"):
-        _ = td.HeatSource(structures=["solid_structure"], rate=100)
-        assert len(caplog.records) == 0, "Expected no warnings for HeatSource."
+    _ = td.HeatSource(structures=["solid_structure"], rate=100)
+    assert len(log_capture) == 0, "Expected no warnings for HeatSource."
 
     # this should issue warning
-    with caplog.at_level("WARNING"):
-        _ = td.UniformHeatSource(structures=["solid_structure"], rate=100)
-        assert_log_level(caplog, "WARNING")
+    _ = td.UniformHeatSource(structures=["solid_structure"], rate=100)
+    assert_log_level(log_capture, "WARNING")
 
     # this shouldn't issue warning but rate is a string, assuming it's allowed
-    with caplog.at_level("WARNING"):
-        _ = td.HeatSource(structures=["solid_structure"], rate="100")
-        assert len(caplog.records) == 1, "Expected one warning for HeatSource with string rate."
+    _ = td.HeatSource(structures=["solid_structure"], rate="100")
+    assert len(log_capture) == 1, "Expected one warning for HeatSource with string rate."
 
 
 def test_heat_charge_simulation(simulation_data):
@@ -621,7 +618,7 @@ class TestCharge:
     # Define semiconductor materials as fixtures within the class
     @pytest.fixture(scope="class")
     def Si_p(self):
-        return td.Medium(
+        return td.MultiPhysicsMedium(
             charge=td.SemiconductorMedium(
                 conductivity=1,
                 permittivity=11.7,
@@ -633,7 +630,7 @@ class TestCharge:
 
     @pytest.fixture(scope="class")
     def Si_n(self):
-        return td.Medium(
+        return td.MultiPhysicsMedium(
             charge=td.SemiconductorMedium(
                 conductivity=1,
                 permittivity=11.7,
@@ -645,7 +642,7 @@ class TestCharge:
 
     @pytest.fixture(scope="class")
     def SiO2(self):
-        return td.Medium(
+        return td.MultiPhysicsMedium(
             charge=td.ChargeInsulatorMedium(permittivity=3.9),
             name="SiO2",
         )
@@ -727,11 +724,13 @@ class TestCharge:
     # Define charge settings as fixtures within the class
     @pytest.fixture(scope="class")
     def charge_tolerance(self):
-        return td.ChargeToleranceSpec(rel_tol=1e5, abs_tol=1e3, max_iters=400)
+        return td.TransferFunctionDC(
+            relative_tolerance=1e5, absolute_tolerance=1e3, dc_iteration_limit=400
+        )
 
     @pytest.fixture(scope="class")
     def charge_dc_regime(self):
-        return td.DCSpec(dv=1)
+        return td.DCTransferSource(values=[1])
 
     def test_charge_simulation(
         self,
@@ -749,14 +748,15 @@ class TestCharge:
         """Ensure charge simulation produces the correct errors when needed."""
         sim = td.HeatChargeSimulation(
             structures=[oxide, p_side, n_side],
-            medium=td.Medium(heat_spec=td.FluidSpec(), name="air"),
+            medium=td.MultiPhysicsMedium(
+                heat=td.FluidSpec(), charge=td.ChargeConductorMedium(), name="air"
+            ),
             monitors=[charge_global_mnt, potential_global_mnt, capacitance_global_mnt],
             center=(0, 0, 0),
             size=CHARGE_SIMULATION.sim_size,
             grid_spec=td.UniformUnstructuredGrid(dl=0.05),
             boundary_spec=[bc_n, bc_p],
-            charge_tolerance=charge_tolerance,
-            charge_regime=charge_dc_regime,
+            electrical_analysis=charge_tolerance,
         )
 
         # At least one ChargeSimulationMonitor should be added
@@ -768,7 +768,7 @@ class TestCharge:
             sim.updated_copy(boundary_spec=[bc_n])
 
         # Define ChargeSimulation with no Semiconductor materials
-        medium = td.Medium(
+        medium = td.MultiPhysicsMedium(
             charge=td.ChargeConductorMedium(permittivity=1, conductivity=1),
             name="medium",
         )
@@ -790,7 +790,7 @@ class TestCharge:
 
 
 @pytest.mark.parametrize("shift_amount, log_level", [(1, None), (2, "WARNING")])
-def test_heat_charge_sim_bounds(shift_amount, log_level, caplog):
+def test_heat_charge_sim_bounds(shift_amount, log_level, log_capture):
     """Ensure bounds are working correctly."""
     # Make sure all things are shifted to this central location
     CENTER_SHIFT = (-1.0, 1.0, 100.0)
@@ -824,14 +824,13 @@ def test_heat_charge_sim_bounds(shift_amount, log_level, caplog):
     bin_signs = 2 * (bin_ints - 0.5)
 
     # Test all cases where box is shifted +/- 1 in x,y,z and still intersects
-    with caplog.at_level("WARNING"):
-        for amp in bin_ints:
-            for sign in bin_signs:
-                center = tuple(shift_amount * a * s for a, s in zip(amp, sign))  # Use 'sign' here
-                if np.sum(np.abs(center)) < 1e-12:
-                    continue
-                place_box(center)
-        assert_log_level(caplog, log_level)
+    for amp in bin_ints:
+        for sign in bin_signs:
+            center = tuple(shift_amount * a * s for a, s in zip(amp, sign))
+            if np.sum(np.abs(center)) < 1e-12:
+                continue
+            place_box(center)
+    assert_log_level(log_capture, log_level)
 
 
 @pytest.mark.parametrize(
@@ -842,20 +841,20 @@ def test_heat_charge_sim_bounds(shift_amount, log_level, caplog):
         ((0.1, 0.1, 1), "WARNING"),
     ],
 )
-def test_sim_structure_extent(box_size, log_level, caplog):
+def test_sim_structure_extent(box_size, log_level, log_capture):
     """Ensure we warn if structure extends exactly to simulation edges."""
     box = td.Structure(geometry=td.Box(size=box_size), medium=td.Medium(permittivity=2))
-    with caplog.at_level("WARNING"):
-        _ = td.HeatChargeSimulation(
-            size=(1, 1, 1),
-            structures=[box],
-            medium=td.MultiPhysicsMedium(charge=td.ChargeConductorMedium(conductivity=1)),
-            boundary_spec=[
-                td.HeatChargeBoundarySpec(
-                    placement=td.SimulationBoundary(),
-                    condition=td.VoltageBC(source=td.DCTransferSource(values=1)),
-                )
-            ],
-            grid_spec=td.UniformUnstructuredGrid(dl=0.1),
-        )
-    assert_log_level(caplog, log_level)
+    _ = td.HeatChargeSimulation(
+        size=(1, 1, 1),
+        structures=[box],
+        medium=td.MultiPhysicsMedium(charge=td.ChargeConductorMedium(conductivity=1)),
+        boundary_spec=[
+            td.HeatChargeBoundarySpec(
+                placement=td.SimulationBoundary(),
+                condition=td.VoltageBC(source=td.DCTransferSource(values=[1])),
+            )
+        ],
+        grid_spec=td.UniformUnstructuredGrid(dl=0.1),
+    )
+
+    assert_log_level(log_capture, log_level)
