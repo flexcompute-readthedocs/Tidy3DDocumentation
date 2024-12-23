@@ -12,12 +12,6 @@ from tidy3d.components.tcad.types import HeatChargeMonitorTypes
 from tidy3d.components.types import annotate_type
 
 
-class OperatingPointDC(Tidy3dBaseModel):
-    """
-    Equivalent to Section 11.1.2 in the ngspice manual.
-    """
-
-
 class TransferFunctionDC(Tidy3dBaseModel):
     """This class sets parameters used in DC simulations.
 
