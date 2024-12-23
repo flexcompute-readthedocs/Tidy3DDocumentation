@@ -1,7 +1,5 @@
 """Test suite for heat-charge simulation objects and data using pytest fixtures."""
 
-import logging
-
 import numpy as np
 import pydantic.v1 as pd
 import pytest
@@ -543,17 +541,17 @@ def test_grid_spec_validation(grid_specs):
 def test_heat_charge_sources(caplog, structures):
     """Tests whether heat-charge sources can be created and associated warnings."""
     # this shouldn't issue warning
-    with caplog.at_level(logging.WARNING):
+    with caplog.at_level("WARNING"):
         _ = td.HeatSource(structures=["solid_structure"], rate=100)
         assert len(caplog.records) == 0, "Expected no warnings for HeatSource."
 
     # this should issue warning
-    with caplog.at_level(logging.WARNING):
+    with caplog.at_level("WARNING"):
         _ = td.UniformHeatSource(structures=["solid_structure"], rate=100)
         assert_log_level(caplog, "WARNING")
 
     # this shouldn't issue warning but rate is a string, assuming it's allowed
-    with caplog.at_level(logging.WARNING):
+    with caplog.at_level("WARNING"):
         _ = td.HeatSource(structures=["solid_structure"], rate="100")
         assert len(caplog.records) == 1, "Expected one warning for HeatSource with string rate."
 
@@ -826,7 +824,7 @@ def test_heat_charge_sim_bounds(shift_amount, log_level, caplog):
     bin_signs = 2 * (bin_ints - 0.5)
 
     # Test all cases where box is shifted +/- 1 in x,y,z and still intersects
-    with caplog.at_level(logging.WARNING):
+    with caplog.at_level("WARNING"):
         for amp in bin_ints:
             for sign in bin_signs:
                 center = tuple(shift_amount * a * s for a, s in zip(amp, sign))  # Use 'sign' here
@@ -847,7 +845,7 @@ def test_heat_charge_sim_bounds(shift_amount, log_level, caplog):
 def test_sim_structure_extent(box_size, log_level, caplog):
     """Ensure we warn if structure extends exactly to simulation edges."""
     box = td.Structure(geometry=td.Box(size=box_size), medium=td.Medium(permittivity=2))
-    with caplog.at_level(logging.WARNING):
+    with caplog.at_level("WARNING"):
         _ = td.HeatChargeSimulation(
             size=(1, 1, 1),
             structures=[box],
