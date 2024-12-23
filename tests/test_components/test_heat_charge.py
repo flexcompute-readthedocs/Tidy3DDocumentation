@@ -97,7 +97,7 @@ def mediums():
 @pytest.fixture(scope="module")
 def structures(mediums):
     """Creates structures with different mediums and sizes."""
-    box = td.Box(center=(0, 0, 0), size=(1, 1, 1))
+    box = td.Box(center=(0, 0, 0), size=(1, 1, 1))  # Adjusted size for consistency
 
     fluid_structure = td.Structure(
         geometry=box,
@@ -516,8 +516,8 @@ def test_monitor_crosses_medium(mediums, structures, heat_simulation, conduction
 
 def test_heat_charge_mnt_data(temperature_monitor_data, voltage_monitor_data):
     """Tests whether different heat-charge monitor data can be created."""
-    assert len(temperature_monitor_data) == 4
-    assert len(voltage_monitor_data) == 4
+    assert len(temperature_monitor_data) == 4, "Expected 4 temperature monitor data entries."
+    assert len(voltage_monitor_data) == 4, "Expected 4 voltage monitor data entries."
     # Additional assertions can be added here if necessary
 
 
@@ -545,7 +545,7 @@ def test_heat_charge_sources(caplog, structures):
     # this shouldn't issue warning
     with caplog.at_level(logging.WARNING):
         _ = td.HeatSource(structures=["solid_structure"], rate=100)
-        assert len(caplog.records) == 0
+        assert len(caplog.records) == 0, "Expected no warnings for HeatSource."
 
     # this should issue warning
     with caplog.at_level(logging.WARNING):
@@ -555,7 +555,7 @@ def test_heat_charge_sources(caplog, structures):
     # this shouldn't issue warning but rate is a string, assuming it's allowed
     with caplog.at_level(logging.WARNING):
         _ = td.HeatSource(structures=["solid_structure"], rate="100")
-        assert len(caplog.records) == 1  # Assuming a warning is issued
+        assert len(caplog.records) == 1, "Expected one warning for HeatSource with string rate."
 
 
 def test_heat_charge_simulation(simulation_data):
@@ -564,11 +564,11 @@ def test_heat_charge_simulation(simulation_data):
 
     # Test Heat Simulation
     heat_sim = heat_sim_data.simulation
-    assert heat_sim is not None
+    assert heat_sim is not None, "Heat simulation should be created successfully."
 
     # Test Conduction Simulation
     cond_sim = cond_sim_data.simulation
-    assert cond_sim is not None
+    assert cond_sim is not None, "Conduction simulation should be created successfully."
 
 
 def test_sim_data_plotting(simulation_data):
@@ -829,7 +829,7 @@ def test_heat_charge_sim_bounds(shift_amount, log_level, caplog):
     with caplog.at_level(logging.WARNING):
         for amp in bin_ints:
             for sign in bin_signs:
-                center = tuple(shift_amount * a * s for a, s in zip(amp, bin_signs))
+                center = tuple(shift_amount * a * s for a, s in zip(amp, sign))  # Use 'sign' here
                 if np.sum(np.abs(center)) < 1e-12:
                     continue
                 place_box(center)
@@ -861,431 +861,3 @@ def test_sim_structure_extent(box_size, log_level, caplog):
             grid_spec=td.UniformUnstructuredGrid(dl=0.1),
         )
     assert_log_level(caplog, log_level)
-
-
-# --------------------------
-# Additional Fixtures and Helper Functions
-# --------------------------
-
-
-@pytest.fixture(scope="module")
-def temperature_monitor_data(monitors):
-    """Creates different temperature monitor data."""
-    temp_mnt1, temp_mnt2, temp_mnt3, temp_mnt4, *_ = monitors
-
-    # SpatialDataArray
-    nx, ny, nz = 9, 6, 5
-    x = np.linspace(0, 1, nx)
-    y = np.linspace(0, 2, ny)
-    z = np.linspace(0, 3, nz)
-    T = np.random.default_rng().uniform(300, 350, (nx, ny, nz))
-    coords = dict(x=x, y=y, z=z)
-    temperature_field = td.SpatialDataArray(T, coords=coords)
-
-    mnt_data1 = td.TemperatureData(monitor=temp_mnt1, temperature=temperature_field)
-
-    # TetrahedralGridDataset
-    tet_grid_points = td.PointDataArray(
-        [[0.0, 0.0, 0.0], [1.0, 0.0, 0.0], [0.0, 1.0, 0.0], [1.0, 1.0, 0.0], [0.0, 0.0, 1.0]],
-        dims=("index", "axis"),
-    )
-
-    tet_grid_cells = td.CellDataArray(
-        [[0, 1, 2, 4], [1, 2, 3, 4]],
-        dims=("cell_index", "vertex_index"),
-    )
-
-    tet_grid_values = td.IndexedDataArray(
-        [1.0, 2.0, 3.0, 4.0, 5.0],
-        dims=("index",),
-        name="T",
-    )
-
-    tet_grid = td.TetrahedralGridDataset(
-        points=tet_grid_points,
-        cells=tet_grid_cells,
-        values=tet_grid_values,
-    )
-
-    mnt_data2 = td.TemperatureData(monitor=temp_mnt2, temperature=tet_grid)
-
-    # TriangularGridDataset
-    tri_grid_points = td.PointDataArray(
-        [[0.0, 0.0], [1.0, 0.0], [0.0, 1.0], [1.0, 1.0]],
-        dims=("index", "axis"),
-    )
-
-    tri_grid_cells = td.CellDataArray(
-        [[0, 1, 2], [1, 2, 3]],
-        dims=("cell_index", "vertex_index"),
-    )
-
-    tri_grid_values = td.IndexedDataArray(
-        [1.0, 2.0, 3.0, 4.0],
-        dims=("index",),
-        name="T",
-    )
-
-    tri_grid = td.TriangularGridDataset(
-        normal_axis=1,
-        normal_pos=0,
-        points=tri_grid_points,
-        cells=tri_grid_cells,
-        values=tri_grid_values,
-    )
-
-    mnt_data3 = td.TemperatureData(monitor=temp_mnt3, temperature=tri_grid)
-
-    mnt_data4 = td.TemperatureData(monitor=temp_mnt4, temperature=None)
-
-    return (mnt_data1, mnt_data2, mnt_data3, mnt_data4)
-
-
-@pytest.fixture(scope="module")
-def voltage_monitor_data(monitors):
-    """Creates different voltage monitor data."""
-    _, _, _, _, volt_mnt1, volt_mnt2, volt_mnt3, volt_mnt4 = monitors
-
-    # SpatialDataArray
-    nx, ny, nz = 9, 6, 5
-    x = np.linspace(0, 1, nx)
-    y = np.linspace(0, 2, ny)
-    z = np.linspace(0, 3, nz)
-    T = np.random.default_rng().uniform(-5, 5, (nx, ny, nz))
-    coords = dict(x=x, y=y, z=z)
-    voltage_field = td.SpatialDataArray(T, coords=coords)
-
-    mnt_data1 = td.SteadyVoltageData(monitor=volt_mnt1, voltage=voltage_field)
-
-    # TetrahedralGridDataset
-    tet_grid_points = td.PointDataArray(
-        [[0.0, 0.0, 0.0], [1.0, 0.0, 0.0], [0.0, 1.0, 0.0], [1.0, 1.0, 0.0], [0.0, 0.0, 1.0]],
-        dims=("index", "axis"),
-    )
-
-    tet_grid_cells = td.CellDataArray(
-        [[0, 1, 2, 4], [1, 2, 3, 4]],
-        dims=("cell_index", "vertex_index"),
-    )
-
-    tet_grid_values = td.IndexedDataArray(
-        [1.0, 2.0, 3.0, 4.0, 5.0],
-        dims=("index",),
-        name="T",
-    )
-
-    tet_grid = td.TetrahedralGridDataset(
-        points=tet_grid_points,
-        cells=tet_grid_cells,
-        values=tet_grid_values,
-    )
-
-    mnt_data2 = td.SteadyVoltageData(monitor=volt_mnt2, voltage=tet_grid)
-
-    # TriangularGridDataset
-    tri_grid_points = td.PointDataArray(
-        [[0.0, 0.0], [1.0, 0.0], [0.0, 1.0], [1.0, 1.0]],
-        dims=("index", "axis"),
-    )
-
-    tri_grid_cells = td.CellDataArray(
-        [[0, 1, 2], [1, 2, 3]],
-        dims=("cell_index", "vertex_index"),
-    )
-
-    tri_grid_values = td.IndexedDataArray(
-        [1.0, 2.0, 3.0, 4.0],
-        dims=("index",),
-        name="T",
-    )
-
-    tri_grid = td.TriangularGridDataset(
-        normal_axis=1,
-        normal_pos=0,
-        points=tri_grid_points,
-        cells=tri_grid_cells,
-        values=tri_grid_values,
-    )
-
-    mnt_data3 = td.SteadyVoltageData(monitor=volt_mnt3, voltage=tri_grid)
-
-    mnt_data4 = td.SteadyVoltageData(monitor=volt_mnt4, voltage=None)
-
-    return (mnt_data1, mnt_data2, mnt_data3, mnt_data4)
-
-
-@pytest.fixture(scope="module")
-def simulation_data(
-    heat_simulation, conduction_simulation, temperature_monitor_data, voltage_monitor_data
-):
-    """Creates 'HeatChargeSimulationData' for both HEAT and CONDUCTION simulations."""
-    heat_sim_data = td.HeatChargeSimulationData(
-        simulation=heat_simulation,
-        data=temperature_monitor_data,
-    )
-
-    cond_sim_data = td.HeatChargeSimulationData(
-        simulation=conduction_simulation,
-        data=voltage_monitor_data,
-    )
-
-    return [heat_sim_data, cond_sim_data]
-
-
-# --------------------------
-# Test Cases
-# --------------------------
-
-
-def test_heat_charge_medium_validation(mediums):
-    """Tests validation errors for mediums."""
-    solid_medium = mediums["solid_medium"]
-
-    # Test invalid capacity
-    with pytest.raises(pd.ValidationError):
-        solid_medium.heat_spec.updated_copy(capacity=-1)
-
-    # Test invalid conductivity
-    with pytest.raises(pd.ValidationError):
-        solid_medium.heat_spec.updated_copy(conductivity=-1)
-
-    # Test invalid charge conductivity
-    with pytest.raises(pd.ValidationError):
-        solid_medium.charge.updated_copy(conductivity=-1)
-
-
-def test_heat_charge_structures_creation(structures):
-    """Tests that different structures with different mediums can be created."""
-    fluid_structure = structures["fluid_structure"]
-    solid_structure = structures["solid_structure"]
-    solid_struct_no_heat = structures["solid_struct_no_heat"]
-    solid_struct_no_elect = structures["solid_struct_no_elect"]
-    insulator_structure = structures["insulator_structure"]
-
-    assert fluid_structure.medium.name == "fluid_medium"
-    assert solid_structure.medium.name == "solid_medium"
-    assert solid_struct_no_heat.medium.name == "solid_no_heat"
-    assert solid_struct_no_elect.medium.name == "solid_no_elect"
-    assert insulator_structure.medium.name == "insulator_medium"
-
-
-def test_heat_charge_bcs_validation(boundary_conditions):
-    """Tests the validators for boundary conditions."""
-    bc_temp, bc_flux, bc_conv, bc_volt, bc_current = boundary_conditions
-
-    # Invalid TemperatureBC
-    with pytest.raises(pd.ValidationError):
-        td.TemperatureBC(temperature=-10)
-
-    # Invalid ConvectionBC: negative ambient temperature
-    with pytest.raises(pd.ValidationError):
-        td.ConvectionBC(ambient_temperature=-400, transfer_coeff=0.2)
-
-    # Invalid ConvectionBC: negative transfer coefficient
-    with pytest.raises(pd.ValidationError):
-        td.ConvectionBC(ambient_temperature=400, transfer_coeff=-0.2)
-
-    # Invalid VoltageBC: infinite voltage
-    with pytest.raises(pd.ValidationError):
-        td.VoltageBC(source=td.DCTransferSource(values=td.inf))
-
-    # Invalid CurrentBC: infinite current density
-    with pytest.raises(pd.ValidationError):
-        td.CurrentBC(current_density=td.inf)
-
-
-def test_heat_charge_monitors_validation(monitors):
-    """Checks for no name and negative size in monitors."""
-    temp_mnt = monitors[0]
-
-    # Invalid monitor name
-    with pytest.raises(pd.ValidationError):
-        temp_mnt.updated_copy(name=None)
-
-    # Invalid monitor size (negative dimension)
-    with pytest.raises(pd.ValidationError):
-        temp_mnt.updated_copy(size=(-1, 2, 3))
-
-
-def test_monitor_crosses_medium(mediums, structures, heat_simulation, conduction_simulation):
-    """Tests whether monitor crosses structures with relevant material specifications."""
-    solid_no_heat = mediums["solid_no_heat"]
-    solid_no_elect = mediums["solid_no_elect"]
-    solid_struct_no_heat = structures["solid_struct_no_heat"]
-    solid_struct_no_elect = structures["solid_struct_no_elect"]
-
-    # Voltage monitor
-    volt_monitor = td.SteadyVoltageMonitor(
-        center=(0, 0, 0), size=(td.inf, td.inf, td.inf), name="voltage"
-    )
-    # A voltage monitor in a heat simulation should throw error if no ChargeConductorMedium is present
-    with pytest.raises(pd.ValidationError):
-        heat_simulation.updated_copy(
-            medium=solid_no_elect, structures=[solid_struct_no_elect], monitors=[volt_monitor]
-        )
-
-    # Temperature monitor
-    temp_monitor = td.TemperatureMonitor(
-        center=(0, 0, 0), size=(td.inf, td.inf, td.inf), name="temperature"
-    )
-    # A temperature monitor should throw error in a conduction simulation if no SolidSpec is present
-    with pytest.raises(pd.ValidationError):
-        conduction_simulation.updated_copy(
-            medium=solid_no_heat, structures=[solid_struct_no_heat], monitors=[temp_monitor]
-        )
-
-
-def test_heat_charge_mnt_data(temperature_monitor_data, voltage_monitor_data):
-    """Tests whether different heat-charge monitor data can be created."""
-    assert len(temperature_monitor_data) == 4, "Expected 4 temperature monitor data entries."
-    assert len(voltage_monitor_data) == 4, "Expected 4 voltage monitor data entries."
-
-
-def test_grid_spec_validation(grid_specs):
-    """Tests whether unstructured grids can be created and different validators for them."""
-    # Test UniformUnstructuredGrid
-    uniform_grid = grid_specs["uniform"]
-    with pytest.raises(pd.ValidationError):
-        uniform_grid.updated_copy(dl=0)
-    with pytest.raises(pd.ValidationError):
-        uniform_grid.updated_copy(min_edges_per_circumference=-1)
-    with pytest.raises(pd.ValidationError):
-        uniform_grid.updated_copy(min_edges_per_side=-1)
-
-    # Test DistanceUnstructuredGrid
-    distance_grid = grid_specs["distance"]
-    with pytest.raises(pd.ValidationError):
-        distance_grid.updated_copy(dl_interface=-1)
-    with pytest.raises(pd.ValidationError):
-        distance_grid.updated_copy(distance_interface=2, distance_bulk=1)
-
-
-def test_heat_charge_sources(caplog, structures):
-    """Tests whether heat-charge sources can be created and associated warnings."""
-    # This shouldn't issue a warning
-    with caplog.at_level(logging.WARNING):
-        _ = td.HeatSource(structures=["solid_structure"], rate=100)
-        assert len(caplog.records) == 0, "Expected no warnings for HeatSource."
-
-    # This should issue a warning
-    with caplog.at_level(logging.WARNING):
-        _ = td.UniformHeatSource(structures=["solid_structure"], rate=100)
-        assert_log_level(caplog, "WARNING")
-
-    # This shouldn't issue a warning but rate is a string, assuming it's allowed
-    with caplog.at_level(logging.WARNING):
-        _ = td.HeatSource(structures=["solid_structure"], rate="100")
-        assert len(caplog.records) == 1, "Expected one warning for HeatSource with string rate."
-
-
-def test_heat_charge_simulation(simulation_data):
-    """Tests 'HeatChargeSimulation' and 'ConductionSimulation' objects."""
-    heat_sim_data, cond_sim_data = simulation_data
-
-    # Test Heat Simulation
-    heat_sim = heat_sim_data.simulation
-    assert heat_sim is not None, "Heat simulation should be created successfully."
-
-    # Test Conduction Simulation
-    cond_sim = cond_sim_data.simulation
-    assert cond_sim is not None, "Conduction simulation should be created successfully."
-
-
-def test_sim_data_plotting(simulation_data):
-    """Tests whether simulation data can be plotted and appropriate errors are raised."""
-    heat_sim_data, cond_sim_data = simulation_data
-
-    # Plotting temperature data
-    heat_sim_data.plot_field("test", z=0)
-    heat_sim_data.plot_field("tri")
-    heat_sim_data.plot_field("tet", y=0.5)
-
-    # Plotting voltage data
-    cond_sim_data.plot_field("v_test", z=0)
-    cond_sim_data.plot_field("v_tri")
-    cond_sim_data.plot_field("v_tet", y=0.5)
-    plt.close()
-
-    # Test plotting with no data
-    with pytest.raises(DataError):
-        heat_sim_data.plot_field("empty")
-
-    # Test plotting with invalid data
-    with pytest.raises(DataError):
-        heat_sim_data.plot_field("test")
-
-    # Test plotting with invalid key
-    with pytest.raises(KeyError):
-        heat_sim_data.plot_field("test3", x=0)
-
-    # Test updating simulation data with duplicate data
-    with pytest.raises(pd.ValidationError):
-        heat_sim_data.updated_copy(data=[heat_sim_data.data[0]] * 2)
-
-    # Test updating simulation data with invalid simulation
-    temp_mnt = td.TemperatureMonitor(size=(1, 2, 3), name="test")
-    temp_mnt = temp_mnt.updated_copy(name="test2")
-
-    sim = heat_sim_data.simulation.updated_copy(monitors=[temp_mnt])
-
-    with pytest.raises(pd.ValidationError):
-        heat_sim_data.updated_copy(simulation=sim)
-
-
-# --------------------------
-# Class-Based Tests
-# --------------------------
-
-
-class TestCharge:
-    """Group of tests related to charge simulations."""
-
-    def test_charge_simulation(
-        self,
-        oxide,
-        p_side,
-        n_side,
-        charge_global_mnt,
-        potential_global_mnt,
-        capacitance_global_mnt,
-        bc_n,
-        bc_p,
-        charge_tolerance,
-        charge_dc_regime,
-    ):
-        """Ensure charge simulation produces the correct errors when needed."""
-        sim = td.HeatChargeSimulation(
-            structures=[oxide, p_side, n_side],
-            medium=td.Medium(heat_spec=td.FluidSpec(), name="air"),
-            monitors=[charge_global_mnt, potential_global_mnt, capacitance_global_mnt],
-            center=(0, 0, 0),
-            size=CHARGE_SIMULATION.sim_size,
-            grid_spec=td.UniformUnstructuredGrid(dl=0.05),
-            boundary_spec=[bc_n, bc_p],
-            charge_tolerance=charge_tolerance,
-            charge_regime=charge_dc_regime,
-        )
-
-        # At least one ChargeSimulationMonitor should be added
-        with pytest.raises(pd.ValidationError):
-            sim.updated_copy(monitors=[])
-
-        # At least 2 VoltageBCs should be defined
-        with pytest.raises(pd.ValidationError):
-            sim.updated_copy(boundary_spec=[bc_n])
-
-        # Define ChargeSimulation with no Semiconductor materials
-        medium = td.Medium(
-            charge=td.ChargeConductorMedium(permittivity=1, conductivity=1),
-            name="medium",
-        )
-        new_structures = [struct.updated_copy(medium=medium) for struct in sim.structures]
-
-        with pytest.raises(pd.ValidationError):
-            sim.updated_copy(structures=new_structures)
-
-    def test_doping_distributions(self):
-        """Test doping distributions."""
-        # Implementation needed
-        # This test was empty in the original code.
-        pass
