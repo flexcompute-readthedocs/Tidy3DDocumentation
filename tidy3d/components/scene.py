@@ -444,26 +444,36 @@ class Scene(Tidy3dBaseModel):
         )
         return ax
 
-    def _plot_shape_structure(self, medium: Medium, mat_index: int, shape: Shapely, ax: Ax) -> Ax:
+    def _plot_shape_structure(
+        self, medium: MultiPhysicsMediumTypes3D, mat_index: int, shape: Shapely, ax: Ax
+    ) -> Ax:
         """Plot a structure's cross section shape for a given medium."""
         plot_params_struct = self._get_structure_plot_params(medium=medium, mat_index=mat_index)
         ax = self.box.plot_shape(shape=shape, plot_params=plot_params_struct, ax=ax)
         return ax
 
-    def _get_structure_plot_params(self, mat_index: int, medium: Medium) -> PlotParams:
+    def _get_structure_plot_params(
+        self, mat_index: int, medium: MultiPhysicsMediumTypes3D
+    ) -> PlotParams:
         """Constructs the plot parameters for a given medium in scene.plot()."""
 
         plot_params = plot_params_structure.copy(update={"linewidth": 0})
+        is_pec = False
+        if hasattr(medium, "is_pec"):
+            is_pec = medium.is_pec
+        is_time_modulated = False
+        if hasattr(medium, "is_time_modulated"):
+            is_time_modulated = medium.is_time_modulated
 
         if mat_index == 0 or medium == self.medium:
             # background medium
             plot_params = plot_params.copy(update={"facecolor": "white", "edgecolor": "white"})
-        elif medium.is_pec:
+        elif is_pec:
             # perfect electrical conductor
             plot_params = plot_params.copy(
                 update={"facecolor": "gold", "edgecolor": "k", "linewidth": 1}
             )
-        elif medium.is_time_modulated:
+        elif is_time_modulated:
             # time modulated medium
             plot_params = plot_params.copy(
                 update={"facecolor": "red", "linewidth": 0, "hatch": "x*"}
@@ -1493,10 +1503,13 @@ class Scene(Tidy3dBaseModel):
             ]
             cond_list = [medium.heat_spec.conductivity for medium in medium_list]
         elif property == "electric_conductivity":
-            medium_list = [
+            cond_mediums = [
                 medium for medium in medium_list if isinstance(medium.charge, ChargeConductorMedium)
             ]
-            cond_list = [medium.charge.conductivity for medium in medium_list]
+            cond_list = [medium.charge.conductivity for medium in cond_mediums]
+
+        if len(cond_list) == 0:
+            cond_list = [0]
 
         cond_min = min(cond_list)
         cond_max = max(cond_list)

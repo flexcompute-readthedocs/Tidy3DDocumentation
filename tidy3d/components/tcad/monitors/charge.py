@@ -6,7 +6,7 @@ from tidy3d.components.tcad.monitors.abstract import HeatChargeMonitor
 from tidy3d.log import log
 
 
-class SteadyVoltageMonitor(HeatChargeMonitor):
+class SteadyPotentialMonitor(HeatChargeMonitor):
     """Electric potential monitor."""
 
     @pd.root_validator(skip_on_failure=True)
@@ -23,7 +23,7 @@ class SteadyVoltageMonitor(HeatChargeMonitor):
         return values
 
 
-class SteadyFreeChargeCarrierMonitor(HeatChargeMonitor):
+class SteadyFreeCarrierMonitor(HeatChargeMonitor):
     """Free-carrier monitor for Charge simulations."""
 
     # NOTE: for the time being supporting unstructured

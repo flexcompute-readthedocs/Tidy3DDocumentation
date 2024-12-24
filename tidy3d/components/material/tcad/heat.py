@@ -51,7 +51,8 @@ class FluidMedium(AbstractHeatMedium):
     """
 
 
-FluidSpec = FluidMedium
+class FluidSpec(FluidMedium):
+    """Fluid medium class for backwards compatibility"""
 
 
 class SolidMedium(AbstractHeatMedium):
@@ -78,7 +79,9 @@ class SolidMedium(AbstractHeatMedium):
     )
 
 
-SolidSpec = SolidMedium
+class SolidSpec(SolidMedium):
+    """Solid medium class for backwards compatibility"""
+
 
 ThermalSpecType = Union[FluidSpec, SolidSpec, SolidMedium, FluidMedium]
 # Note this needs to remain here to avoid circular imports in the new medium structure.

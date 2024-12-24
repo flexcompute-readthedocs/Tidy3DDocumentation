@@ -10,8 +10,9 @@ from tidy3d.components.material.tcad.heat import (
     FluidSpec,
     SolidSpec,
 )
-from tidy3d.components.spice.analysis.dc import TransferFunctionDC
-from tidy3d.components.spice.sources.dc import DCTransferSource, MultiDCTransferSource
+from tidy3d.components.spice.analysis.dc import ChargeToleranceSpec, SteadyDCAnalysis
+from tidy3d.components.spice.sources.dc import DCVoltageSource
+from tidy3d.components.spice.sources.types import VoltageSourceType
 from tidy3d.components.tcad.boundary.specification import (
     HeatBoundarySpec,
     HeatChargeBoundarySpec,
@@ -21,15 +22,14 @@ from tidy3d.components.tcad.data.types import (
     SteadyCapacitanceData,
     SteadyFreeCarrierData,
     SteadyPotentialData,
-    SteadyVoltageData,
     TemperatureData,
 )
 from tidy3d.components.tcad.doping import ConstantDoping, GaussianDoping
 from tidy3d.components.tcad.grid import DistanceUnstructuredGrid, UniformUnstructuredGrid
 from tidy3d.components.tcad.monitors.charge import (
     SteadyCapacitanceMonitor,
-    SteadyFreeChargeCarrierMonitor,
-    SteadyVoltageMonitor,
+    SteadyFreeCarrierMonitor,
+    SteadyPotentialMonitor,
 )
 from tidy3d.components.tcad.monitors.heat import (
     TemperatureMonitor,
@@ -566,10 +566,9 @@ __all__ = [
     "RadiativeRecombination",
     "ConstantDoping",
     "GaussianDoping",
-    "SteadyVoltageData",
     "HeatChargeBoundarySpec",
-    "SteadyVoltageMonitor",
-    "SteadyFreeChargeCarrierMonitor",
+    "SteadyPotentialMonitor",
+    "SteadyFreeCarrierMonitor",
     "SteadyCapacitanceMonitor",
     "SpaceTimeModulation",
     "SpaceModulation",
@@ -621,7 +620,8 @@ __all__ = [
     "FixedAngleSpec",
     "FixedInPlaneKSpec",
     "MultiPhysicsMedium",
-    "DCTransferSource",
-    "MultiDCTransferSource",
-    "TransferFunctionDC",
+    "DCVoltageSource",
+    "VoltageSourceType",
+    "SteadyDCAnalysis",
+    "ChargeToleranceSpec",
 ]

@@ -142,7 +142,7 @@ def boundary_conditions():
     bc_temp = td.TemperatureBC(temperature=300)
     bc_flux = td.HeatFluxBC(flux=20)
     bc_conv = td.ConvectionBC(ambient_temperature=400, transfer_coeff=0.2)
-    bc_volt = td.VoltageBC(source=td.DCTransferSource(values=[1]))
+    bc_volt = td.VoltageBC(source=td.DCVoltageSource(voltage=[1]))
     bc_current = td.CurrentBC(current_density=3e-1)
 
     return [bc_temp, bc_flux, bc_conv, bc_volt, bc_current]
@@ -160,12 +160,12 @@ def monitors():
         center=(0, 0.9, 0), size=(1.6, 0, 3), name="empty", unstructured=True, conformal=False
     )
 
-    volt_mnt1 = td.SteadyVoltageMonitor(size=(1.6, 2, 3), name="v_test")
-    volt_mnt2 = td.SteadyVoltageMonitor(size=(1.6, 2, 3), name="v_tet", unstructured=True)
-    volt_mnt3 = td.SteadyVoltageMonitor(
+    volt_mnt1 = td.SteadyPotentialMonitor(size=(1.6, 2, 3), name="v_test")
+    volt_mnt2 = td.SteadyPotentialMonitor(size=(1.6, 2, 3), name="v_tet", unstructured=True)
+    volt_mnt3 = td.SteadyPotentialMonitor(
         center=(0, 0.9, 0), size=(1.6, 0, 3), name="v_tri", unstructured=True, conformal=True
     )
-    volt_mnt4 = td.SteadyVoltageMonitor(
+    volt_mnt4 = td.SteadyPotentialMonitor(
         center=(0, 0.9, 0), size=(1.6, 0, 3), name="v_empty", unstructured=True, conformal=False
     )
 
@@ -332,7 +332,7 @@ def voltage_monitor_data(monitors):
     coords = dict(x=x, y=y, z=z)
     voltage_field = td.SpatialDataArray(T, coords=coords)
 
-    mnt_data1 = td.SteadyVoltageData(monitor=volt_mnt1, voltage=voltage_field)
+    mnt_data1 = td.SteadyPotentialData(monitor=volt_mnt1, potential=voltage_field)
 
     # TetrahedralGridDataset
     tet_grid_points = td.PointDataArray(
@@ -357,7 +357,7 @@ def voltage_monitor_data(monitors):
         values=tet_grid_values,
     )
 
-    mnt_data2 = td.SteadyVoltageData(monitor=volt_mnt2, voltage=tet_grid)
+    mnt_data2 = td.SteadyPotentialData(monitor=volt_mnt2, potential=tet_grid)
 
     # TriangularGridDataset
     tri_grid_points = td.PointDataArray(
@@ -384,9 +384,9 @@ def voltage_monitor_data(monitors):
         values=tri_grid_values,
     )
 
-    mnt_data3 = td.SteadyVoltageData(monitor=volt_mnt3, voltage=tri_grid)
+    mnt_data3 = td.SteadyPotentialData(monitor=volt_mnt3, potential=tri_grid)
 
-    mnt_data4 = td.SteadyVoltageData(monitor=volt_mnt4, voltage=None)
+    mnt_data4 = td.SteadyPotentialData(monitor=volt_mnt4, potential=None)
 
     return (mnt_data1, mnt_data2, mnt_data3, mnt_data4)
 
@@ -464,7 +464,7 @@ def test_heat_charge_bcs_validation(boundary_conditions):
 
     # Invalid VoltageBC: infinite voltage
     with pytest.raises(pd.ValidationError):
-        td.VoltageBC(source=td.DCTransferSource(values=[td.inf]))
+        td.VoltageBC(source=td.DCVoltageSource(voltage=[td.inf]))
 
     # Invalid CurrentBC: infinite current density
     with pytest.raises(pd.ValidationError):
@@ -492,7 +492,7 @@ def test_monitor_crosses_medium(mediums, structures, heat_simulation, conduction
     solid_struct_no_elect = structures["solid_struct_no_elect"]
 
     # Voltage monitor
-    volt_monitor = td.SteadyVoltageMonitor(
+    volt_monitor = td.SteadyPotentialMonitor(
         center=(0, 0, 0), size=(td.inf, td.inf, td.inf), name="voltage"
     )
     # A voltage monitor in a heat simulation should throw error if no ChargeConductorMedium is present
@@ -682,21 +682,21 @@ class TestCharge:
     @pytest.fixture(scope="class")
     def bc_p(self, SiO2, Si_p):
         return td.HeatChargeBoundarySpec(
-            condition=td.VoltageBC(source=td.DCTransferSource(values=[0])),
+            condition=td.VoltageBC(source=td.DCVoltageSource(voltage=[0])),
             placement=td.MediumMediumInterface(mediums=[SiO2.name, Si_p.name]),
         )
 
     @pytest.fixture(scope="class")
     def bc_n(self, SiO2, Si_n):
         return td.HeatChargeBoundarySpec(
-            condition=td.VoltageBC(source=td.DCTransferSource(values=[0])),
+            condition=td.VoltageBC(source=td.DCVoltageSource(voltage=[0, 1])),
             placement=td.MediumMediumInterface(mediums=[SiO2.name, Si_n.name]),
         )
 
     # Define monitors as fixtures within the class
     @pytest.fixture(scope="class")
     def charge_global_mnt(self):
-        return td.SteadyFreeChargeCarrierMonitor(
+        return td.SteadyFreeCarrierMonitor(
             center=(0, 0, 0),
             size=(td.inf, td.inf, td.inf),
             name="charge_global_mnt",
@@ -705,7 +705,7 @@ class TestCharge:
 
     @pytest.fixture(scope="class")
     def potential_global_mnt(self):
-        return td.SteadyVoltageMonitor(
+        return td.SteadyPotentialMonitor(
             center=(0, 0, 0),
             size=(td.inf, td.inf, td.inf),
             name="potential_global_mnt",
@@ -724,13 +724,13 @@ class TestCharge:
     # Define charge settings as fixtures within the class
     @pytest.fixture(scope="class")
     def charge_tolerance(self):
-        return td.TransferFunctionDC(
-            relative_tolerance=1e5, absolute_tolerance=1e3, dc_iteration_limit=400
+        return td.SteadyDCAnalysis(
+            tolerance_settings=td.ChargeToleranceSpec(rel_tol=1e5, abs_tol=1e3, max_iters=400)
         )
 
     @pytest.fixture(scope="class")
     def charge_dc_regime(self):
-        return td.DCTransferSource(values=[1])
+        return td.DCVoltageSource(voltage=[1])
 
     def test_charge_simulation(
         self,
@@ -756,7 +756,7 @@ class TestCharge:
             size=CHARGE_SIMULATION.sim_size,
             grid_spec=td.UniformUnstructuredGrid(dl=0.05),
             boundary_spec=[bc_n, bc_p],
-            electrical_analysis=charge_tolerance,
+            analysis_spec=charge_tolerance,
         )
 
         # At least one ChargeSimulationMonitor should be added
@@ -776,6 +776,13 @@ class TestCharge:
 
         with pytest.raises(pd.ValidationError):
             sim.updated_copy(structures=new_structures)
+
+        # test a voltage array is provided when a capacitance monitor is present
+        with pytest.raises(pd.ValidationError):
+            new_bc_n = bc_n.updated_copy(
+                condition=td.VoltageBC(source=td.DCVoltageSource(voltage=1))
+            )
+            _ = sim.updated_copy(boundary_spec=[bc_p, new_bc_n])
 
     def test_doping_distributions(self):
         """Test doping distributions."""
@@ -810,7 +817,7 @@ def test_heat_charge_sim_bounds(shift_amount, log_level, log_capture):
             ],
             boundary_spec=[
                 td.HeatChargeBoundarySpec(
-                    condition=td.VoltageBC(source=td.DCTransferSource(values=[1])),
+                    condition=td.VoltageBC(source=td.DCVoltageSource(voltage=[1])),
                     placement=td.SimulationBoundary(),
                 )
             ],
@@ -851,7 +858,7 @@ def test_sim_structure_extent(box_size, log_level, log_capture):
         boundary_spec=[
             td.HeatChargeBoundarySpec(
                 placement=td.SimulationBoundary(),
-                condition=td.VoltageBC(source=td.DCTransferSource(values=[1])),
+                condition=td.VoltageBC(source=td.DCVoltageSource(voltage=[1])),
             )
         ],
         grid_spec=td.UniformUnstructuredGrid(dl=0.1),
