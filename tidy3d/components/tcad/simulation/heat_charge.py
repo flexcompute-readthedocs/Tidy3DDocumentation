@@ -29,6 +29,7 @@ from tidy3d.components.material.tcad.heat import (
 )
 from tidy3d.components.material.types import MultiPhysicsMediumTypes3D
 from tidy3d.components.scene import Scene
+from tidy3d.components.spice.sources.dc import DCVoltageSource
 from tidy3d.components.spice.types import ElectricalAnalysisTypes, TransferFunctionDC
 from tidy3d.components.structure import Structure
 from tidy3d.components.tcad.boundary.specification import (
@@ -384,7 +385,10 @@ class HeatChargeSimulation(AbstractSimulation):
 
         for bc in val:
             if isinstance(bc.condition, VoltageBC):
-                voltages = bc.condition.source.values
+                voltages = []
+                # currently we're only supporting DC BCs, so let's check these values
+                if isinstance(bc.condition.source, DCVoltageSource):
+                    voltages = bc.condition.source.voltage
 
                 if isinstance(voltages, tuple):
                     if len(voltages) > 1:

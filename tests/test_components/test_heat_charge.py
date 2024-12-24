@@ -142,7 +142,7 @@ def boundary_conditions():
     bc_temp = td.TemperatureBC(temperature=300)
     bc_flux = td.HeatFluxBC(flux=20)
     bc_conv = td.ConvectionBC(ambient_temperature=400, transfer_coeff=0.2)
-    bc_volt = td.VoltageBC(source=td.DCTransferSource(values=[1]))
+    bc_volt = td.VoltageBC(source=td.DCVoltageSource(voltage=[1]))
     bc_current = td.CurrentBC(current_density=3e-1)
 
     return [bc_temp, bc_flux, bc_conv, bc_volt, bc_current]
@@ -464,7 +464,7 @@ def test_heat_charge_bcs_validation(boundary_conditions):
 
     # Invalid VoltageBC: infinite voltage
     with pytest.raises(pd.ValidationError):
-        td.VoltageBC(source=td.DCTransferSource(values=[td.inf]))
+        td.VoltageBC(source=td.DCVoltageSource(voltage=[td.inf]))
 
     # Invalid CurrentBC: infinite current density
     with pytest.raises(pd.ValidationError):
@@ -682,14 +682,14 @@ class TestCharge:
     @pytest.fixture(scope="class")
     def bc_p(self, SiO2, Si_p):
         return td.HeatChargeBoundarySpec(
-            condition=td.VoltageBC(source=td.DCTransferSource(values=[0])),
+            condition=td.VoltageBC(source=td.DCVoltageSource(voltage=[0])),
             placement=td.MediumMediumInterface(mediums=[SiO2.name, Si_p.name]),
         )
 
     @pytest.fixture(scope="class")
     def bc_n(self, SiO2, Si_n):
         return td.HeatChargeBoundarySpec(
-            condition=td.VoltageBC(source=td.DCTransferSource(values=[0])),
+            condition=td.VoltageBC(source=td.DCVoltageSource(voltage=[0])),
             placement=td.MediumMediumInterface(mediums=[SiO2.name, Si_n.name]),
         )
 
@@ -730,7 +730,7 @@ class TestCharge:
 
     @pytest.fixture(scope="class")
     def charge_dc_regime(self):
-        return td.DCTransferSource(values=[1])
+        return td.DCVoltageSource(voltage=[1])
 
     def test_charge_simulation(
         self,
@@ -810,7 +810,7 @@ def test_heat_charge_sim_bounds(shift_amount, log_level, log_capture):
             ],
             boundary_spec=[
                 td.HeatChargeBoundarySpec(
-                    condition=td.VoltageBC(source=td.DCTransferSource(values=[1])),
+                    condition=td.VoltageBC(source=td.DCVoltageSource(voltage=[1])),
                     placement=td.SimulationBoundary(),
                 )
             ],
@@ -851,7 +851,7 @@ def test_sim_structure_extent(box_size, log_level, log_capture):
         boundary_spec=[
             td.HeatChargeBoundarySpec(
                 placement=td.SimulationBoundary(),
-                condition=td.VoltageBC(source=td.DCTransferSource(values=[1])),
+                condition=td.VoltageBC(source=td.DCVoltageSource(voltage=[1])),
             )
         ],
         grid_spec=td.UniformUnstructuredGrid(dl=0.1),

@@ -7,7 +7,7 @@ from typing import Optional, Tuple, Union
 import pydantic.v1 as pd
 
 from tidy3d.components.base import Tidy3dBaseModel
-from tidy3d.components.spice.sources.dc import DCTransferSource, MultiDCTransferSource
+from tidy3d.components.spice.sources.types import VoltageSourceType
 from tidy3d.components.tcad.types import HeatChargeMonitorTypes
 from tidy3d.components.types import annotate_type
 
@@ -31,10 +31,13 @@ class TransferFunctionDC(Tidy3dBaseModel):
     >>> charge_settings = td.ChargeToleranceSpec(abs_tol=1e8, rel_tol=1e-10, max_iters=30)
     """
 
-    input: Union[MultiDCTransferSource, DCTransferSource] = []  # todo accept a single source
-    output: Tuple[
-        annotate_type(HeatChargeMonitorTypes), ...
-    ] = ()  # TODO this should be more generic, # TODO this should be a separate generic monitor class.
+    input: Optional[Union[VoltageSourceType]] = pd.Field(
+        default=None, title="Inputs"
+    )  # todo accept a single source
+    output: Optional[Tuple[annotate_type(HeatChargeMonitorTypes), ...]] = pd.Field(
+        default=None,
+        title="Outputs",
+    )  # TODO this should be more generic, # TODO this should be a separate generic monitor class.
 
     absolute_tolerance: Optional[pd.PositiveFloat] = pd.Field(
         default=1e10,

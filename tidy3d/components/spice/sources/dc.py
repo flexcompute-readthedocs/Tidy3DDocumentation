@@ -21,12 +21,12 @@ Examples:
 
 from typing import Optional, Union
 
-import pydantic as pd
+import pydantic.v1 as pd
 
 from tidy3d.components.base import Tidy3dBaseModel
 
 
 class DCVoltageSource(Tidy3dBaseModel):
     name: Optional[str]
-    voltage: Union[pd.FiniteFloat, list[pd.FiniteFloat]] = []
+    voltage: Union[pd.FiniteFloat, list[pd.FiniteFloat]] = pd.Field(title="Voltage")
     # units: Union[VOLT, AMP] = VOLT
