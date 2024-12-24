@@ -15,15 +15,17 @@ class MultiPhysicsMedium(Tidy3dBaseModel):
     """
 
     # TODO requires backwards compatibility.
-    name: Optional[str]
-    optical: Optional[OpticalMediumTypes]
-    electrical: Optional[ElectricalMediumTypes]
-    heat: Optional[HeatMediumTypes]
-    charge: Optional[ChargeMediumTypes]
+    name: Optional[str] = None
+    optical: Optional[OpticalMediumTypes] = None
+    electrical: Optional[ElectricalMediumTypes] = None
+    heat: Optional[HeatMediumTypes] = None
+    charge: Optional[ChargeMediumTypes] = None
 
     @property
     def heat_spec(self):
         if self.heat is not None:
             return self.heat
-        else:
+        elif self.optical is not None:
             return self.optical.heat_spec
+        else:
+            return None
