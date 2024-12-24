@@ -26,10 +26,7 @@ import pydantic as pd
 from tidy3d.components.base import Tidy3dBaseModel
 
 
-class DCTransferSource(Tidy3dBaseModel):
+class DCVoltageSource(Tidy3dBaseModel):
     name: Optional[str]
-    values: Union[pd.FiniteFloat, list[pd.FiniteFloat]] = []
+    voltage: Union[pd.FiniteFloat, list[pd.FiniteFloat]] = []
     # units: Union[VOLT, AMP] = VOLT
-
-
-MultiDCTransferSource = list[DCTransferSource]
