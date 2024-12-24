@@ -12,7 +12,7 @@ from tidy3d.components.tcad.mobility import CaugheyThomasMobility
 from tidy3d.components.tcad.monitors.charge import (
     SteadyCapacitanceMonitor,
     SteadyFreeChargeCarrierMonitor,
-    SteadyVoltageMonitor,
+    SteadyPotentialMonitor,
 )
 from tidy3d.components.tcad.monitors.heat import TemperatureMonitor
 from tidy3d.components.tcad.source.coupled import HeatFromElectricSource
@@ -28,7 +28,7 @@ BandGapModelTypes = Union[SlotboomNarrowingBandGap]
 # types of monitors that are accepted by heat simulation
 HeatChargeMonitorTypes = Union[
     TemperatureMonitor,
-    SteadyVoltageMonitor,
+    SteadyPotentialMonitor,
     SteadyFreeChargeCarrierMonitor,
     SteadyCapacitanceMonitor,
 ]

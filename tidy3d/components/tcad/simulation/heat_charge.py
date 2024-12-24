@@ -30,7 +30,7 @@ from tidy3d.components.material.tcad.heat import (
 from tidy3d.components.material.types import MultiPhysicsMediumTypes3D
 from tidy3d.components.scene import Scene
 from tidy3d.components.spice.sources.dc import DCVoltageSource
-from tidy3d.components.spice.types import ElectricalAnalysisTypes, TransferFunctionDC
+from tidy3d.components.spice.types import ElectricalAnalysisTypes
 from tidy3d.components.structure import Structure
 from tidy3d.components.tcad.boundary.specification import (
     HeatBoundarySpec,
@@ -44,7 +44,7 @@ from tidy3d.components.tcad.grid import (
 from tidy3d.components.tcad.monitors.charge import (
     SteadyCapacitanceMonitor,
     SteadyFreeChargeCarrierMonitor,
-    SteadyVoltageMonitor,
+    SteadyPotentialMonitor,
 )
 from tidy3d.components.tcad.monitors.heat import (
     TemperatureMonitor,
@@ -86,6 +86,8 @@ HeatBCTypes = (TemperatureBC, HeatFluxBC, ConvectionBC)
 HeatSourceTypes = (UniformHeatSource, HeatSource, HeatFromElectricSource)
 ChargeSourceTypes = ()
 ElectricBCTypes = (VoltageBC, CurrentBC, InsulatingBC)
+
+AnalysisSpecType = Union[ElectricalAnalysisTypes]
 
 
 class TCADAnalysisTypes(str, Enum):
@@ -203,8 +205,10 @@ class HeatChargeSimulation(AbstractSimulation):
         "Each element can be ``0`` (symmetry off) or ``1`` (symmetry on).",
     )
 
-    electrical_analysis: ElectricalAnalysisTypes = pd.Field(
-        TransferFunctionDC(), title="Charge settings.", description="Some Charge settings."
+    analysis_spec: AnalysisSpecType = pd.Field(
+        None,
+        title="Analysis specification.",
+        description="Used to define what simulation types to run.",
     )
 
     @pd.validator("structures", always=True)
@@ -293,7 +297,7 @@ class HeatChargeSimulation(AbstractSimulation):
 
         temp_monitors = [idx for idx, mnt in enumerate(val) if isinstance(mnt, TemperatureMonitor)]
         volt_monitors = [
-            idx for idx, mnt in enumerate(val) if isinstance(mnt, SteadyVoltageMonitor)
+            idx for idx, mnt in enumerate(val) if isinstance(mnt, SteadyPotentialMonitor)
         ]
 
         failed_temp_mnt = [idx for idx in temp_monitors if idx in failed_solid_idx]
@@ -406,7 +410,7 @@ class HeatChargeSimulation(AbstractSimulation):
         """Makes sure that CHARGE simulations are set correctly."""
 
         ChargeMonitorType = (
-            SteadyVoltageMonitor,
+            SteadyPotentialMonitor,
             SteadyFreeChargeCarrierMonitor,
             SteadyCapacitanceMonitor,
         )
@@ -431,7 +435,7 @@ class HeatChargeSimulation(AbstractSimulation):
             if not any(isinstance(mnt, ChargeMonitorType) for mnt in monitors):
                 raise SetupError(
                     "CHARGE simulations require the definition of, at least, one of these monitors: "
-                    "'[SteadyVoltageMonitor, SteadyFreeChargeCarrierMonitor, SteadyCapacitanceMonitor]' "
+                    "'[SteadyPotentialMonitor, SteadyFreeChargeCarrierMonitor, SteadyCapacitanceMonitor]' "
                     "but none have been defined."
                 )
 

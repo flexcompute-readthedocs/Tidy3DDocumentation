@@ -19,7 +19,7 @@ from tidy3d.components.data.utils import (
     UnstructuredGridDataset,
 )
 from tidy3d.components.tcad.data.types import (
-    SteadyVoltageData,
+    SteadyPotentialData,
     TCADMonitorDataTypes,
     TemperatureData,
 )
@@ -178,7 +178,7 @@ class HeatChargeSimulationData(AbstractSimulationData):
         if field_name is None:
             if isinstance(monitor_data, TemperatureData):
                 field_name = "temperature"
-            elif isinstance(monitor_data, SteadyVoltageData):
+            elif isinstance(monitor_data, SteadyPotentialData):
                 field_name = "voltage"
 
         if field_name not in monitor_data.field_components.keys():
@@ -193,12 +193,12 @@ class HeatChargeSimulationData(AbstractSimulationData):
 
         if isinstance(monitor_data, TemperatureData):
             property_to_plot = "heat_conductivity"
-        elif isinstance(monitor_data, SteadyVoltageData):
+        elif isinstance(monitor_data, SteadyPotentialData):
             property_to_plot = "electric_conductivity"
         else:
             raise DataError(
                 f"Monitor '{monitor_name}' (type '{monitor_data.monitor.type}') is not a "
-                f"supported monitor. Supported monitors are 'TemperatureData', 'SteadyVoltageData'."
+                f"supported monitor. Supported monitors are 'TemperatureData', 'SteadyPotentialData'."
             )
 
         if scale == "log":

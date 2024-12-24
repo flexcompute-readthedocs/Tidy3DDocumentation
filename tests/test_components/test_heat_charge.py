@@ -160,12 +160,12 @@ def monitors():
         center=(0, 0.9, 0), size=(1.6, 0, 3), name="empty", unstructured=True, conformal=False
     )
 
-    volt_mnt1 = td.SteadyVoltageMonitor(size=(1.6, 2, 3), name="v_test")
-    volt_mnt2 = td.SteadyVoltageMonitor(size=(1.6, 2, 3), name="v_tet", unstructured=True)
-    volt_mnt3 = td.SteadyVoltageMonitor(
+    volt_mnt1 = td.SteadyPotentialMonitor(size=(1.6, 2, 3), name="v_test")
+    volt_mnt2 = td.SteadyPotentialMonitor(size=(1.6, 2, 3), name="v_tet", unstructured=True)
+    volt_mnt3 = td.SteadyPotentialMonitor(
         center=(0, 0.9, 0), size=(1.6, 0, 3), name="v_tri", unstructured=True, conformal=True
     )
-    volt_mnt4 = td.SteadyVoltageMonitor(
+    volt_mnt4 = td.SteadyPotentialMonitor(
         center=(0, 0.9, 0), size=(1.6, 0, 3), name="v_empty", unstructured=True, conformal=False
     )
 
@@ -332,7 +332,7 @@ def voltage_monitor_data(monitors):
     coords = dict(x=x, y=y, z=z)
     voltage_field = td.SpatialDataArray(T, coords=coords)
 
-    mnt_data1 = td.SteadyVoltageData(monitor=volt_mnt1, voltage=voltage_field)
+    mnt_data1 = td.SteadyPotentialData(monitor=volt_mnt1, potential=voltage_field)
 
     # TetrahedralGridDataset
     tet_grid_points = td.PointDataArray(
@@ -357,7 +357,7 @@ def voltage_monitor_data(monitors):
         values=tet_grid_values,
     )
 
-    mnt_data2 = td.SteadyVoltageData(monitor=volt_mnt2, voltage=tet_grid)
+    mnt_data2 = td.SteadyPotentialData(monitor=volt_mnt2, potential=tet_grid)
 
     # TriangularGridDataset
     tri_grid_points = td.PointDataArray(
@@ -384,9 +384,9 @@ def voltage_monitor_data(monitors):
         values=tri_grid_values,
     )
 
-    mnt_data3 = td.SteadyVoltageData(monitor=volt_mnt3, voltage=tri_grid)
+    mnt_data3 = td.SteadyPotentialData(monitor=volt_mnt3, potential=tri_grid)
 
-    mnt_data4 = td.SteadyVoltageData(monitor=volt_mnt4, voltage=None)
+    mnt_data4 = td.SteadyPotentialData(monitor=volt_mnt4, potential=None)
 
     return (mnt_data1, mnt_data2, mnt_data3, mnt_data4)
 
@@ -492,7 +492,7 @@ def test_monitor_crosses_medium(mediums, structures, heat_simulation, conduction
     solid_struct_no_elect = structures["solid_struct_no_elect"]
 
     # Voltage monitor
-    volt_monitor = td.SteadyVoltageMonitor(
+    volt_monitor = td.SteadyPotentialMonitor(
         center=(0, 0, 0), size=(td.inf, td.inf, td.inf), name="voltage"
     )
     # A voltage monitor in a heat simulation should throw error if no ChargeConductorMedium is present
@@ -705,7 +705,7 @@ class TestCharge:
 
     @pytest.fixture(scope="class")
     def potential_global_mnt(self):
-        return td.SteadyVoltageMonitor(
+        return td.SteadyPotentialMonitor(
             center=(0, 0, 0),
             size=(td.inf, td.inf, td.inf),
             name="potential_global_mnt",
@@ -725,7 +725,7 @@ class TestCharge:
     @pytest.fixture(scope="class")
     def charge_tolerance(self):
         return td.TransferFunctionDC(
-            relative_tolerance=1e5, absolute_tolerance=1e3, dc_iteration_limit=400
+            tolerance_settings=td.ChargeToleranceSpec(rel_tol=1e5, abs_tol=1e3, max_iters=400)
         )
 
     @pytest.fixture(scope="class")
@@ -756,7 +756,7 @@ class TestCharge:
             size=CHARGE_SIMULATION.sim_size,
             grid_spec=td.UniformUnstructuredGrid(dl=0.05),
             boundary_spec=[bc_n, bc_p],
-            electrical_analysis=charge_tolerance,
+            analysis_spec=charge_tolerance,
         )
 
         # At least one ChargeSimulationMonitor should be added
