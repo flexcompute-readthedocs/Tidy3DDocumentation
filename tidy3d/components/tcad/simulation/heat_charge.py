@@ -21,13 +21,13 @@ from tidy3d.components.bc_placement import (
 from tidy3d.components.geometry.base import Box
 from tidy3d.components.material.tcad.charge import (
     ChargeConductorMedium,
-    ChargeInsulatorMedium,
     SemiconductorMedium,
 )
 from tidy3d.components.material.tcad.heat import (
     SolidSpec,
 )
-from tidy3d.components.material.types import MultiPhysicsMediumTypes3D
+from tidy3d.components.material.types import MultiPhysicsMedium, StructureMediumTypes
+from tidy3d.components.medium import Medium
 from tidy3d.components.scene import Scene
 from tidy3d.components.spice.sources.dc import DCVoltageSource
 from tidy3d.components.spice.types import ElectricalAnalysisTypes
@@ -161,8 +161,8 @@ class HeatChargeSimulation(AbstractSimulation):
     ... )
     """
 
-    medium: MultiPhysicsMediumTypes3D = pd.Field(
-        ChargeInsulatorMedium(),
+    medium: StructureMediumTypes = pd.Field(
+        Medium(),
         title="Background Medium",
         description="Background medium of simulation, defaults to `ChargeInsulatorMedium` if not specified.",
         discriminator=TYPE_TAG_STR,
@@ -228,6 +228,10 @@ class HeatChargeSimulation(AbstractSimulation):
         a ``SolidSpec`` medium.
         """
 
+        # NOTE: when considering CONDUCTION or CHARGE cases, both conductors and semiconductors
+        # will be accepted
+        ValidElectricTypes = Union[SemiconductorMedium, ChargeConductorMedium]
+
         try:
             size = values["size"]
             center = values["center"]
@@ -262,7 +266,7 @@ class HeatChargeSimulation(AbstractSimulation):
                     isinstance(medium.heat_spec, SolidSpec) for medium in medium_set
                 )
                 crosses_elec_spec = any(
-                    isinstance(medium.charge, ChargeConductorMedium) for medium in medium_set
+                    isinstance(medium.charge, ValidElectricTypes) for medium in medium_set
                 )
             else:
                 # approximate check for volumetric objects based on bounding boxes
@@ -275,7 +279,7 @@ class HeatChargeSimulation(AbstractSimulation):
                 crosses_elec_spec = any(
                     obj.intersects(structure.geometry)
                     for structure in total_structures
-                    if isinstance(structure.medium.charge, ChargeConductorMedium)
+                    if isinstance(structure.medium.charge, ValidElectricTypes)
                 )
 
             if not crosses_solid:
@@ -573,12 +577,10 @@ class HeatChargeSimulation(AbstractSimulation):
 
         # make sure mediums with doping have been defined
         for structure in structures:
-            if isinstance(structure.medium.charge, SemiconductorMedium):
-                if (
-                    structure.medium.charge.donors is not None
-                    or structure.medium.charge.acceptors is not None
-                ):
-                    return True
+            if isinstance(structure.medium, MultiPhysicsMedium):
+                if structure.medium.charge is not None:
+                    if isinstance(structure.medium.charge, SemiconductorMedium):
+                        return True
         return charge_sim
 
     @staticmethod
