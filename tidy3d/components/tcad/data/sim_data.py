@@ -179,7 +179,7 @@ class HeatChargeSimulationData(AbstractSimulationData):
             if isinstance(monitor_data, TemperatureData):
                 field_name = "temperature"
             elif isinstance(monitor_data, SteadyPotentialData):
-                field_name = "voltage"
+                field_name = "potential"
 
         if field_name not in monitor_data.field_components.keys():
             raise DataError(f"field_name '{field_name}' not found in data.")

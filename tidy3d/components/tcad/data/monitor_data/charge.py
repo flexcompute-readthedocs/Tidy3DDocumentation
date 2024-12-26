@@ -39,13 +39,10 @@ class SteadyPotentialData(HeatChargeMonitorData):
         description="Electric potential monitor associated with a Charge simulation.",
     )
 
-    # TODO: work out why I can't use SpatialDataArray here and generalize this so that
-    # in the future it can also accept structured fields.
-    potential: UnstructuredFieldType = pd.Field(
+    potential: FieldDataset = pd.Field(
         None,
         title="Voltage series",
         description="Contains the voltages.",
-        discriminator=TYPE_TAG_STR,
     )
 
     @property
@@ -68,21 +65,21 @@ class SteadyPotentialData(HeatChargeMonitorData):
 
         return val
 
-    @pd.validator("potential", always=True)
-    @skip_if_fields_missing(["monitor"])
-    def check_correct_data_type(cls, val, values):
-        """Issue error if incorrect data type is used"""
+    # @pd.validator("potential", always=True)
+    # @skip_if_fields_missing(["monitor"])
+    # def check_correct_data_type(cls, val, values):
+    #     """Issue error if incorrect data type is used"""
 
-        mnt = values.get("monitor")
+    #     mnt = values.get("monitor")
 
-        if isinstance(val, TetrahedralGridDataset) or isinstance(val, TriangularGridDataset):
-            if not isinstance(val.values, IndexVoltageDataArray):
-                raise ValueError(
-                    f"Monitor {mnt} of type 'SteadyVoltageMonitor' is not associated with data arrays "
-                    "of type 'IndexVoltageDataArray' and cannot be associated with an applied voltage."
-                )
+    #     if isinstance(val, TetrahedralGridDataset) or isinstance(val, TriangularGridDataset):
+    #         if not isinstance(val.values, IndexVoltageDataArray):
+    #             raise ValueError(
+    #                 f"Monitor {mnt} of type 'SteadyVoltageMonitor' is not associated with data arrays "
+    #                 "of type 'IndexVoltageDataArray' and cannot be associated with an applied voltage."
+    #             )
 
-        return val
+    #     return val
 
     @property
     def symmetry_expanded_copy(self) -> SteadyPotentialData:

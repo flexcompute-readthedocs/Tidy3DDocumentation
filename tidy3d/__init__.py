@@ -10,7 +10,7 @@ from tidy3d.components.material.tcad.heat import (
     FluidSpec,
     SolidSpec,
 )
-from tidy3d.components.spice.analysis.dc import ChargeToleranceSpec, TransferFunctionDC
+from tidy3d.components.spice.analysis.dc import ChargeToleranceSpec, SteadyDCAnalysis
 from tidy3d.components.spice.sources.dc import DCVoltageSource
 from tidy3d.components.spice.sources.types import VoltageSourceType
 from tidy3d.components.tcad.boundary.specification import (
@@ -622,6 +622,6 @@ __all__ = [
     "MultiPhysicsMedium",
     "DCVoltageSource",
     "VoltageSourceType",
-    "TransferFunctionDC",
+    "SteadyDCAnalysis",
     "ChargeToleranceSpec",
 ]

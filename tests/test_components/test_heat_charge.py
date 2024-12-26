@@ -696,7 +696,7 @@ class TestCharge:
     # Define monitors as fixtures within the class
     @pytest.fixture(scope="class")
     def charge_global_mnt(self):
-        return td.SteadyFreeChargeCarrierMonitor(
+        return td.SteadyFreeCarrierMonitor(
             center=(0, 0, 0),
             size=(td.inf, td.inf, td.inf),
             name="charge_global_mnt",
@@ -724,7 +724,7 @@ class TestCharge:
     # Define charge settings as fixtures within the class
     @pytest.fixture(scope="class")
     def charge_tolerance(self):
-        return td.TransferFunctionDC(
+        return td.SteadyDCAnalysis(
             tolerance_settings=td.ChargeToleranceSpec(rel_tol=1e5, abs_tol=1e3, max_iters=400)
         )
 
