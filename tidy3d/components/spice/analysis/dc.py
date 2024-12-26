@@ -68,7 +68,8 @@ class TransferFunctionDC(Tidy3dBaseModel):
     dv: pd.PositiveFloat = pd.Field(
         default=1.0,
         title="Bias step.",
-        description="By default, a solution is computed at 0 bias. "
-        "If a bias different than 0 is requested, DEVSIM will start at 0 and increase bias "
-        "at 'dV' intervals until the required bias is reached. ",
+        description="By default, a solution is computed at 0 bias. If a bias different than "
+        "0 is requested through a voltage source, DEVSIM will start at 0 and increase bias "
+        "at 'dv' intervals until the required bias is reached. This is, therefore, a "
+        "convergence parameter in DC computations.",
     )

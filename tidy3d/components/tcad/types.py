@@ -11,7 +11,7 @@ from tidy3d.components.tcad.generation_recombination import (
 from tidy3d.components.tcad.mobility import CaugheyThomasMobility
 from tidy3d.components.tcad.monitors.charge import (
     SteadyCapacitanceMonitor,
-    SteadyFreeChargeCarrierMonitor,
+    SteadyFreeCarrierMonitor,
     SteadyPotentialMonitor,
 )
 from tidy3d.components.tcad.monitors.heat import TemperatureMonitor
@@ -29,7 +29,7 @@ BandGapModelTypes = Union[SlotboomNarrowingBandGap]
 HeatChargeMonitorTypes = Union[
     TemperatureMonitor,
     SteadyPotentialMonitor,
-    SteadyFreeChargeCarrierMonitor,
+    SteadyFreeCarrierMonitor,
     SteadyCapacitanceMonitor,
 ]
 HeatChargeSourceTypes = Union[HeatSource, HeatFromElectricSource, UniformHeatSource]

@@ -17,7 +17,7 @@ from tidy3d.components.data.utils import TetrahedralGridDataset, TriangularGridD
 from tidy3d.components.tcad.data.monitor_data.abstract import HeatChargeMonitorData
 from tidy3d.components.tcad.monitors.charge import (
     SteadyCapacitanceMonitor,
-    SteadyFreeChargeCarrierMonitor,
+    SteadyFreeCarrierMonitor,
     SteadyPotentialMonitor,
 )
 from tidy3d.components.types import TYPE_TAG_STR, annotate_type
@@ -102,7 +102,7 @@ class SteadyPotentialData(HeatChargeMonitorData):
 class SteadyFreeCarrierData(HeatChargeMonitorData):
     """Class that stores free carrier concentration in Charge simulations."""
 
-    monitor: SteadyFreeChargeCarrierMonitor = pd.Field(
+    monitor: SteadyFreeCarrierMonitor = pd.Field(
         ...,
         title="Free carrier monitor",
         description="Free carrier data associated with a Charge simulation.",

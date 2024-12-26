@@ -28,7 +28,7 @@ from tidy3d.components.tcad.doping import ConstantDoping, GaussianDoping
 from tidy3d.components.tcad.grid import DistanceUnstructuredGrid, UniformUnstructuredGrid
 from tidy3d.components.tcad.monitors.charge import (
     SteadyCapacitanceMonitor,
-    SteadyFreeChargeCarrierMonitor,
+    SteadyFreeCarrierMonitor,
     SteadyPotentialMonitor,
 )
 from tidy3d.components.tcad.monitors.heat import (
@@ -568,7 +568,7 @@ __all__ = [
     "GaussianDoping",
     "HeatChargeBoundarySpec",
     "SteadyPotentialMonitor",
-    "SteadyFreeChargeCarrierMonitor",
+    "SteadyFreeCarrierMonitor",
     "SteadyCapacitanceMonitor",
     "SpaceTimeModulation",
     "SpaceModulation",

@@ -43,7 +43,7 @@ from tidy3d.components.tcad.grid import (
 )
 from tidy3d.components.tcad.monitors.charge import (
     SteadyCapacitanceMonitor,
-    SteadyFreeChargeCarrierMonitor,
+    SteadyFreeCarrierMonitor,
     SteadyPotentialMonitor,
 )
 from tidy3d.components.tcad.monitors.heat import (
@@ -87,6 +87,7 @@ HeatSourceTypes = (UniformHeatSource, HeatSource, HeatFromElectricSource)
 ChargeSourceTypes = ()
 ElectricBCTypes = (VoltageBC, CurrentBC, InsulatingBC)
 
+# TODO: add more analysis types as needed
 AnalysisSpecType = Union[ElectricalAnalysisTypes]
 
 
@@ -415,7 +416,7 @@ class HeatChargeSimulation(AbstractSimulation):
 
         ChargeMonitorType = (
             SteadyPotentialMonitor,
-            SteadyFreeChargeCarrierMonitor,
+            SteadyFreeCarrierMonitor,
             SteadyCapacitanceMonitor,
         )
 
@@ -439,7 +440,7 @@ class HeatChargeSimulation(AbstractSimulation):
             if not any(isinstance(mnt, ChargeMonitorType) for mnt in monitors):
                 raise SetupError(
                     "CHARGE simulations require the definition of, at least, one of these monitors: "
-                    "'[SteadyPotentialMonitor, SteadyFreeChargeCarrierMonitor, SteadyCapacitanceMonitor]' "
+                    "'[SteadyPotentialMonitor, SteadyFreeCarrierMonitor, SteadyCapacitanceMonitor]' "
                     "but none have been defined."
                 )
 
