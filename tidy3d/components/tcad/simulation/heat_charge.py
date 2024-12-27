@@ -108,13 +108,21 @@ class HeatChargeSimulation(AbstractSimulation):
         heat and conduction equations using the
         Finite-Volume (FV) method.
 
-        Currently, we support:
-            * Heat simulations: we solve the heat equation with specified heat sources,
-                BCs, etc.
-            * Conduction simulations: the conduction equation, div(sigma*grad(psi))=0,
+        Currently, this class supports:
+            * HEAT simulations: the heat equation is solved with specified heat sources,
+                BCs, etc. Structures should incorporate mediums with heat properties.
+            * CONDUCTION simulations: the conduction equation, div(sigma*grad(psi))=0,
                 (with sigma being the electric conductivity) is solved for specified BCs.
+            * CHARGE simulations: drift-diffusion equations are solved for structures
+                where a 'SemiconductorMedium' has been defined. Insulators defined with
+                'ChargeInsulatorMedium' can be included in the simulations for which only
+                electric potential field will be calculated.
 
-        COUPLING
+        CURRENT LIMITATIONS OF CHARGE
+        * The charge solver is currently limited to isothermal cases with T=300K.
+        * Boltzmann statistics are assumed throughout (no degeneracy effects considered).
+
+        COUPLING HEAT-CONDUCTION
         Coupling between these simulations is currently limited to 1-way coupling between
         heat and conduction simulations. Coupling is specified by defining a heat source of
         type 'HeatFromElectricSource'. With this coupling, joule heating is calculated as part
@@ -325,6 +333,33 @@ class HeatChargeSimulation(AbstractSimulation):
             )
 
         return val
+
+    @pd.root_validator(skip_on_failure=True)
+    def check_voltage_array_if_capacitance(cls, values):
+        """Make sure an array of voltages has been defined if a
+        SteadyCapacitanceMonitor' has been defined"""
+        bounday_spec = values["boundary_spec"]
+        monitors = values["monitors"]
+
+        is_capacitance_mnt = any(isinstance(mnt, SteadyCapacitanceMonitor) for mnt in monitors)
+        voltage_array_present = False
+        if is_capacitance_mnt:
+            for bc in bounday_spec:
+                if isinstance(bc.condition, VoltageBC):
+                    if isinstance(bc.condition.source, DCVoltageSource):
+                        if isinstance(bc.condition.source.voltage, list) or isinstance(
+                            bc.condition.source.voltage, tuple
+                        ):
+                            if len(bc.condition.source.voltage) > 1:
+                                voltage_array_present = True
+        if is_capacitance_mnt and not voltage_array_present:
+            raise SetupError(
+                "Monitors of type 'SteadyCapacitanceMonitor' have been defined but no array of voltages "
+                "has been supplied as voltage source, which is required for this type of monitor. "
+                "Voltage arrays can be included in a source in this manner: "
+                "'VoltageBC(source=DCVoltageSource(voltage=yourArray))'"
+            )
+        return values
 
     @pd.validator("size", always=True)
     def check_zero_dim_domain(cls, val, values):

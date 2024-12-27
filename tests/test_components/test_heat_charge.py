@@ -689,7 +689,7 @@ class TestCharge:
     @pytest.fixture(scope="class")
     def bc_n(self, SiO2, Si_n):
         return td.HeatChargeBoundarySpec(
-            condition=td.VoltageBC(source=td.DCVoltageSource(voltage=[0])),
+            condition=td.VoltageBC(source=td.DCVoltageSource(voltage=[0, 1])),
             placement=td.MediumMediumInterface(mediums=[SiO2.name, Si_n.name]),
         )
 
@@ -776,6 +776,13 @@ class TestCharge:
 
         with pytest.raises(pd.ValidationError):
             sim.updated_copy(structures=new_structures)
+
+        # test a voltage array is provided when a capacitance monitor is present
+        with pytest.raises(pd.ValidationError):
+            new_bc_n = bc_n.updated_copy(
+                condition=td.VoltageBC(source=td.DCVoltageSource(voltage=1))
+            )
+            _ = sim.updated_copy(boundary_spec=[bc_p, new_bc_n])
 
     def test_doping_distributions(self):
         """Test doping distributions."""
