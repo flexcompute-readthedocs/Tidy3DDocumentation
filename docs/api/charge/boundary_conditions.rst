@@ -4,7 +4,7 @@ Boundary Conditions
 -----------------------------
 
 Specifications
-^^^^^^^^^^^^^^^^^
+^^^^^^^^^^^^^^
 
 .. autosummary::
    :toctree: ../_autosummary/

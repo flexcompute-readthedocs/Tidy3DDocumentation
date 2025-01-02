@@ -22,6 +22,9 @@ Monitor Data
    :template: module.rst
 
    tidy3d.SteadyVoltageData
+   tidy3d.SteadyPotentialData
+   tidy3d.SteadyFreeCarrierData
+   tidy3d.SteadyCapacitanceData
 
 
 Unstructured Data Classes

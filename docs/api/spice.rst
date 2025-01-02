@@ -1,7 +1,7 @@
 .. currentmodule:: tidy3d
 
-``SPICE``
-==========
+``SPICE`` |:electric_plug:|
+===========================
 
 Sources
 ----------------

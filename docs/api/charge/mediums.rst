@@ -20,3 +20,44 @@ Charge Specification
    tidy3d.ChargeConductorMedium
    tidy3d.ChargeInsulatorMedium
 
+Mobility
+^^^^^^^^^^^^^^
+
+.. autosummary::
+   :toctree: ../_autosummary/
+   :template: module.rst
+
+   tidy3d.CaugheyThomasMobility
+
+
+Generation Recombination
+^^^^^^^^^^^^^^^^^^^^^^^^
+
+.. autosummary::
+   :toctree: ../_autosummary/
+   :template: module.rst
+
+   tidy3d.AugerRecombination
+   tidy3d.RadiativeRecombination
+   tidy3d.ShockleyReedHallRecombination
+
+
+Doping
+^^^^^^
+
+.. autosummary::
+   :toctree: ../_autosummary/
+   :template: module.rst
+
+   tidy3d.ConstantDoping
+   tidy3d.GaussianDoping
+
+
+Bandgap
+^^^^^^^^
+
+.. autosummary::
+   :toctree: ../_autosummary/
+   :template: module.rst
+
+   tidy3d.SlotboomNarrowingBandGap
