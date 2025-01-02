@@ -7,7 +7,7 @@ from typing import Optional, Tuple, Union
 import pydantic.v1 as pd
 
 from tidy3d.components.base import Tidy3dBaseModel
-from tidy3d.components.spice.sources.types import VoltageSourceType
+from tidy3d.components.spice.sources.types import VoltageSourceTypes
 from tidy3d.components.tcad.types import HeatChargeMonitorTypes
 from tidy3d.components.types import annotate_type
 
@@ -53,9 +53,10 @@ class SteadyDCAnalysis(Tidy3dBaseModel):
     Ultimately, equivalent to Section 11.3.2 in the ngspice manual.
     """
 
-    input: Optional[Union[VoltageSourceType]] = pd.Field(
+    input: Optional[Union[VoltageSourceTypes]] = pd.Field(
         default=None, title="Inputs"
     )  # todo accept a single source
+
     output: Optional[Tuple[annotate_type(HeatChargeMonitorTypes), ...]] = pd.Field(
         default=None,
         title="Outputs",

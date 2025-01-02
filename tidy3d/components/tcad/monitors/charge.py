@@ -7,7 +7,7 @@ from tidy3d.log import log
 
 
 class SteadyPotentialMonitor(HeatChargeMonitor):
-    """Electric potential monitor."""
+    """Electric potential (:math:`\\psi`) monitor."""
 
     @pd.root_validator(skip_on_failure=True)
     def check_unstructured(cls, values):
@@ -24,7 +24,9 @@ class SteadyPotentialMonitor(HeatChargeMonitor):
 
 
 class SteadyFreeCarrierMonitor(HeatChargeMonitor):
-    """Free-carrier monitor for Charge simulations."""
+    """
+    Free-carrier monitor for Charge simulations.
+    """
 
     # NOTE: for the time being supporting unstructured
     unstructured = True

@@ -100,48 +100,42 @@ class TCADAnalysisTypes(str, Enum):
 
 
 class HeatChargeSimulation(AbstractSimulation):
-    """This class is used to define thermo-electric simulations.
+    """
+    This class is used to define thermo-electric simulations.
 
     Notes
     -----
-        'HeatChargeSimulation' supports different types of simulations. It solves the
-        heat and conduction equations using the
-        Finite-Volume (FV) method.
+        A ``HeatChargeSimulation`` supports different types of simulations. It solves the
+        heat and conduction equations using the Finite-Volume (FV) method. This solver
+        determines the required computation physics according to the simulation scene definition.
+        This is implemented in this way due to the strong multi-physics coupling.
 
-        Currently, this class supports:
-            * HEAT simulations: the heat equation is solved with specified heat sources,
-                BCs, etc. Structures should incorporate mediums with heat properties.
-            * CONDUCTION simulations: the conduction equation, div(sigma*grad(psi))=0,
-                (with sigma being the electric conductivity) is solved for specified BCs.
-            * CHARGE simulations: drift-diffusion equations are solved for structures
-                where a 'SemiconductorMedium' has been defined. Insulators defined with
-                'ChargeInsulatorMedium' can be included in the simulations for which only
-                electric potential field will be calculated.
+    Let's understand how the physics solving is determined:
 
-        CURRENT LIMITATIONS OF CHARGE
-        * The charge solver is currently limited to isothermal cases with T=300K.
-        * Boltzmann statistics are assumed throughout (no degeneracy effects considered).
+        .. list-table::
+           :widths: 25 75
+           :header-rows: 1
 
-        COUPLING HEAT-CONDUCTION
-        Coupling between these simulations is currently limited to 1-way coupling between
-        heat and conduction simulations. Coupling is specified by defining a heat source of
-        type 'HeatFromElectricSource'. With this coupling, joule heating is calculated as part
-        of the solution to a CONDUCTION simulation and then read in to the HEAT simulation.
-        When using coupling we anticipate two scenarios:
-            1. one in which BCs and sources are specified for both HEAT and CONDUCTION simulations.
-                In this case one mesh will be generated and used for both the CONDUCTION and HEAT
-                simulations.
-            2. only heat BCs/sources are provided. In this case, only the HEAT equation will be solved.
-                Before the simulation starts, it will try to load the heat source from file so a
-                previously run CONDUCTION simulations must have run previously. Since the CONDUCTION
-                and HEAT meshes may differ, an interpolation between them will be performed prior to
-                starting the HEAT simulation.
-        Additional heat sources can be defined, in which case, they will be added on
-        top of the coupling heat source.
+           * - Simulation Type
+             - Example Configuration Settings
+           * - ``HEAT``
+             - The heat equation is solved with specified heat sources,
+               boundary conditions, etc. Structures should incorporate materials
+               with defined heat properties.
+           * - ``CONDUCTION``
+             - The conduction equation, :math:`\\text{div}(\\sigma \\cdot \\nabla(\\psi)) = 0`,
+               where :math:`\\sigma` is the electric conductivity, is solved with
+               specified boundary conditions.
+           * - ``CHARGE``
+             - Drift-diffusion equations are solved for structures containing
+               a defined :class:`SemiconductorMedium`. Insulators with a
+               :class:`ChargeInsulatorMedium`` can also be included. For these, only the
+               electric potential field is calculated.
 
+    Examples
+    --------
+    To run a thermal (``HEAT`` |:fire:|) simulation with a solid conductive structure:
 
-    Example
-    -------
     >>> from tidy3d import Medium, SolidSpec, FluidSpec, UniformUnstructuredGrid, TemperatureMonitor
     >>> heat_sim = HeatChargeSimulation(
     ...     size=(3.0, 3.0, 3.0),
@@ -149,7 +143,8 @@ class HeatChargeSimulation(AbstractSimulation):
     ...         Structure(
     ...             geometry=Box(size=(1, 1, 1), center=(0, 0, 0)),
     ...             medium=Medium(
-    ...                 permittivity=2.0, heat_spec=SolidSpec(
+    ...                 permittivity=2.0,
+    ...                 heat_spec=SolidSpec(
     ...                     conductivity=1,
     ...                     capacity=1,
     ...                 )
@@ -168,16 +163,47 @@ class HeatChargeSimulation(AbstractSimulation):
     ...     ],
     ...     monitors=[TemperatureMonitor(size=(1, 2, 3), name="sample")],
     ... )
+
+    To run a drift-diffusion (``CHARGE`` |:zap:|) equation:
+    TODO EXAMPLE
+
+
+    Coupling between ``HEAT`` and electrical ``CONDUCTION`` simulations is currently limited to 1-way.
+    This is specified by defining a heat source of type :class:`HeatFromElectricSource`. With this coupling, joule heating is
+    calculated as part  of the solution to a ``CONDUCTION`` simulation and translated into the ``HEAT`` simulation.
+
+    Two common scenarios can use this coupling definition:
+        1. one in which BCs and sources are specified for both ``HEAT`` and ``CONDUCTION`` simulations.
+            In this case one mesh will be generated and used for both the ``CONDUCTION`` and ``HEAT``
+            simulations.
+        2. only heat BCs/sources are provided. In this case, only the ``HEAT`` equation will be solved.
+            Before the simulation starts, it will try to load the heat source from file so a
+            previously run ``CONDUCTION`` simulations must have run previously. Since the CONDUCTION
+            and ``HEAT`` meshes may differ, an interpolation between them will be performed prior to
+            starting the ``HEAT`` simulation.
+
+    Additional heat sources can be defined, in which case, they will be added on
+    top of the coupling heat source. Let's review an example:
+    TODO EXAMPLE
+
+    Warnings
+    --------
+    There are some current limitation of the CHARGE solver:
+
+    * The charge solver is currently limited to isothermal cases with T=300K.
+    * Boltzmann statistics are assumed throughout (no degeneracy effects considered).
+
     """
 
     medium: StructureMediumTypes = pd.Field(
         Medium(),
         title="Background Medium",
-        description="Background medium of simulation, defaults to `ChargeInsulatorMedium` if not specified.",
+        description="Background medium of simulation, defaults to a standard dispersion-less :class:`Medium` if not "
+        "specified.",
         discriminator=TYPE_TAG_STR,
     )
     """
-    Background medium of simulation, defaults to `ChargeInsulatorMedium` if not specified.
+    Background medium of simulation, defaults to a standard dispersion-less :class:`Medium` if not specified.
     """
 
     sources: Tuple[HeatChargeSourceTypes, ...] = pd.Field(

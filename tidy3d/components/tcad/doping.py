@@ -56,7 +56,8 @@ class AbstractDopingBox(Box):
 
 
 class ConstantDoping(AbstractDopingBox):
-    """This class sets constant doping in the specified box.
+    """
+    This class sets constant doping :math:`N` in the specified box with a :parameter`size` and :parameter:`concentration`.
 
     Example
     -------
@@ -79,6 +80,22 @@ class ConstantDoping(AbstractDopingBox):
 class GaussianDoping(AbstractDopingBox):
     """This class sets a gaussian doping in the specified box.
 
+    Notes
+    -----
+    The Gaussian doping concentration :math:`N` is defined in relation to a reference
+    concentration :math:`\\{N_{\\text{ref}}` as ``ref_con``,
+    maximum target concentration :math:`\\{N_{\\text{ref}}` as ``concentration``, a Gaussian ``width``,
+    and a doping box ``size``.
+
+    TODO can we do better parameter names here more related to the equations? TODO how does the size get defined.
+
+    .. math::
+
+        N = \\{N_{\\text{max}}\\} \\exp \\left[
+        - \\ln \\left( \\frac{\\{N_{\\text{max}}\\}}{\\{N_{\\text{ref}}\\}} \\right)
+        \\left( \\frac{(x|y|z) - \\{\\text{TODOsize???}\\}}{\\{\\text{width}\\}} \\right)^2
+        \\right]
+
     Example
     -------
     >>> import tidy3d as td
@@ -86,14 +103,14 @@ class GaussianDoping(AbstractDopingBox):
     ...     [-1, -1, -1],
     ...     [1, 1, 1]
     ... ]
-    >>> constant_box1 = td.GaussianDoping(
+    >>> gaussian_box1 = td.GaussianDoping(
     ...     center=(0, 0, 0),
     ...     size(2, 2, 2),
     ...     concentration=1e18,
     ...     width=0.1,
     ...     source="xmin"
     ... )
-    >>> constant_box2 = td.GaussianDoping(
+    >>> gaussian_box2 = td.GaussianDoping(
     ...     box_coords=box_coords,
     ...     concentration=1e18,
     ...     width=0.1,

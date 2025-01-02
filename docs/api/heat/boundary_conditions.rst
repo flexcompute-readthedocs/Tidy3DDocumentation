@@ -1,6 +1,6 @@
 .. currentmodule:: tidy3d
 
-Thermal/Charge Boundary Conditions
+Boundary Conditions
 -----------------------------
 
 Specifications
@@ -24,9 +24,6 @@ Types
    tidy3d.TemperatureBC
    tidy3d.ConvectionBC
    tidy3d.HeatFluxBC
-   tidy3d.VoltageBC
-   tidy3d.CurrentBC,
-   tidy3d.InsulatingBC
 
 
 Placement

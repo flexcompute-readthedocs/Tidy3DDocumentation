@@ -67,7 +67,9 @@ class ChargeInsulatorMedium(AbstractChargeMedium):
     >>> solid = ChargeInsulatorMedium()
     >>> solid2 = ChargeInsulatorMedium(permittivity=1.1)
 
-    Note: relative permittivity will be assumed 1 if no value is specified.
+    Note
+    ----
+        A relative permittivity :math:`\\varepsilon` will be assumed 1 if no value is specified.
     """
 
 
@@ -78,7 +80,9 @@ class ChargeConductorMedium(AbstractChargeMedium):
     -------
     >>> solid = ChargeConductorMedium(conductivity=3)
 
-    Note: relative permittivity will be assumed 1 if no value is specified.
+    Note
+    ----
+        A relative permittivity will be assumed 1 if no value is specified.
     """
 
     conductivity: pd.PositiveFloat = pd.Field(
@@ -95,8 +99,86 @@ class SemiconductorMedium(AbstractChargeMedium):
 
     Notes
     -----
-        Both acceptors and donors can be either a positive number or an 'xarray.DataArray'.
-        Default values for parameters and models are those appropriate for Silicon
+        The drift-diffusion equations for semiconductor materials are defined as follows:
+
+        .. math::
+
+           \\begin{equation}
+               -\\nabla \\cdot \\varepsilon \\nabla \\psi = q (p - n + C)
+           \\end{equation}
+
+        .. math::
+
+           \\begin{equation}
+               \\nabla \\cdot \\mathbf{J_n} - q R = q \\frac{\\partial n}{\\partial t}
+           \\end{equation}
+
+        .. math::
+
+           \\begin{equation}
+               -\\nabla \\cdot \\mathbf{J_p} - q R = q \\frac{\\partial p}{\\partial t}
+           \\end{equation}
+
+        .. math::
+
+           \\begin{equation}
+               \\mathbf{J_n} = -q \\mu_n n \\nabla \\psi + q D_n \\nabla n
+           \\end{equation}
+
+        .. math::
+
+           \\begin{equation}
+               \\mathbf{J_p} = -q \\mu_p p \\nabla \\psi - q D_p \\nabla p
+           \\end{equation}
+
+        .. math::
+
+           \\begin{equation}
+               C = N_d - N_a
+           \\end{equation}
+
+        Let's explore how these material properties are defined as class parameters or other classes.
+
+         .. list-table::
+           :widths: 25 25 75
+           :header-rows: 1
+
+           * - Symbol
+             - Parameter Name
+             - Description
+           * - :math:`N_a`
+             - ``acceptors``
+             - TODO_NAME?
+           * - :math:`N_d`
+             - ``donors``
+             - TODO_NAME?
+           * - :math:`n`
+             - ``nc``
+             - Electron concentration TODO_NAME?
+           * - :math:`p`
+             - ``nv``
+             - Hole concentration TODO_NAME?
+           * - :math:`R`
+             - ``recombination``
+             - Generation-recombination term. TODO_NAME?
+           * - :math:`E_g`
+             - ``eg``
+             - Bandgap Energy TODO_NAME?
+           * - :math:`\\sigma`
+             - ``conductivity``
+             -
+           * - :math:`\\varepsilon`
+             - ``permittivity``
+             -
+           * - :math:`q`
+             - ``tidy3d.constants.Q_e``
+             - Fundamental electron charge.
+
+
+    Note
+    ----
+        - Both acceptors and donors can be either a positive number or an 'xarray.DataArray'.
+        - Default values for parameters and models are those appropriate for Silicon
     """
 
     nc: pd.PositiveFloat = pd.Field(
@@ -132,7 +214,7 @@ class SemiconductorMedium(AbstractChargeMedium):
 
     recombination: Tuple[RecombinationModelTypes, ...] = pd.Field(
         (ShockleyReedHallRecombination(), AugerRecombination(), RadiativeRecombination()),
-        title="Recombination models",
+        title="Generation-Recombination models",
         description="Array containing the recombination models to be applied to the material.",
     )
 
