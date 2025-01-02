@@ -56,6 +56,7 @@ class SteadyDCAnalysis(Tidy3dBaseModel):
     input: Optional[Union[VoltageSourceType]] = pd.Field(
         default=None, title="Inputs"
     )  # todo accept a single source
+
     output: Optional[Tuple[annotate_type(HeatChargeMonitorTypes), ...]] = pd.Field(
         default=None,
         title="Outputs",
