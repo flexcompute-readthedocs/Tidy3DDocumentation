@@ -22,9 +22,8 @@ Types
    :template: module.rst
 
    tidy3d.VoltageBC
-   tidy3d.CurrentBC,
+   tidy3d.CurrentBC
    tidy3d.InsulatingBC
-
 
 Placement
 ^^^^^^^^^^^^^^^^^
