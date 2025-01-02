@@ -10,6 +10,7 @@ Charge Perturbation Specification
    tidy3d.LinearChargePerturbation
    tidy3d.CustomChargePerturbation
 
+
 Charge Specification
 -------------------------------
 
@@ -19,6 +20,7 @@ Charge Specification
 
    tidy3d.ChargeConductorMedium
    tidy3d.ChargeInsulatorMedium
+   tidy3d.SemiconductorMedium
 
 Mobility
 ^^^^^^^^^^^^^^
