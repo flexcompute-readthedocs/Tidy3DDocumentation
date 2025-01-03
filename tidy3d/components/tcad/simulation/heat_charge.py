@@ -100,23 +100,50 @@ class TCADAnalysisTypes(str, Enum):
 
 
 class HeatChargeSimulation(AbstractSimulation):
-    """This class is used to define thermo-electric simulations.
+    """
+    This class is used to define thermo-electric simulations.
 
     Notes
     -----
-        'HeatChargeSimulation' supports different types of simulations. It solves the
-        heat and conduction equations using the
-        Finite-Volume (FV) method.
+        A ``HeatChargeSimulation`` supports different types of simulations. It solves the
+        heat and conduction equations using the Finite-Volume (FV) method. This solver
+        determines the required computation physics according to the simulation scene definition.
+        This is implemented in this way due to the strong physical coupling between this physics.
 
-        Currently, this class supports:
-            * HEAT simulations: the heat equation is solved with specified heat sources,
-                BCs, etc. Structures should incorporate mediums with heat properties.
-            * CONDUCTION simulations: the conduction equation, div(sigma*grad(psi))=0,
-                (with sigma being the electric conductivity) is solved for specified BCs.
-            * CHARGE simulations: drift-diffusion equations are solved for structures
-                where a 'SemiconductorMedium' has been defined. Insulators defined with
-                'ChargeInsulatorMedium' can be included in the simulations for which only
-                electric potential field will be calculated.
+        .. list-table:: Let's go through how this can work:
+           :widths: 25 75
+           :header-rows: 1
+           * - Computation Type
+             - Example Configuration Requirements
+           * - ``HEAT``
+             - The heat equation is solved with specified heat sources,
+               BCs, etc. Structures should incorporate mediums with heat properties.
+           * - ``CONDUCTION``
+             - The conduction equation, :math:`\\div(\\sigma*\\grad(\\psi))=0`,
+               (with sigma being the electric conductivity) is solved for specified BCs.
+           * - ``CHARGE``
+             - Drift-diffusion equations are solved for structures
+               where a ``SemiconductorMedium`` has been defined. Insulators defined with
+               ``ChargeInsulatorMedium`` can be included in the simulations for which only
+               electric potential field will be calculated.
+
+
+        The drift-diffusion equations for semiconductor materials are defined as follows:
+
+        .. math::
+
+           -\\nabla \\cdot \\varepsilon \\nabla \\psi = q (p - n + C)
+
+           \\nabla \\cdot \\mathbf{J_n} - q R = q \\frac{\\partial n}{\\partial t}
+
+           -\\nabla \\cdot \\mathbf{J_p} - q R = q \\frac{\\partial p}{\\partial t}
+
+           \\mathbf{J_n} = -q \\mu_n n \\nabla \\psi + q D_n \\nabla n
+
+           \\mathbf{J_p} = -q \\mu_p p \\nabla \\psi - q D_p \\nabla p
+
+           C = N_d - N_a
+
 
         CURRENT LIMITATIONS OF CHARGE
         * The charge solver is currently limited to isothermal cases with T=300K.
@@ -140,8 +167,10 @@ class HeatChargeSimulation(AbstractSimulation):
         top of the coupling heat source.
 
 
-    Example
-    -------
+    Examples
+    --------
+
+    To run a thermal (HEAT |:fire:|) simulation with a solid conductive structure:
     >>> from tidy3d import Medium, SolidSpec, FluidSpec, UniformUnstructuredGrid, TemperatureMonitor
     >>> heat_sim = HeatChargeSimulation(
     ...     size=(3.0, 3.0, 3.0),
@@ -149,7 +178,8 @@ class HeatChargeSimulation(AbstractSimulation):
     ...         Structure(
     ...             geometry=Box(size=(1, 1, 1), center=(0, 0, 0)),
     ...             medium=Medium(
-    ...                 permittivity=2.0, heat_spec=SolidSpec(
+    ...                 permittivity=2.0,
+    ...                 heat_spec=SolidSpec(
     ...                     conductivity=1,
     ...                     capacity=1,
     ...                 )
@@ -168,12 +198,14 @@ class HeatChargeSimulation(AbstractSimulation):
     ...     ],
     ...     monitors=[TemperatureMonitor(size=(1, 2, 3), name="sample")],
     ... )
+
+    To run a drift-diffusion equation
     """
 
     medium: StructureMediumTypes = pd.Field(
         Medium(),
         title="Background Medium",
-        description="Background medium of simulation, defaults to `ChargeInsulatorMedium` if not specified.",
+        description="Background medium of simulation, defaults to a standard dispersionless `Medium` if not specified.",
         discriminator=TYPE_TAG_STR,
     )
     """
