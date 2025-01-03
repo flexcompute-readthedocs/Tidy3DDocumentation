@@ -18,7 +18,7 @@ class CaugheyThomasMobility(Tidy3dBaseModel):
     -------
     There are some current limitations of this model:
 
-    - high electric field effects not yet supported.
+    - High electric field effects not yet supported.
     - Default values are those appropriate for Silicon.
     """
 

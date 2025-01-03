@@ -84,10 +84,10 @@ class GaussianDoping(AbstractDopingBox):
     -----
     The Gaussian doping concentration :math:`N` is defined in relation to a reference
     concentration :math:`\\{N_{\\text{ref}}` as ``ref_con``,
-    maximum target concentration :math:`\\{N_{\\text{ref}}` as ``concentration``, a Gaussian :parameter:`width`,
-    and a doping box :parameter`size`.
+    maximum target concentration :math:`\\{N_{\\text{ref}}` as ``concentration``, a Gaussian ``width``,
+    and a doping box ``size``.
 
-    TODO can we do better parameter names here more related to the equations?
+    TODO can we do better parameter names here more related to the equations? TODO how does the size get defined.
 
     .. math::
 

@@ -36,11 +36,11 @@ class ShockleyReedHallRecombination(Tidy3dBaseModel):
 
         .. math::
 
-            R_{SRH} = \\frac{n p - n_0 p_0}{\\tau_p \\left(n + \\sqrt{n_0 p_0}\\right) + \\tau_n \\left(p + \\sqrt{n_0 p_0}\\right)}.
-
+           R_{SRH} = \\frac{n p - n_0 p_0}{\\tau_p \\left(n + \\sqrt{n_0 p_0}\\right) + \\tau_n \\left(p + \\sqrt{n_0 p_0}\\right)}.
 
         Note that the electron and holes densities are defined within the :class:`SemiconductorMedium`. The electron
         lifetime :math:`\\tau_n` and hole lifetimes :math:`\\tau_p` need to be defined.
+
 
         .. [1] Schenk. A model for the field and temperature dependence of shockley-read-hall
                lifetimes in silicon. Solid-State Electronics, 35:1585–1596, 1992.

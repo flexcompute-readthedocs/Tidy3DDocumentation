@@ -133,7 +133,7 @@ class SemiconductorMedium(AbstractChargeMedium):
                C = N_d - N_a
            \\end{equation}
 
-    Let's explore how these material properties are defined as class parameters or other classes.
+        Let's explore how these material properties are defined as class parameters or other classes.
 
          .. list-table::
            :widths: 25 25 75
