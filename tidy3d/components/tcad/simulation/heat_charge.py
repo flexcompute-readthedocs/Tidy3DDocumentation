@@ -129,7 +129,7 @@ class HeatChargeSimulation(AbstractSimulation):
            * - ``CHARGE``
              - Drift-diffusion equations are solved for structures containing
                a defined :class:`SemiconductorMedium`. Insulators with a
-               ``ChargeInsulatorMedium`` can also be included. For these, only the
+               :class:`ChargeInsulatorMedium`` can also be included. For these, only the
                electric potential field is calculated.
 
     Examples
