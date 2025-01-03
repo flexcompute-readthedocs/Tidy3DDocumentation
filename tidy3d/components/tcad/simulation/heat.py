@@ -14,7 +14,8 @@ from tidy3d.log import log
 
 
 class HeatSimulation(HeatChargeSimulation):
-    """Contains all information about heat simulation.
+    """
+    Contains all information about heat simulation.
 
     Example
     -------

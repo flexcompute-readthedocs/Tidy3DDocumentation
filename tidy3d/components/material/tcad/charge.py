@@ -95,6 +95,46 @@ class SemiconductorMedium(AbstractChargeMedium):
 
     Notes
     -----
+
+        The drift-diffusion equations for semiconductor materials are defined as follows:
+
+        .. math::
+
+           \\begin{equation}
+               -\\nabla \\cdot \\varepsilon \\nabla \\psi = q (p - n + C)
+           \\end{equation}
+
+        .. math::
+
+           \\begin{equation}
+               \\nabla \\cdot \\mathbf{J_n} - q R = q \\frac{\\partial n}{\\partial t}
+           \\end{equation}
+
+        .. math::
+
+           \\begin{equation}
+               -\\nabla \\cdot \\mathbf{J_p} - q R = q \\frac{\\partial p}{\\partial t}
+           \\end{equation}
+
+        .. math::
+
+           \\begin{equation}
+               \\mathbf{J_n} = -q \\mu_n n \\nabla \\psi + q D_n \\nabla n
+           \\end{equation}
+
+        .. math::
+
+           \\begin{equation}
+               \\mathbf{J_p} = -q \\mu_p p \\nabla \\psi - q D_p \\nabla p
+           \\end{equation}
+
+        .. math::
+
+           \\begin{equation}
+               C = N_d - N_a
+           \\end{equation}
+
+
         Both acceptors and donors can be either a positive number or an 'xarray.DataArray'.
         Default values for parameters and models are those appropriate for Silicon
     """

@@ -108,69 +108,34 @@ class HeatChargeSimulation(AbstractSimulation):
         A ``HeatChargeSimulation`` supports different types of simulations. It solves the
         heat and conduction equations using the Finite-Volume (FV) method. This solver
         determines the required computation physics according to the simulation scene definition.
-        This is implemented in this way due to the strong physical coupling between this physics.
+        This is implemented in this way due to the strong multi-physics coupling.
 
-        .. list-table:: Let's go through how this can work:
+    Let's understand how the physics solving is determined:
+
+        .. list-table::
            :widths: 25 75
            :header-rows: 1
-           * - Computation Type
-             - Example Configuration Requirements
+
+           * - Simulation Type
+             - Example Configuration Settings
            * - ``HEAT``
              - The heat equation is solved with specified heat sources,
-               BCs, etc. Structures should incorporate mediums with heat properties.
+               boundary conditions, etc. Structures should incorporate materials
+               with defined heat properties.
            * - ``CONDUCTION``
-             - The conduction equation, :math:`\\div(\\sigma*\\grad(\\psi))=0`,
-               (with sigma being the electric conductivity) is solved for specified BCs.
+             - The conduction equation, :math:`\\text{div}(\\sigma \\cdot \\nabla(\\psi)) = 0`,
+               where :math:`\\sigma` is the electric conductivity, is solved with
+               specified boundary conditions.
            * - ``CHARGE``
-             - Drift-diffusion equations are solved for structures
-               where a ``SemiconductorMedium`` has been defined. Insulators defined with
-               ``ChargeInsulatorMedium`` can be included in the simulations for which only
-               electric potential field will be calculated.
-
-
-        The drift-diffusion equations for semiconductor materials are defined as follows:
-
-        .. math::
-
-           -\\nabla \\cdot \\varepsilon \\nabla \\psi = q (p - n + C)
-
-           \\nabla \\cdot \\mathbf{J_n} - q R = q \\frac{\\partial n}{\\partial t}
-
-           -\\nabla \\cdot \\mathbf{J_p} - q R = q \\frac{\\partial p}{\\partial t}
-
-           \\mathbf{J_n} = -q \\mu_n n \\nabla \\psi + q D_n \\nabla n
-
-           \\mathbf{J_p} = -q \\mu_p p \\nabla \\psi - q D_p \\nabla p
-
-           C = N_d - N_a
-
-
-        CURRENT LIMITATIONS OF CHARGE
-        * The charge solver is currently limited to isothermal cases with T=300K.
-        * Boltzmann statistics are assumed throughout (no degeneracy effects considered).
-
-        COUPLING HEAT-CONDUCTION
-        Coupling between these simulations is currently limited to 1-way coupling between
-        heat and conduction simulations. Coupling is specified by defining a heat source of
-        type 'HeatFromElectricSource'. With this coupling, joule heating is calculated as part
-        of the solution to a CONDUCTION simulation and then read in to the HEAT simulation.
-        When using coupling we anticipate two scenarios:
-            1. one in which BCs and sources are specified for both HEAT and CONDUCTION simulations.
-                In this case one mesh will be generated and used for both the CONDUCTION and HEAT
-                simulations.
-            2. only heat BCs/sources are provided. In this case, only the HEAT equation will be solved.
-                Before the simulation starts, it will try to load the heat source from file so a
-                previously run CONDUCTION simulations must have run previously. Since the CONDUCTION
-                and HEAT meshes may differ, an interpolation between them will be performed prior to
-                starting the HEAT simulation.
-        Additional heat sources can be defined, in which case, they will be added on
-        top of the coupling heat source.
-
+             - Drift-diffusion equations are solved for structures containing
+               a defined :class:`SemiconductorMedium`. Insulators with a
+               ``ChargeInsulatorMedium`` can also be included. For these, only the
+               electric potential field is calculated.
 
     Examples
     --------
+    To run a thermal (``HEAT`` |:fire:|) simulation with a solid conductive structure:
 
-    To run a thermal (HEAT |:fire:|) simulation with a solid conductive structure:
     >>> from tidy3d import Medium, SolidSpec, FluidSpec, UniformUnstructuredGrid, TemperatureMonitor
     >>> heat_sim = HeatChargeSimulation(
     ...     size=(3.0, 3.0, 3.0),
@@ -199,7 +164,35 @@ class HeatChargeSimulation(AbstractSimulation):
     ...     monitors=[TemperatureMonitor(size=(1, 2, 3), name="sample")],
     ... )
 
-    To run a drift-diffusion equation
+    To run a drift-diffusion (``CHARGE`` |:zap:|) equation:
+    TODO EXAMPLE
+
+
+    Coupling between ``HEAT`` and electrical ``CONDUCTION`` simulations is currently limited to 1-way.
+    This is specified by defining a heat source of type :class:`HeatFromElectricSource`. With this coupling, joule heating is
+    calculated as part  of the solution to a CONDUCTION simulation and translated into the HEAT simulation.
+
+    Two common scenarios can use this coupling definition:
+        1. one in which BCs and sources are specified for both HEAT and CONDUCTION simulations.
+            In this case one mesh will be generated and used for both the CONDUCTION and HEAT
+            simulations.
+        2. only heat BCs/sources are provided. In this case, only the HEAT equation will be solved.
+            Before the simulation starts, it will try to load the heat source from file so a
+            previously run CONDUCTION simulations must have run previously. Since the CONDUCTION
+            and HEAT meshes may differ, an interpolation between them will be performed prior to
+            starting the HEAT simulation.
+
+    Additional heat sources can be defined, in which case, they will be added on
+    top of the coupling heat source. Let's review an example:
+    TODO EXAMPLE
+
+    Warnings
+    --------
+    There are some current limitation of the CHARGE solver:
+
+    * The charge solver is currently limited to isothermal cases with T=300K.
+    * Boltzmann statistics are assumed throughout (no degeneracy effects considered).
+
     """
 
     medium: StructureMediumTypes = pd.Field(
