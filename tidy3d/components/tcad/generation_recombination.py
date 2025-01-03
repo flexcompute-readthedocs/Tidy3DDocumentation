@@ -4,8 +4,22 @@ from tidy3d.components.base import Tidy3dBaseModel
 
 
 class AugerRecombination(Tidy3dBaseModel):
-    """This class defines the parameters for the Auger recombination model.
-    NOTE: default parameters are those appropriate for Silicon."""
+    """
+    This class defines the parameters for the Auger recombination model.
+
+    Notes
+    -----
+
+        The Auger recombination rate ``R_A`` is primarily defined by the electrons and holes Auger recombination
+        coefficients, :math:`C_n` and :math:`C_p`, respectively.
+
+        .. math::
+
+            R_A = \\left( C_n n + C_p p \\right) \\left( np - n_0 p_0 \\right)
+
+    Note
+    -----
+        The default parameters are those appropriate for Silicon."""
 
     c_n: pd.PositiveFloat = pd.Field(
         2.8e-31, title="Constant for electrons", description="Constant for electrons in cm^6/s"
@@ -17,8 +31,22 @@ class AugerRecombination(Tidy3dBaseModel):
 
 
 class RadiativeRecombination(Tidy3dBaseModel):
-    """This class is used to define the parameters for the radiative recombination model.
-    NOTE: default values are those appropriate for Silicon."""
+    """
+    This class is used to define the parameters for the radiative recombination model.
+
+    Notes
+    -----
+
+        This is a direct recombination model primarily defined by a radiative recombination coefficient :math:`R_{\\text{rad}}`.
+
+        .. math::
+
+            R_{\\text{rad}} = C \\left( np - n_0 p_0 \\right)
+
+    Note
+    ----
+        The default values are those appropriate for Silicon.
+    """
 
     r_const: float = pd.Field(
         1.6e-14,
@@ -32,6 +60,7 @@ class ShockleyReedHallRecombination(Tidy3dBaseModel):
 
     Notes
     -----
+        TODO verify mid gap limitations or not.
         The recombination rate parameter from this model is defined from [1]_ as follows:
 
         .. math::
@@ -46,8 +75,8 @@ class ShockleyReedHallRecombination(Tidy3dBaseModel):
                lifetimes in silicon. Solid-State Electronics, 35:1585–1596, 1992.
 
 
-    Warning
-    -------
+    Note
+    ----
     Important considerations when using this model:
 
     - Currently, lifetimes are considered constant (not dependent on temperature or doping)

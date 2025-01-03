@@ -67,7 +67,9 @@ class ChargeInsulatorMedium(AbstractChargeMedium):
     >>> solid = ChargeInsulatorMedium()
     >>> solid2 = ChargeInsulatorMedium(permittivity=1.1)
 
-    Note: relative permittivity will be assumed 1 if no value is specified.
+    Note
+    ----
+        A relative permittivity :math:`\\varepsilon` will be assumed 1 if no value is specified.
     """
 
 
@@ -78,7 +80,9 @@ class ChargeConductorMedium(AbstractChargeMedium):
     -------
     >>> solid = ChargeConductorMedium(conductivity=3)
 
-    Note: relative permittivity will be assumed 1 if no value is specified.
+    Note
+    ----
+        A relative permittivity will be assumed 1 if no value is specified.
     """
 
     conductivity: pd.PositiveFloat = pd.Field(
@@ -143,29 +147,38 @@ class SemiconductorMedium(AbstractChargeMedium):
              - Parameter Name
              - Description
            * - :math:`N_a`
-             - ```acceptors``
+             - ``acceptors``
              - TODO_NAME?
            * - :math:`N_d`
-             - ```donors``
+             - ``donors``
              - TODO_NAME?
            * - :math:`n`
-             - ```nc``
+             - ``nc``
              - Electron concentration TODO_NAME?
            * - :math:`p`
-             - ```nv``
+             - ``nv``
              - Hole concentration TODO_NAME?
            * - :math:`R`
              - ``recombination``
              - Generation-recombination term. TODO_NAME?
            * - :math:`E_g`
-             - ``recombination``
-             - Generation-recombination term. TODO_NAME?
+             - ``eg``
+             - Bandgap Energy TODO_NAME?
+           * - :math:`\\sigma`
+             - ``conductivity``
+             -
+           * - :math:`\\varepsilon`
+             - ``permittivity``
+             -
            * - :math:`q`
              - ``tidy3d.constants.Q_e``
              - Fundamental electron charge.
 
-        Both acceptors and donors can be either a positive number or an 'xarray.DataArray'.
-        Default values for parameters and models are those appropriate for Silicon
+
+    Note
+    ----
+        - Both acceptors and donors can be either a positive number or an 'xarray.DataArray'.
+        - Default values for parameters and models are those appropriate for Silicon
     """
 
     nc: pd.PositiveFloat = pd.Field(
