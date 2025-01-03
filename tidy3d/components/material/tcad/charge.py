@@ -95,7 +95,6 @@ class SemiconductorMedium(AbstractChargeMedium):
 
     Notes
     -----
-
         The drift-diffusion equations for semiconductor materials are defined as follows:
 
         .. math::
@@ -134,6 +133,36 @@ class SemiconductorMedium(AbstractChargeMedium):
                C = N_d - N_a
            \\end{equation}
 
+    Let's explore how these material properties are defined as class parameters or other classes.
+
+         .. list-table::
+           :widths: 25 25 75
+           :header-rows: 1
+
+           * - Symbol
+             - Parameter Name
+             - Description
+           * - :math:`N_a`
+             - ```acceptors``
+             - TODO_NAME?
+           * - :math:`N_d`
+             - ```donors``
+             - TODO_NAME?
+           * - :math:`n`
+             - ```nc``
+             - Electron concentration TODO_NAME?
+           * - :math:`p`
+             - ```nv``
+             - Hole concentration TODO_NAME?
+           * - :math:`R`
+             - ``recombination``
+             - Generation-recombination term. TODO_NAME?
+           * - :math:`E_g`
+             - ``recombination``
+             - Generation-recombination term. TODO_NAME?
+           * - :math:`q`
+             - ``tidy3d.constants.Q_e``
+             - Fundamental electron charge.
 
         Both acceptors and donors can be either a positive number or an 'xarray.DataArray'.
         Default values for parameters and models are those appropriate for Silicon
@@ -172,7 +201,7 @@ class SemiconductorMedium(AbstractChargeMedium):
 
     recombination: Tuple[RecombinationModelTypes, ...] = pd.Field(
         (ShockleyReedHallRecombination(), AugerRecombination(), RadiativeRecombination()),
-        title="Recombination models",
+        title="Generation-Recombination models",
         description="Array containing the recombination models to be applied to the material.",
     )
 

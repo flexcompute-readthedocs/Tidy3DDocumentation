@@ -6,12 +6,19 @@ from tidy3d.constants import VOLT
 
 # Band-gap narrowing models
 class SlotboomNarrowingBandGap(Tidy3dBaseModel):
-    """This class specifies the parameters for the Slotboom model for band-gap narrowing.
+    """
+    This class specifies the parameters for the Slotboom model for band-gap narrowing.
 
-    Reference
-    ---------
-    'UNIFIED APPARENT BANDGAP NARROWING IN n- AND p-TYPE SILICON'
-    Solid-State Electronics Vol. 35, No. 2, pp. 125-129, 1992"""
+    Notes
+    ------
+        Based on the model defined in [1]_ as follows:
+
+        .. math::
+
+
+
+        .. [1] 'UNIFIED APPARENT BANDGAP NARROWING IN n- AND p-TYPE SILICON'
+                Solid-State Electronics Vol. 35, No. 2, pp. 125-129, 1992"""
 
     v1: pd.PositiveFloat = pd.Field(
         6.92 * 1e-3, title="V1 parameter", description=f"V1 parameter in {VOLT}", units=VOLT

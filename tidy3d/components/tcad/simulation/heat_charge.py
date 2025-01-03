@@ -170,17 +170,17 @@ class HeatChargeSimulation(AbstractSimulation):
 
     Coupling between ``HEAT`` and electrical ``CONDUCTION`` simulations is currently limited to 1-way.
     This is specified by defining a heat source of type :class:`HeatFromElectricSource`. With this coupling, joule heating is
-    calculated as part  of the solution to a CONDUCTION simulation and translated into the HEAT simulation.
+    calculated as part  of the solution to a ``CONDUCTION`` simulation and translated into the ``HEAT`` simulation.
 
     Two common scenarios can use this coupling definition:
-        1. one in which BCs and sources are specified for both HEAT and CONDUCTION simulations.
-            In this case one mesh will be generated and used for both the CONDUCTION and HEAT
+        1. one in which BCs and sources are specified for both ``HEAT`` and ``CONDUCTION`` simulations.
+            In this case one mesh will be generated and used for both the ``CONDUCTION`` and ``HEAT``
             simulations.
-        2. only heat BCs/sources are provided. In this case, only the HEAT equation will be solved.
+        2. only heat BCs/sources are provided. In this case, only the ``HEAT`` equation will be solved.
             Before the simulation starts, it will try to load the heat source from file so a
-            previously run CONDUCTION simulations must have run previously. Since the CONDUCTION
-            and HEAT meshes may differ, an interpolation between them will be performed prior to
-            starting the HEAT simulation.
+            previously run ``CONDUCTION`` simulations must have run previously. Since the CONDUCTION
+            and ``HEAT`` meshes may differ, an interpolation between them will be performed prior to
+            starting the ``HEAT`` simulation.
 
     Additional heat sources can be defined, in which case, they will be added on
     top of the coupling heat source. Let's review an example:
@@ -198,11 +198,12 @@ class HeatChargeSimulation(AbstractSimulation):
     medium: StructureMediumTypes = pd.Field(
         Medium(),
         title="Background Medium",
-        description="Background medium of simulation, defaults to a standard dispersionless `Medium` if not specified.",
+        description="Background medium of simulation, defaults to a standard dispersion-less :class:`Medium` if not "
+        "specified.",
         discriminator=TYPE_TAG_STR,
     )
     """
-    Background medium of simulation, defaults to `ChargeInsulatorMedium` if not specified.
+    Background medium of simulation, defaults to a standard dispersion-less :class:`Medium` if not specified.
     """
 
     sources: Tuple[HeatChargeSourceTypes, ...] = pd.Field(

@@ -6,8 +6,18 @@ from tidy3d.components.base import Tidy3dBaseModel
 # Mobility models
 class CaugheyThomasMobility(Tidy3dBaseModel):
     """This class defines the parameters for the mobility model of Caughey and Thomas.
-    NOTE: high electric field effects not yet supported.
-    NOTE: Default values are those appropriate for Silicon."""
+
+    Notes
+    -----
+        TODO equations here
+
+    Warning
+    -------
+    There are some current limitations of this model:
+
+    - high electric field effects not yet supported.
+    - Default values are those appropriate for Silicon.
+    """
 
     # mobilities
     mu_n_min: pd.PositiveFloat = pd.Field(
