@@ -5,12 +5,12 @@ from tidy3d.components.base import Tidy3dBaseModel
 
 class AugerRecombination(Tidy3dBaseModel):
     """
-    This class defines the parameters for the Auger R model.
+    This class defines the parameters for the Auger recombination model.
 
     Notes
     -----
 
-        The Auger R rate ``R_A`` is primarily defined by the electrons and holes Auger R
+        The Auger recombination rate ``R_A`` is primarily defined by the electrons and holes Auger recombination
         coefficients, :math:`C_n` and :math:`C_p`, respectively.
 
         .. math::
@@ -32,12 +32,12 @@ class AugerRecombination(Tidy3dBaseModel):
 
 class RadiativeRecombination(Tidy3dBaseModel):
     """
-    This class is used to define the parameters for the radiative R model.
+    This class is used to define the parameters for the radiative recombination model.
 
     Notes
     -----
 
-        This is a direct R model primarily defined by a radiative R coefficient :math:`R_{\\text{rad}}`.
+        This is a direct recombination model primarily defined by a radiative recombination coefficient :math:`R_{\\text{rad}}`.
 
         .. math::
 
@@ -56,12 +56,12 @@ class RadiativeRecombination(Tidy3dBaseModel):
 
 
 class ShockleyReedHallRecombination(Tidy3dBaseModel):
-    """This class defines the parameters for the Shockley-Reed-Hall (SRH) R model.
+    """This class defines the parameters for the Shockley-Reed-Hall (SRH) recombination model.
 
     Notes
     -----
         TODO verify mid gap limitations or not.
-        The R rate parameter from this model is defined from [1]_ as follows:
+        The recombination rate parameter from this model is defined from [1]_ as follows:
 
         .. math::
 

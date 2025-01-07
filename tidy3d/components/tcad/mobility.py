@@ -6,13 +6,13 @@ from tidy3d.components.base import Tidy3dBaseModel
 class CaugheyThomasMobility(Tidy3dBaseModel):
     """This class defines the parameters for the mobility model of Caughey and Thomas [1]_ as defined below:
 
-
-    .. [1] M. Caughey and R.E. Thomas. Carrier mobilities in silicon empirically related to doping
-           and field. Proceedings of the IEEE, 55(12):2192–2193, December 1967
-
     Notes
     -----
         TODO equations here
+
+
+        .. [1] M. Caughey and R.E. Thomas. Carrier mobilities in silicon empirically related to doping
+           and field. Proceedings of the IEEE, 55(12):2192–2193, December 1967
 
     Warning
     -------

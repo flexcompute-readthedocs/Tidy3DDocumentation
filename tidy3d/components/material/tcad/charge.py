@@ -103,56 +103,109 @@ class SemiconductorMedium(AbstractChargeMedium):
 
         .. math::
 
-           - \\nabla \\cdot \\left( \\varepsilon_0 \\varepsilon_r \\nabla \\psi \\right) = q \\left( p - n + N_D^+ - N_A^- \\right)
+            \\begin{equation}
+                - \\nabla \\cdot \\left( \\varepsilon_0 \\varepsilon_r \\nabla \\psi \\right) = q \\left( p - n + N_d^+ - N_a^- \\right)
+            \\end{equation}
 
-        In this solver, we assume Boltzmann statistics. The electron and hole densities, :math:`n` and :math:`p`, can be
-        calculated from the conduction/valence bands and quasi-Fermi energy levels:
 
-        .. math::
+    In this solver, we assume Boltzmann statistics. The electron and hole densities, :math:`n` and :math:`p`, can be
+    calculated from the conduction/valence bands and quasi-Fermi energy levels:
 
-            n = N_C \\exp\\left( \\frac{E_{Fn} - E_C}{k_B T} \\right)
+    .. math::
 
-        .. math::
+        \\begin{equation}
+            n = N_c \\exp\\left( \\frac{E_{Fn} - E_C}{k_B T} \\right)
+        \\end{equation}
 
-            p = N_V \\exp\\left( \\frac{E_V - E_{Fp}}{k_B T} \\right)
 
-        Let's explore how these material properties are defined as class parameters or other classes.
+    .. math::
 
-         .. list-table::
-           :widths: 25 25 75
-           :header-rows: 1
+        \\begin{equation}
+            p = N_v \\exp\\left( \\frac{E_V - E_{Fp}}{k_B T} \\right)
+        \\end{equation}
 
-           * - Symbol
-             - Parameter Name
-             - Description
-           * - :math:`N_a`
-             - ``N_a``
-             - Ionized N_a density
-           * - :math:`N_d`
-             - ``N_d``
-             - Ionized N_d density
-           * - :math:`N_c`
-             - ``N_c``
-             - Effective density of states in the conduction band.
-           * - :math:`N_v`
-             - ``N_v``
-             - Effective density of states in valence band.
-           * - :math:`R`
-             - ``R``
-             - Generation-R term. TODO_NAME?
-           * - :math:`E_g`
-             - ``E_g``
-             - Bandgap Energy.
-           * - :math:`\\sigma`
-             - ``conductivity``
-             - Electrical conductivity.
-           * - :math:`\\varepsilon_r`
-             - ``permittivity``
-             - Relative permittivity.
-           * - :math:`q`
-             - ``tidy3d.constants.Q_e``
-             - Fundamental electron charge.
 
+    Currently, an isothermal drift-diffusion model is supported:
+
+    .. math::
+
+        \\begin{equation}
+            q \\frac{\\partial n}{\\partial t} = \\nabla \\cdot \\mathbf{J_n} - qR
+        \\end{equation}
+
+
+    .. math::
+
+        \\begin{equation}
+            q \\frac{\\partial p}{\\partial t} = -\\nabla \\cdot \\mathbf{J_p} - qR
+        \\end{equation}
+
+
+    The electron and hole current density :math:`\\mathbf{J_n}` & :math:`\\mathbf{J_p}` is solved for steady
+    temperature conditions as formalised in [1]_.
+
+    .. math::
+
+        \\begin{equation}
+             \\mathbf{J_n} = q \\mu_n \\mathbf{F_{n,e}} + q D_n \\nabla n
+        \\end{equation}
+
+
+    .. math::
+
+        \\begin{equation}
+             \\mathbf{J_p} = q \\mu_p \\mathbf{F_{p,e}} - q D_p \\nabla p
+        \\end{equation}
+
+
+    .. math::
+
+        \\begin{equation}
+            \\mathbf{F_{eff}} = \\nabla \\left( E_i - \\frac{\\Delta E_g}{2} \\right)
+        \\end{equation}
+
+    Let's explore how these material properties are defined as class parameters or other classes.
+
+     .. list-table::
+       :widths: 25 25 75
+       :header-rows: 1
+
+       * - Symbol
+         - Parameter Name
+         - Description
+       * - :math:`N_a`
+         - ``N_a``
+         - Ionized acceptors density
+       * - :math:`N_d`
+         - ``N_d``
+         - Ionized donors density
+       * - :math:`N_c`
+         - ``N_c``
+         - Effective density of states in the conduction band.
+       * - :math:`N_v`
+         - ``N_v``
+         - Effective density of states in valence band.
+       * - :math:`R`
+         - ``R``
+         - Generation-Recombination term.
+       * - :math:`E_g`
+         - ``E_g``
+         - Bandgap Energy.
+       * - :math:`\\Delta E_g`
+         - ``delta_E_g``
+         - Bandgap Narrowing.
+       * - :math:`\\sigma`
+         - ``conductivity``
+         - Electrical conductivity.
+       * - :math:`\\varepsilon_r`
+         - ``permittivity``
+         - Relative permittivity.
+       * - :math:`q`
+         - ``tidy3d.constants.Q_e``
+         - Fundamental electron charge.
+
+
+    .. [1] Schroeder, D., T. Ostermann, and O. Kalz. "Comparison of transport models far the simulation of degenerate semiconductors." Semiconductor science and technology 9.4 (1994): 364.
 
     Note
     ----
@@ -181,10 +234,6 @@ class SemiconductorMedium(AbstractChargeMedium):
         units=ELECTRON_VOLT,
     )
 
-    chi: float = pd.Field(
-        4.05, title="Electron affinity", description="Electron affinity", units=ELECTRON_VOLT
-    )
-
     mobility: MobilityModelTypes = pd.Field(
         CaugheyThomasMobility(),
         title="Mobility model",
@@ -197,9 +246,9 @@ class SemiconductorMedium(AbstractChargeMedium):
         description="Array containing the R models to be applied to the material.",
     )
 
-    bandgap_narrowing: BandGapNarrowingModelTypes = pd.Field(
+    delta_E_g: BandGapNarrowingModelTypes = pd.Field(
         SlotboomBandGapNarrowing(),
-        title="Bandgap narrowing model.",
+        title=r"$\Delta E_g$ Bandgap narrowing model.",
         description="Bandgap narrowing model.",
     )
 
