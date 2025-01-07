@@ -47,7 +47,7 @@ class CurrentBC(HeatChargeBC):
 
 class InsulatingBC(HeatChargeBC):
     """Insulation boundary condition.
-    Ensures electric fields as well as the surface R current density
+    Ensures electric fields as well as the surface recombination current density
     are set to zero.
 
     Example
