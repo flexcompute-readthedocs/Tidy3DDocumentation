@@ -11,13 +11,13 @@ from tidy3d.components.medium import AbstractMedium
 from tidy3d.components.tcad.doping import DopingBoxType
 from tidy3d.components.tcad.types import (
     AugerRecombination,
-    BandGapModelTypes,
+    BandGapNarrowingModelTypes,
     CaugheyThomasMobility,
     MobilityModelTypes,
     RadiativeRecombination,
     RecombinationModelTypes,
     ShockleyReedHallRecombination,
-    SlotboomNarrowingBandGap,
+    SlotboomBandGapNarrowing,
 )
 from tidy3d.components.types import Union
 from tidy3d.constants import (
@@ -99,43 +99,22 @@ class SemiconductorMedium(AbstractChargeMedium):
 
     Notes
     -----
-        The drift-diffusion equations for semiconductor materials are defined as follows:
+        The nonlinear electrostatic Poisson equation is:
 
         .. math::
 
-           \\begin{equation}
-               -\\nabla \\cdot \\varepsilon \\nabla \\psi = q (p - n + C)
-           \\end{equation}
+           - \\nabla \\cdot \\left( \\varepsilon_0 \\varepsilon_r \\nabla \\psi \\right) = q \\left( p - n + N_D^+ - N_A^- \\right)
+
+        In this solver, we assume Boltzmann statistics. The electron and hole densities, :math:`n` and :math:`p`, can be
+        calculated from the conduction/valence bands and quasi-Fermi energy levels:
 
         .. math::
 
-           \\begin{equation}
-               \\nabla \\cdot \\mathbf{J_n} - q R = q \\frac{\\partial n}{\\partial t}
-           \\end{equation}
+            n = N_C \\exp\\left( \\frac{E_{Fn} - E_C}{k_B T} \\right)
 
         .. math::
 
-           \\begin{equation}
-               -\\nabla \\cdot \\mathbf{J_p} - q R = q \\frac{\\partial p}{\\partial t}
-           \\end{equation}
-
-        .. math::
-
-           \\begin{equation}
-               \\mathbf{J_n} = -q \\mu_n n \\nabla \\psi + q D_n \\nabla n
-           \\end{equation}
-
-        .. math::
-
-           \\begin{equation}
-               \\mathbf{J_p} = -q \\mu_p p \\nabla \\psi - q D_p \\nabla p
-           \\end{equation}
-
-        .. math::
-
-           \\begin{equation}
-               C = N_d - N_a
-           \\end{equation}
+            p = N_V \\exp\\left( \\frac{E_V - E_{Fp}}{k_B T} \\right)
 
         Let's explore how these material properties are defined as class parameters or other classes.
 
@@ -147,29 +126,29 @@ class SemiconductorMedium(AbstractChargeMedium):
              - Parameter Name
              - Description
            * - :math:`N_a`
-             - ``acceptors``
-             - TODO_NAME?
+             - ``N_a``
+             - Ionized N_a density
            * - :math:`N_d`
-             - ``donors``
-             - TODO_NAME?
-           * - :math:`n`
-             - ``nc``
-             - Electron concentration TODO_NAME?
-           * - :math:`p`
-             - ``nv``
-             - Hole concentration TODO_NAME?
+             - ``N_d``
+             - Ionized N_d density
+           * - :math:`N_c`
+             - ``N_c``
+             - Effective density of states in the conduction band.
+           * - :math:`N_v`
+             - ``N_v``
+             - Effective density of states in valence band.
            * - :math:`R`
-             - ``recombination``
-             - Generation-recombination term. TODO_NAME?
+             - ``R``
+             - Generation-R term. TODO_NAME?
            * - :math:`E_g`
-             - ``eg``
-             - Bandgap Energy TODO_NAME?
+             - ``E_g``
+             - Bandgap Energy.
            * - :math:`\\sigma`
              - ``conductivity``
-             -
-           * - :math:`\\varepsilon`
+             - Electrical conductivity.
+           * - :math:`\\varepsilon_r`
              - ``permittivity``
-             -
+             - Relative permittivity.
            * - :math:`q`
              - ``tidy3d.constants.Q_e``
              - Fundamental electron charge.
@@ -177,25 +156,25 @@ class SemiconductorMedium(AbstractChargeMedium):
 
     Note
     ----
-        - Both acceptors and donors can be either a positive number or an 'xarray.DataArray'.
-        - Default values for parameters and models are those appropriate for Silicon
+        - Both :math:`N_a` and :math:`N_d` can be either a positive number or an ``xarray.DataArray``.
+        - Default values for parameters and models are those appropriate for Silicon.
     """
 
-    nc: pd.PositiveFloat = pd.Field(
+    N_c: pd.PositiveFloat = pd.Field(
         2.86e19,
         title="Effective density of electron states",
-        description="Effective density of electron states",
+        description=r"$N_c$ Effective density of states in the conduction band.",
         units="cm^(-3)",
     )
 
-    nv: pd.PositiveFloat = pd.Field(
+    N_v: pd.PositiveFloat = pd.Field(
         3.1e19,
         title="Effective density of hole states",
-        description="Effective density of hole states",
+        description=r"$N_v$ Effective density of states in the valence band.",
         units="cm^(-3)",
     )
 
-    eg: pd.PositiveFloat = pd.Field(
+    E_g: pd.PositiveFloat = pd.Field(
         1.11,
         title="Band-gap energy",
         description="Band-gap energy",
@@ -212,26 +191,26 @@ class SemiconductorMedium(AbstractChargeMedium):
         description="Mobility model",
     )
 
-    recombination: Tuple[RecombinationModelTypes, ...] = pd.Field(
+    R: Tuple[RecombinationModelTypes, ...] = pd.Field(
         (ShockleyReedHallRecombination(), AugerRecombination(), RadiativeRecombination()),
         title="Generation-Recombination models",
-        description="Array containing the recombination models to be applied to the material.",
+        description="Array containing the R models to be applied to the material.",
     )
 
-    bandgap: BandGapModelTypes = pd.Field(
-        SlotboomNarrowingBandGap(),
+    bandgap_narrowing: BandGapNarrowingModelTypes = pd.Field(
+        SlotboomBandGapNarrowing(),
         title="Bandgap narrowing model.",
         description="Bandgap narrowing model.",
     )
 
-    acceptors: Union[pd.NonNegativeFloat, SpatialDataArray, Tuple[DopingBoxType, ...]] = pd.Field(
+    N_a: Union[pd.NonNegativeFloat, SpatialDataArray, Tuple[DopingBoxType, ...]] = pd.Field(
         0,
         title="Doping: Acceptor concentration",
         description="Units of 1/cm^3",
         units="1/cm^3",
     )
 
-    donors: Union[pd.NonNegativeFloat, SpatialDataArray, Tuple[DopingBoxType, ...]] = pd.Field(
+    N_d: Union[pd.NonNegativeFloat, SpatialDataArray, Tuple[DopingBoxType, ...]] = pd.Field(
         0,
         title="Doping: Donor concentration",
         description="Units of 1/cm^3",

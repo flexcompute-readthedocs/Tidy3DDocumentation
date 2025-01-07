@@ -210,7 +210,7 @@ class JaxSimulationData(SimulationData, JaxObject):
                 "All gradients will be zero for anything depending on this simulation's data. "
                 "This comes up when a simulation's data contributes to the value of an objective "
                 "function but the contribution from each member of the data is 0. "
-                "If this is intended (eg. if using 'jnp.max()' of several simulation results), "
+                "If this is intended (E_g. if using 'jnp.max()' of several simulation results), "
                 "please ignore. Otherwise, this can suggest a mistake in your objective function."
             )
 

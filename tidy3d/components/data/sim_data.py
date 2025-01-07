@@ -458,7 +458,7 @@ class AbstractYeeGridSimulationData(AbstractSimulationData, ABC):
         field_monitor_data : AbstractFieldData
             Field monitor data to plot.
         field_name : str
-            Name of ``field`` component to plot (eg. `'Ex'`).
+            Name of ``field`` component to plot (E_g. `'Ex'`).
             Also accepts ``'E'`` and ``'H'`` to plot the vector magnitudes of the electric and
             magnetic fields, and ``'S'`` for the Poynting vector.
         val : Literal['real', 'imag', 'abs', 'abs^2', 'phase'] = 'real'
@@ -670,7 +670,7 @@ class AbstractYeeGridSimulationData(AbstractSimulationData, ABC):
             Name of :class:`.FieldMonitor`, :class:`.FieldTimeData`, or :class:`.ModeSolverData`
             to plot.
         field_name : str
-            Name of ``field`` component to plot (eg. `'Ex'`).
+            Name of ``field`` component to plot (E_g. `'Ex'`).
             Also accepts ``'E'`` and ``'H'`` to plot the vector magnitudes of the electric and
             magnetic fields, and ``'S'`` for the Poynting vector.
         val : Literal['real', 'imag', 'abs', 'abs^2', 'phase'] = 'real'

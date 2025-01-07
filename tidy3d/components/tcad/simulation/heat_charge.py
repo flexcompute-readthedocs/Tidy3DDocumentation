@@ -186,13 +186,12 @@ class HeatChargeSimulation(AbstractSimulation):
     top of the coupling heat source. Let's review an example:
     TODO EXAMPLE
 
-    Warnings
-    --------
+    Note
+    ----
     There are some current limitation of the CHARGE solver:
 
     * The charge solver is currently limited to isothermal cases with T=300K.
     * Boltzmann statistics are assumed throughout (no degeneracy effects considered).
-
     """
 
     medium: StructureMediumTypes = pd.Field(

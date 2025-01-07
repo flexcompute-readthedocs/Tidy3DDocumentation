@@ -89,7 +89,7 @@ class RadiusPenalty(Penalty):
                 "version '2.7'. "
                 "The derivative information is contained in 'JaxPolySlab.vertices_jax'. "
                 "Therefore, we recommend changing your code to either pass that field or pass "
-                "the output of the parameterization functions directly, eg. "
+                "the output of the parameterization functions directly, E_g. "
                 "'penalty.evaluate(make_vertices(params))'."
             )
 

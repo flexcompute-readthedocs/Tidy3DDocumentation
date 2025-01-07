@@ -139,7 +139,7 @@ class HeatChargeSimulationData(AbstractSimulationData):
         field_monitor_name : str
             Name of :class:`.TemperatureMonitorData` to plot.
         field_name : str = None
-            Name of ``field`` component to plot (eg. `'temperature'`). Not required if monitor data contains only one field.
+            Name of ``field`` component to plot (E_g. `'temperature'`). Not required if monitor data contains only one field.
         val : Literal['real', 'abs', 'abs^2'] = 'real'
             Which part of the field to plot.
         scale : Literal['lin', 'log']

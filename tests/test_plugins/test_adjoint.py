@@ -983,7 +983,7 @@ def test_intersect_structures(log_capture):
 
 
 def test_structure_overlaps():
-    """Test weird overlap edge cases, eg with box out of bounds and 2D sim."""
+    """Test weird overlap edge cases, E_g with box out of bounds and 2D sim."""
 
     box = JaxBox(center=(0, 0, 0), size=(td.inf, 2, 1))
     medium = JaxMedium(permittivity=2.0)

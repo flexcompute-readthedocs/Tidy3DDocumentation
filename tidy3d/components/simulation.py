@@ -1155,9 +1155,9 @@ class AbstractYeeGridSimulation(AbstractSimulation, ABC):
         coord_key : str = 'centers'
             Specifies at what part of the grid to return the permittivity at.
             Accepted values are ``{'centers', 'boundaries', 'Ex', 'Ey', 'Ez', 'Exy', 'Exz', 'Eyx',
-            'Eyz', 'Ezx', Ezy'}``. The field values (eg. ``'Ex'``) correspond to the corresponding field
+            'Eyz', 'Ezx', Ezy'}``. The field values (E_g. ``'Ex'``) correspond to the corresponding field
             locations on the yee lattice. If field values are selected, the corresponding diagonal
-            (eg. ``eps_xx`` in case of ``'Ex'``) or off-diagonal (eg. ``eps_xy`` in case of ``'Exy'``) epsilon
+            (E_g. ``eps_xx`` in case of ``'Ex'``) or off-diagonal (E_g. ``eps_xy`` in case of ``'Exy'``) epsilon
             component from the epsilon tensor is returned. Otherwise, the average of the main
             values is returned.
         freq : float = None
@@ -1196,9 +1196,9 @@ class AbstractYeeGridSimulation(AbstractSimulation, ABC):
         coord_key : str = 'centers'
             Specifies at what part of the grid to return the permittivity at.
             Accepted values are ``{'centers', 'boundaries', 'Ex', 'Ey', 'Ez', 'Exy', 'Exz', 'Eyx',
-            'Eyz', 'Ezx', Ezy'}``. The field values (eg. ``'Ex'``) correspond to the corresponding field
+            'Eyz', 'Ezx', Ezy'}``. The field values (E_g. ``'Ex'``) correspond to the corresponding field
             locations on the yee lattice. If field values are selected, the corresponding diagonal
-            (eg. ``eps_xx`` in case of ``'Ex'``) or off-diagonal (eg. ``eps_xy`` in case of ``'Exy'``) epsilon
+            (E_g. ``eps_xx`` in case of ``'Ex'``) or off-diagonal (E_g. ``eps_xy`` in case of ``'Exy'``) epsilon
             component from the epsilon tensor is returned. Otherwise, the average of the main
             values is returned.
         freq : float = None
@@ -1283,7 +1283,7 @@ class AbstractYeeGridSimulation(AbstractSimulation, ABC):
 
         # combine all data into dictionary
         if coord_key[0] == "E":
-            # off-diagonal components are sampled at respective locations (eg. `eps_xy` at `Ex`)
+            # off-diagonal components are sampled at respective locations (E_g. `eps_xy` at `Ex`)
             coords = grid[coord_key[0:2]]
         else:
             coords = grid[coord_key]
@@ -1706,7 +1706,7 @@ class Simulation(AbstractYeeGridSimulation):
         **Dimensions Selection**
 
         By default, simulations are defined as 3D. To make the simulation 2D, we can just set the simulation
-        :attr:`size` in one of the dimensions to be 0. However, note that we still have to define a grid size (eg.
+        :attr:`size` in one of the dimensions to be 0. However, note that we still have to define a grid size (E_g.
         ``tidy3d.Simulation(size=[size_x, size_y, 0])``) and specify a periodic boundary condition in that direction.
 
         .. TODO sort out inheritance problem https://aware-moon.cloudvent.net/tidy3d/examples/notebooks/RingResonator/
