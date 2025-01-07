@@ -1490,7 +1490,7 @@ class AbstractCustomMedium(AbstractMedium, ABC):
             # if sizes_list is empty, then reduce() fails
             d_vol = np.array(1.0)
 
-        # TODO: probably this could be more robust. E_g if the DataArray has weird edge cases
+        # TODO: probably this could be more robust. eg if the DataArray has weird edge cases
         E_der_dim = E_der_map[f"E{dim}"]
         E_der_dim_interp = (
             E_der_dim.interp(**coords_interp, assume_sorted=True).fillna(0.0).sum(dims_sum).sum("f")
@@ -2688,7 +2688,7 @@ class CustomMedium(AbstractCustomMedium):
             # if sizes_list is empty, then reduce() fails
             d_vol = np.array(1.0)
 
-        # TODO: probably this could be more robust. E_g if the DataArray has weird edge cases
+        # TODO: probably this could be more robust. eg if the DataArray has weird edge cases
         E_der_dim = E_der_map[f"E{dim}"]
         E_der_dim_interp = (
             E_der_dim.interp(**coords_interp, assume_sorted=True).fillna(0.0).sum(dims_sum).real

@@ -723,9 +723,9 @@ class JaxSimulation(Simulation, JaxObject):
         coord_key : str = 'centers'
             Specifies at what part of the grid to return the permittivity at.
             Accepted values are ``{'centers', 'boundaries', 'Ex', 'Ey', 'Ez', 'Exy', 'Exz', 'Eyx',
-            'Eyz', 'Ezx', Ezy'}``. The field values (E_g. ``'Ex'``) correspond to the corresponding field
+            'Eyz', 'Ezx', Ezy'}``. The field values (eg. ``'Ex'``) correspond to the corresponding field
             locations on the yee lattice. If field values are selected, the corresponding diagonal
-            (E_g. ``eps_xx`` in case of ``'Ex'``) or off-diagonal (E_g. ``eps_xy`` in case of ``'Exy'``) epsilon
+            (eg. ``eps_xx`` in case of ``'Ex'``) or off-diagonal (eg. ``eps_xy`` in case of ``'Exy'``) epsilon
             component from the epsilon tensor is returned. Otherwise, the average of the main
             values is returned.
         freq : float = None

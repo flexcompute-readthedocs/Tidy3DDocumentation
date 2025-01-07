@@ -802,7 +802,7 @@ class BoundarySpec(Tidy3dBaseModel):
         Parameters
         ----------
         field_name : ``str``
-            Name of the axis, E_g. "y" along which :class:`Boundary` is requested.
+            Name of the axis, eg. "y" along which :class:`Boundary` is requested.
 
         Returns
         -------
