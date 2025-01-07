@@ -108,8 +108,9 @@ class SemiconductorMedium(AbstractChargeMedium):
             \\end{equation}
 
 
-    In this solver, we assume Boltzmann statistics. The electron and hole densities, :math:`n` and :math:`p`, can be
-    calculated from the conduction/valence bands and quasi-Fermi energy levels:
+    In this solver, we assume Boltzmann statistics. The electron and hole densities, :math:`n` and :math:`p`,
+    can be calculated from the conduction/valence bands and quasi-Fermi energy levels. An isothermal system is at a
+    constant temperature, and in our current implementation, the temperature is at :math:`T=300K`.
 
     .. math::
 
@@ -133,6 +134,8 @@ class SemiconductorMedium(AbstractChargeMedium):
             q \\frac{\\partial n}{\\partial t} = \\nabla \\cdot \\mathbf{J_n} - qR
         \\end{equation}
 
+
+    In a non-degenerate case:
 
     .. math::
 

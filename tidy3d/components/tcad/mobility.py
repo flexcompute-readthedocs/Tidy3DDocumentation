@@ -4,14 +4,19 @@ from tidy3d.components.base import Tidy3dBaseModel
 
 
 class CaugheyThomasMobility(Tidy3dBaseModel):
-    """This class defines the parameters for the mobility model of Caughey and Thomas [1]_ as defined below:
+    """The Caughey-Thomas temperature-depedent carrier mobility model.
 
     Notes
     -----
-        TODO equations here
+        This class defines the parameters for the mobility model :math:`\\mu` of Caughey and Thomas [1]_ as defined below:
 
+        .. math::
 
-        .. [1] M. Caughey and R.E. Thomas. Carrier mobilities in silicon empirically related to doping
+            \\mu = \\frac{\\mu_{max} - \\mu_{min}}{1 + \\left(N/N_{ref}\\right)^z} + \\mu_{min}
+
+    TODO temperature model.
+
+    .. [1] M. Caughey and R.E. Thomas. Carrier mobilities in silicon empirically related to doping
            and field. Proceedings of the IEEE, 55(12):2192–2193, December 1967
 
     Warning
@@ -25,7 +30,7 @@ class CaugheyThomasMobility(Tidy3dBaseModel):
     # mobilities
     mu_n_min: pd.PositiveFloat = pd.Field(
         52.2,
-        title="Minimum electron mobility",
+        title=r"$\mu_{min}$ Minimum electron mobility",
         description="Minimum electron mobility at reference temperature (300K) in cm^2/V-s. ",
     )
 
