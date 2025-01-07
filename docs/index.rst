@@ -177,7 +177,14 @@ Further Information
 .. toctree::
   :maxdepth: 2
 
+  install
+  lectures/index
+  notebooks/docs/index
+  faq/docs/index
   api/index
+  development/index
+  changelog
+  About our Solver <https://www.flexcompute.com/tidy3d/solver/>
 
 Github Repositories
 --------------------

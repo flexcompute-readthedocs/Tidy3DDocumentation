@@ -7,7 +7,15 @@ from tidy3d.log import log
 
 
 class SteadyPotentialMonitor(HeatChargeMonitor):
-    """Electric potential (:math:`\\psi`) monitor."""
+    """
+    Electric potential (:math:`\\psi`) monitor.
+
+    Example
+    -------
+    >>> voltage_monitor_z0 = td.SteadyPotentialMonitor(
+    ... center=(0, 0.14, 0), size=(0.6, 0.3, 0), name="voltage_z0", unstructured=True,
+    ... )
+    """
 
     @pd.root_validator(skip_on_failure=True)
     def check_unstructured(cls, values):
@@ -26,6 +34,12 @@ class SteadyPotentialMonitor(HeatChargeMonitor):
 class SteadyFreeCarrierMonitor(HeatChargeMonitor):
     """
     Free-carrier monitor for Charge simulations.
+
+    Example
+    -------
+    >>> voltage_monitor_z0 = td.SteadyFreeCarrierMonitor(
+    ... center=(0, 0.14, 0), size=(0.6, 0.3, 0), name="voltage_z0", unstructured=True,
+    ... )
     """
 
     # NOTE: for the time being supporting unstructured

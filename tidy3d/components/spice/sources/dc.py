@@ -30,3 +30,8 @@ class DCVoltageSource(Tidy3dBaseModel):
     name: Optional[str]
     voltage: Union[pd.FiniteFloat, list[pd.FiniteFloat]] = pd.Field(title="Voltage")
     # units: Union[VOLT, AMP] = VOLT
+
+
+class DCCurrentSource(Tidy3dBaseModel):
+    name: Optional[str]
+    current: Union[pd.FiniteFloat, list[pd.FiniteFloat]] = pd.Field(title="Voltage")
