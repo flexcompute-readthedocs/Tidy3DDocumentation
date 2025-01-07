@@ -4,7 +4,7 @@ from __future__ import annotations
 
 import pydantic.v1 as pd
 
-from tidy3d.components.spice.sources.types import VoltageSourceTypes
+from tidy3d.components.spice.sources.types import CurrentSourceTypes, VoltageSourceTypes
 from tidy3d.components.tcad.boundary.abstract import HeatChargeBC
 from tidy3d.constants import CURRENT_DENSITY, VOLT
 
@@ -18,8 +18,9 @@ class VoltageBC(HeatChargeBC):
 
     Example
     -------
-    >>> bc1 = VoltageBC(source=2)
-    >>> bc2 = VoltageBC(source=[-1, 0, 1])
+    >>> import tidy3d as td
+    >>> voltage_source = DCVoltageSource(voltage=[-1, 0, 1])
+    >>> voltage_bc = VoltageBC(source=voltage_source)
     """
 
     source: VoltageSourceTypes = pd.Field(
@@ -34,13 +35,14 @@ class CurrentBC(HeatChargeBC):
 
     Example
     -------
-    >>> bc = CurrentBC(current_density=1)
-    # TODO Marc how can we make this a current source spice?
+    >>> import tidy3d as td
+    >>> current_source = td.DCCurrentSource(current=1)
+    >>> current_bc = CurrentBC(source=current_source)
     """
 
-    current_density: pd.FiniteFloat = pd.Field(
-        title="Current density",
-        description="Current density.",
+    source: CurrentSourceTypes = pd.Field(
+        title="Current Source",
+        description="A current source",
         units=CURRENT_DENSITY,
     )
 
