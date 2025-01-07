@@ -83,9 +83,14 @@ class GaussianDoping(AbstractDopingBox):
     Notes
     -----
     The Gaussian doping concentration :math:`N` is defined in relation to a reference
-    concentration :math:`\\{N_{\\text{ref}}` as ``ref_con``,
-    maximum target concentration :math:`\\{N_{\\text{ref}}` as ``concentration``, a Gaussian ``width``,
-    and a doping box ``size``.
+    concentration :math:`N_{\\text{ref}` as ``ref_con``,
+    maximum target concentration :math:`N_{\\text{max}` as ``concentration``, a Gaussian ``width``,
+    and a doping box ``size``. The concentration will decrease from :math:`N_{\\text{max}` to
+    :math:`N_{\\text{ref}` in a length ``width`` following a Gaussian curve. By definition,
+    all sides of the box will have concentration :math:`N_{\\text{ref}` (except the side specified
+    as source) and the center of the box (``width`` away from the box sides) will have a concentration
+    :math:`N_{\\text{max}`.
+
 
     TODO can we do better parameter names here more related to the equations? TODO how does the size get defined.
 
@@ -93,7 +98,7 @@ class GaussianDoping(AbstractDopingBox):
 
         N = \\{N_{\\text{max}}\\} \\exp \\left[
         - \\ln \\left( \\frac{\\{N_{\\text{max}}\\}}{\\{N_{\\text{ref}}\\}} \\right)
-        \\left( \\frac{(x|y|z) - \\{\\text{TODOsize???}\\}}{\\{\\text{width}\\}} \\right)^2
+        \\left( \\frac{(x|y|z) - \\{(x|y|z)_{\\text{box}}\\}}{\\{\\text{width}\\}} \\right)^2
         \\right]
 
     Example

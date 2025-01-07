@@ -7,7 +7,9 @@ from tidy3d.components.material.tcad.charge import (
     SemiconductorMedium,
 )
 from tidy3d.components.material.tcad.heat import (
+    FluidMedium,
     FluidSpec,
+    SolidMedium,
     SolidSpec,
 )
 from tidy3d.components.spice.analysis.dc import ChargeToleranceSpec, SteadyDCAnalysis
@@ -533,7 +535,9 @@ __all__ = [
     "MediumMediumInterface",
     "StructureSimulationBoundary",
     "SimulationBoundary",
+    "FluidMedium",
     "FluidSpec",
+    "SolidMedium",
     "SolidSpec",
     "ChargeConductorMedium",
     "SemiconductorMedium",
