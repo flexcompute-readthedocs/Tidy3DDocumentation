@@ -27,11 +27,21 @@ from tidy3d.components.base import Tidy3dBaseModel
 
 
 class DCVoltageSource(Tidy3dBaseModel):
+    """
+    This represents an equivalent DC voltage source.
+
+    """
+
     name: Optional[str]
     voltage: Union[pd.FiniteFloat, list[pd.FiniteFloat]] = pd.Field(title="Voltage")
     # units: Union[VOLT, AMP] = VOLT
 
 
 class DCCurrentSource(Tidy3dBaseModel):
+    """
+    This represents an equivalent DC current source.
+
+    """
+
     name: Optional[str]
     current: Union[pd.FiniteFloat, list[pd.FiniteFloat]] = pd.Field(title="Voltage")

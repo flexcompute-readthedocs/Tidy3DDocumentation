@@ -64,8 +64,9 @@ class ChargeInsulatorMedium(AbstractChargeMedium):
 
     Example
     -------
-    >>> solid = ChargeInsulatorMedium()
-    >>> solid2 = ChargeInsulatorMedium(permittivity=1.1)
+    >>> import tidy3d as td
+    >>> solid = td.ChargeInsulatorMedium()
+    >>> solid2 = td.ChargeInsulatorMedium(permittivity=1.1)
 
     Note
     ----
@@ -78,7 +79,8 @@ class ChargeConductorMedium(AbstractChargeMedium):
 
     Example
     -------
-    >>> solid = ChargeConductorMedium(conductivity=3)
+    >>> import tidy3d as td
+    >>> solid = td.ChargeConductorMedium(conductivity=3)
 
     Note
     ----
