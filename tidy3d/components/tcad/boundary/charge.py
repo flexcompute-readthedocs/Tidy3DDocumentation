@@ -10,17 +10,22 @@ from tidy3d.constants import CURRENT_DENSITY, VOLT
 
 
 class VoltageBC(HeatChargeBC):
-    """Electric potential (voltage) boundary condition.
+    """
+    Constant electric potential (voltage) :math:`= \\text{V}` boundary condition.
     Sets a potential at the specified boundary.
-    In charge simulations it also accepts an array of voltages.
-    In this case, a solution for each of these voltages will
-    be computed.
+
+    Notes
+    -----
+
+        In charge simulations it also accepts an array of voltages.
+        In this case, a solution for each of these voltages will
+        be computed. TODO DEPRECIATE?
 
     Example
     -------
     >>> import tidy3d as td
-    >>> voltage_source = DCVoltageSource(voltage=[-1, 0, 1])
-    >>> voltage_bc = VoltageBC(source=voltage_source)
+    >>> voltage_source = td.DCVoltageSource(voltage=[-1, 0, 1])
+    >>> voltage_bc = td.VoltageBC(source=voltage_source)
     """
 
     source: VoltageSourceTypes = pd.Field(
@@ -31,7 +36,8 @@ class VoltageBC(HeatChargeBC):
 
 
 class CurrentBC(HeatChargeBC):
-    """Current boundary conditions.
+    """
+    Current boundary conditions.
 
     Example
     -------
@@ -45,12 +51,13 @@ class CurrentBC(HeatChargeBC):
         description="A current source",
         units=CURRENT_DENSITY,
     )
+    # TODO translation between currentsource amps and currentdensity, why not amps here?
 
 
 class InsulatingBC(HeatChargeBC):
     """Insulation boundary condition.
-    Ensures electric fields as well as the surface recombination current density
-    are set to zero.
+    Ensures electric fields :math:`\\mathbf{E} = - \\nabla \\psi  = 0` as well as the surface recombination current
+    density :math:`J_s = 0` are set to zero.
 
     Example
     -------
