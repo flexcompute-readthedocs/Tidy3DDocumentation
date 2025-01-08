@@ -50,6 +50,7 @@ class ChargeToleranceSpec(Tidy3dBaseModel):
 
 class SteadyDCAnalysis(Tidy3dBaseModel):
     """
+
     This class sets parameters used in DC simulations.
 
     Ultimately, equivalent to Section 11.3.2 in the ngspice manual.
