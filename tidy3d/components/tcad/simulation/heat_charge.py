@@ -1,3 +1,4 @@
+# ruff: noqa: W293, W291
 """Defines heat simulation class"""
 
 from __future__ import annotations
@@ -87,8 +88,7 @@ HeatSourceTypes = (UniformHeatSource, HeatSource, HeatFromElectricSource)
 ChargeSourceTypes = ()
 ElectricBCTypes = (VoltageBC, CurrentBC, InsulatingBC)
 
-# TODO: add more analysis types as needed
-AnalysisSpecType = Union[ElectricalAnalysisTypes]
+ChargeAnalysisSpecTypes = Union[ElectricalAnalysisTypes]
 
 
 class TCADAnalysisTypes(str, Enum):
@@ -110,6 +110,25 @@ class HeatChargeSimulation(AbstractSimulation):
         determines the required computation physics according to the simulation scene definition.
         This is implemented in this way due to the strong multi-physics coupling.
 
+    The ``HeatChargeSimulation`` can solve multiple physics and the intention is to enable close thermo-electrical coupling.
+
+    Currently, this solver supports steady-state heat conduction where :math:`q` is the heat flux, :math:`k`
+    is the thermal conductivity, and :math:`T` is the temperature.
+
+         .. math::
+
+            -k \\cdot \\nabla(T) = q
+
+
+    The steady-state electrical ``CONDUCTION`` equation depends on the electric conductivity (:math:`\\sigma`)  of a
+    medium, and the electric field (:math:`\\mathbf{E} = -\\nabla(\\psi)`) derived from electrical potential (:math:`\\psi`).
+    Currently, in this type of simulation, no current sources or sinks are supported.
+
+        .. math::
+
+            \\text{div}(\\sigma \\cdot \\nabla(\\psi)) = 0
+
+
     Let's understand how the physics solving is determined:
 
         .. list-table::
@@ -123,9 +142,8 @@ class HeatChargeSimulation(AbstractSimulation):
                boundary conditions, etc. Structures should incorporate materials
                with defined heat properties.
            * - ``CONDUCTION``
-             - The conduction equation, :math:`\\text{div}(\\sigma \\cdot \\nabla(\\psi)) = 0`,
-               where :math:`\\sigma` is the electric conductivity, is solved with
-               specified boundary conditions.
+             - The electrical conduction equation is solved with
+               specified boundary conditions such as ``SteadyVoltageBC``, ``SteadyCurrentBC``, ...
            * - ``CHARGE``
              - Drift-diffusion equations are solved for structures containing
                a defined :class:`SemiconductorMedium`. Insulators with a
@@ -164,7 +182,7 @@ class HeatChargeSimulation(AbstractSimulation):
     ...     monitors=[TemperatureMonitor(size=(1, 2, 3), name="sample")],
     ... )
 
-    To run a drift-diffusion (``CHARGE`` |:zap:|) equation:
+    To run a drift-diffusion (``CHARGE`` |:zap:|) system:
     TODO EXAMPLE
 
 
@@ -173,10 +191,10 @@ class HeatChargeSimulation(AbstractSimulation):
     calculated as part  of the solution to a ``CONDUCTION`` simulation and translated into the ``HEAT`` simulation.
 
     Two common scenarios can use this coupling definition:
-        1. one in which BCs and sources are specified for both ``HEAT`` and ``CONDUCTION`` simulations.
+        1. One in which BCs and sources are specified for both ``HEAT`` and ``CONDUCTION`` simulations.
             In this case one mesh will be generated and used for both the ``CONDUCTION`` and ``HEAT``
             simulations.
-        2. only heat BCs/sources are provided. In this case, only the ``HEAT`` equation will be solved.
+        2. Only heat BCs/sources are provided. In this case, only the ``HEAT`` equation will be solved.
             Before the simulation starts, it will try to load the heat source from file so a
             previously run ``CONDUCTION`` simulations must have run previously. Since the CONDUCTION
             and ``HEAT`` meshes may differ, an interpolation between them will be performed prior to
@@ -239,11 +257,31 @@ class HeatChargeSimulation(AbstractSimulation):
         "Each element can be ``0`` (symmetry off) or ``1`` (symmetry on).",
     )
 
-    analysis_spec: AnalysisSpecType = pd.Field(
+    analysis_spec: ChargeAnalysisSpecTypes = pd.Field(
         None,
         title="Analysis specification.",
         description="Used to define what simulation types to run.",
     )
+    """
+    Notes
+    -----
+    
+        The analysis class aims to specify how the inputs and outputs of a given simulation are related. This 
+        configures the way that the multi-input relationships are defined within the solver computation. The supported 
+        ``ChargeAnalysisSpecTypes`` formalise how these relationships are integrated.
+        
+        Conceptually, this is represented as:
+        
+        .. code::
+        
+            analysis(inputs, outputs) -> AnalysisData
+        
+        It operates on the defined output ``monitors`` for a given set of ``inputs`` in order to define specific data classes.
+        that correspond to the coupling.
+        
+        One of the goals of defining this ``analysis`` is that different types of physical domains
+        require different configuration parameters and this enables the proper definition of these terms.
+    """
 
     @pd.validator("structures", always=True)
     def check_unsupported_geometries(cls, val):

@@ -24,24 +24,29 @@ from typing import Optional, Union
 import pydantic.v1 as pd
 
 from tidy3d.components.base import Tidy3dBaseModel
+from tidy3d.constants import AMP, VOLT
 
 
 class DCVoltageSource(Tidy3dBaseModel):
     """
-    This represents an equivalent DC voltage source.
+    This represents an equivalent DC voltage source in volts.
+
+    Examples
+    --------
 
     """
 
     name: Optional[str]
     voltage: Union[pd.FiniteFloat, list[pd.FiniteFloat]] = pd.Field(title="Voltage")
-    # units: Union[VOLT, AMP] = VOLT
+    units: str = VOLT
 
 
 class DCCurrentSource(Tidy3dBaseModel):
     """
-    This represents an equivalent DC current source.
+    This represents an equivalent DC current source in amperes.
 
     """
 
     name: Optional[str]
     current: Union[pd.FiniteFloat, list[pd.FiniteFloat]] = pd.Field(title="Current")
+    units: str = AMP
