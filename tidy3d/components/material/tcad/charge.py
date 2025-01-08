@@ -106,13 +106,18 @@ class SemiconductorMedium(AbstractChargeMedium):
         .. math::
 
             \\begin{equation}
-                - \\nabla \\cdot \\left( \\varepsilon_0 \\varepsilon_r \\nabla \\psi \\right) = q \\left( p - n + N_d^+ - N_a^- \\right)
+                 - \\nabla \\cdot \\left( \\varepsilon_0 \\varepsilon_r \\nabla \\psi \\right) = q
+                \\left( p - n + N_d^+ - N_a^- \\right)
             \\end{equation}
 
 
-    In this solver, we assume Boltzmann statistics. The electron and hole densities, :math:`n` and :math:`p`,
+    Currently, only Boltzmann statistics are supported when solving the Drift-Diffusion equations for semiconductors.
+    The electron and hole densities, :math:`n` and :math:`p`,
     can be calculated from the conduction/valence bands and quasi-Fermi energy levels. An isothermal system is at a
     constant temperature, and in our current implementation, the temperature is at :math:`T=300K`.
+
+    Since we're considering Boltzmann statistics ( a good approximation in non-degenerate semiconductors) the
+    following relations apply:
 
     .. math::
 

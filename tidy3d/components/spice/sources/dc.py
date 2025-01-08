@@ -44,4 +44,4 @@ class DCCurrentSource(Tidy3dBaseModel):
     """
 
     name: Optional[str]
-    current: Union[pd.FiniteFloat, list[pd.FiniteFloat]] = pd.Field(title="Voltage")
+    current: Union[pd.FiniteFloat, list[pd.FiniteFloat]] = pd.Field(title="Current")
