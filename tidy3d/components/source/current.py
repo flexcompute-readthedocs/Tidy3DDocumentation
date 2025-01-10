@@ -82,8 +82,7 @@ class PointDipole(CurrentSource, ReverseInterpolatedSource):
     of the oscillation. This is discussed further in our
     `source normalization <../../faq/docs/faq/How-are-results-normalized.html>`_ FAQ page.
 
-    ..
-        TODO add image of how it looks like based on sim 1.
+    .. TODO add image of how it looks like based on sim 1.
 
     Example
     -------
