@@ -585,7 +585,7 @@ def simulation_data(
     capacitance_monitor_data,
     free_carrier_monitor_data,
 ):
-    """Creates 'HeatChargeSimulationData' for both HEAT and CONDUCTION simulations."""
+    """Creates 'HeatChargeSimulationData' for both Heat and Conduction simulations."""
     heat_sim_data = td.HeatChargeSimulationData(
         simulation=heat_simulation,
         data=temperature_monitor_data,

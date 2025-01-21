@@ -98,9 +98,9 @@ AnalysisSpecType = ElectricalAnalysisType
 class TCADAnalysisTypes(str, Enum):
     """Enumeration of the types of simulations currently supported"""
 
-    HEAT = "HEAT"
-    CONDUCTION = "CONDUCTION"
-    CHARGE = "CHARGE"
+    HEAT = "Heat"
+    CONDUCTION = "Conduction"
+    CHARGE = "Charge"
 
 
 class HeatChargeSimulation(AbstractSimulation):
@@ -124,7 +124,7 @@ class HeatChargeSimulation(AbstractSimulation):
             -k \\cdot \\nabla(T) = q
 
 
-    The steady-state electrical ``CONDUCTION`` equation depends on the electric conductivity (:math:`\\sigma`)  of a
+    The steady-state electrical ``Conduction`` equation depends on the electric conductivity (:math:`\\sigma`)  of a
     medium, and the electric field (:math:`\\mathbf{E} = -\\nabla(\\psi)`) derived from electrical potential (:math:`\\psi`).
     Currently, in this type of simulation, no current sources or sinks are supported.
 
@@ -133,7 +133,7 @@ class HeatChargeSimulation(AbstractSimulation):
             \\text{div}(\\sigma \\cdot \\nabla(\\psi)) = 0
 
 
-    For further details on what equations are solved in ``CHARGE`` simulations, refer to the :class:`SemiconductorMedium`.
+    For further details on what equations are solved in ``Charge`` simulations, refer to the :class:`SemiconductorMedium`.
 
     Let's understand how the physics solving is determined:
 
@@ -143,14 +143,14 @@ class HeatChargeSimulation(AbstractSimulation):
 
            * - Simulation Type
              - Example Configuration Settings
-           * - ``HEAT``
+           * - ``Heat``
              - The heat equation is solved with specified heat sources,
                boundary conditions, etc. Structures should incorporate materials
                with defined heat properties.
-           * - ``CONDUCTION``
+           * - ``Conduction``
              - The electrical conduction equation is solved with
                specified boundary conditions such as ``SteadyVoltageBC``, ``SteadyCurrentBC``, ...
-           * - ``CHARGE``
+           * - ``Charge``
              - Drift-diffusion equations are solved for structures containing
                a defined :class:`SemiconductorMedium`. Insulators with a
                :class:`ChargeInsulatorMedium` can also be included. For these, only the
@@ -158,7 +158,7 @@ class HeatChargeSimulation(AbstractSimulation):
 
     Examples
     --------
-    To run a thermal (``HEAT`` |:fire:|) simulation with a solid conductive structure:
+    To run a thermal (``Heat`` |:fire:|) simulation with a solid conductive structure:
 
     >>> import tidy3d as td
     >>> heat_sim = td.HeatChargeSimulation(
@@ -188,7 +188,7 @@ class HeatChargeSimulation(AbstractSimulation):
     ...     monitors=[td.TemperatureMonitor(size=(1, 2, 3), name="sample")],
     ... )
 
-    To run a drift-diffusion (``CHARGE`` |:zap:|) system:
+    To run a drift-diffusion (``Charge`` |:zap:|) system:
     >>> import tidy3d as td
     >>> Si_n = td.MultiPhysicsMedium(charge=td.SemiconductorMedium(
     ...     permittivity=11.7,
@@ -231,19 +231,19 @@ class HeatChargeSimulation(AbstractSimulation):
     ...     )
 
 
-    Coupling between ``HEAT`` and electrical ``CONDUCTION`` simulations is currently limited to 1-way.
+    Coupling between ``Heat`` and electrical ``Conduction`` simulations is currently limited to 1-way.
     This is specified by defining a heat source of type :class:`HeatFromElectricSource`. With this coupling, joule heating is
-    calculated as part  of the solution to a ``CONDUCTION`` simulation and translated into the ``HEAT`` simulation.
+    calculated as part  of the solution to a ``Conduction`` simulation and translated into the ``Heat`` simulation.
 
     Two common scenarios can use this coupling definition:
-        1. One in which BCs and sources are specified for both ``HEAT`` and ``CONDUCTION`` simulations.
-            In this case one mesh will be generated and used for both the ``CONDUCTION`` and ``HEAT``
+        1. One in which BCs and sources are specified for both ``Heat`` and ``Conduction`` simulations.
+            In this case one mesh will be generated and used for both the ``Conduction`` and ``Heat``
             simulations.
-        2. Only heat BCs/sources are provided. In this case, only the ``HEAT`` equation will be solved.
+        2. Only heat BCs/sources are provided. In this case, only the ``Heat`` equation will be solved.
             Before the simulation starts, it will try to load the heat source from file so a
-            previously run ``CONDUCTION`` simulations must have run previously. Since the CONDUCTION
-            and ``HEAT`` meshes may differ, an interpolation between them will be performed prior to
-            starting the ``HEAT`` simulation.
+            previously run ``Conduction`` simulations must have run previously. Since the Conduction
+            and ``Heat`` meshes may differ, an interpolation between them will be performed prior to
+            starting the ``Heat`` simulation.
 
     Additional heat sources can be defined, in which case, they will be added on
     top of the coupling heat source.
@@ -320,7 +320,7 @@ class HeatChargeSimulation(AbstractSimulation):
         a ``SolidSpec`` medium.
         """
 
-        # NOTE: when considering CONDUCTION or CHARGE cases, both conductors and semiconductors
+        # NOTE: when considering Conduction or Charge cases, both conductors and semiconductors
         # will be accepted
         valid_electric_medium = (SemiconductorMedium, ChargeConductorMedium)
 
@@ -534,7 +534,7 @@ class HeatChargeSimulation(AbstractSimulation):
 
     @pd.root_validator(skip_on_failure=True)
     def check_charge_simulation(cls, values):
-        """Makes sure that CHARGE simulations are set correctly."""
+        """Makes sure that Charge simulations are set correctly."""
 
         ChargeMonitorType = (
             SteadyPotentialMonitor,
@@ -561,10 +561,22 @@ class HeatChargeSimulation(AbstractSimulation):
             monitors = values["monitors"]
             if not any(isinstance(mnt, ChargeMonitorType) for mnt in monitors):
                 raise SetupError(
-                    "CHARGE simulations require the definition of, at least, one of these monitors: "
+                    "Charge simulations require the definition of, at least, one of these monitors: "
                     "'[SteadyPotentialMonitor, SteadyFreeCarrierMonitor, SteadyCapacitanceMonitor]' "
                     "but none have been defined."
                 )
+
+            # NOTE: SteadyPotentialMonitor and SteadyFreeCarrierMonitor are only supported
+            # for unstructured = True
+            for mnt in monitors:
+                if isinstance(mnt, SteadyPotentialMonitor) or isinstance(
+                    mnt, SteadyFreeCarrierMonitor
+                ):
+                    if not mnt.unstructured:
+                        log.warning(
+                            "Currently, Charge simulations support only unstructured monitors. Please set "
+                            f"monitor '{mnt.name}' to 'unstructured = True'."
+                        )
 
         return values
 
@@ -813,7 +825,7 @@ class HeatChargeSimulation(AbstractSimulation):
         if nodes_estimate > max_nodes:
             log.warning(
                 "WARNING: It has been estimated the mesh to be bigger than the currently "
-                "supported mesh size for CHARGE simulations. The simulation may be "
+                "supported mesh size for Charge simulations. The simulation may be "
                 "submitted but if the maximum number of nodes is indeed exceeded "
                 "the pipeline will be stopped. If this happens the grid specification "
                 "may need to be modified."

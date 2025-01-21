@@ -89,7 +89,7 @@ class SemiconductorMedium(AbstractChargeMedium):
 
     Notes
     -----
-    Semiconductors are associated with ``CHARGE`` simulations. During these simulations
+    Semiconductors are associated with ``Charge`` simulations. During these simulations
     the Drift-Diffusion (DD) equations will be solved in semiconductors. In what follows, a
     description of the assumptions taken and its limitations is put forward.
 

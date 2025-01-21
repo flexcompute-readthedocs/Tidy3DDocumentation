@@ -1,4 +1,4 @@
-CHARGE |:zap:|
+Charge |:zap:|
 ==============
 
 .. toctree::

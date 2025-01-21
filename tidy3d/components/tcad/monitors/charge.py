@@ -1,9 +1,10 @@
 """Objects that define how data is recorded from simulation."""
 
+from typing import Literal
+
 import pydantic.v1 as pd
 
 from tidy3d.components.tcad.monitors.abstract import HeatChargeMonitor
-from tidy3d.log import log
 
 
 class SteadyPotentialMonitor(HeatChargeMonitor):
@@ -17,19 +18,6 @@ class SteadyPotentialMonitor(HeatChargeMonitor):
     ... center=(0, 0.14, 0), size=(0.6, 0.3, 0), name="voltage_z0", unstructured=True,
     ... )
     """
-
-    @pd.root_validator(skip_on_failure=True)
-    def check_unstructured(cls, values):
-        """Currently, we're supporting only unstructured monitors in Charge"""
-        unstructured = values["unstructured"]
-        name = values["name"]
-        if not unstructured:
-            log.warning(
-                "Currently, charge simulations support only unstructured monitors. If monitor "
-                f"'{name}' is associated with a charge simulation, please set it tu unstructured. "
-                f"This can be done with 'your_monitor = tidy3d.SteadyVoltageMonitor(unstructured=True)'"
-            )
-        return values
 
 
 class SteadyFreeCarrierMonitor(HeatChargeMonitor):
@@ -45,7 +33,11 @@ class SteadyFreeCarrierMonitor(HeatChargeMonitor):
     """
 
     # NOTE: for the time being supporting unstructured
-    unstructured: bool = True
+    unstructured: Literal[True] = pd.Field(
+        True,
+        title="Unstructured Grid",
+        description="Return data on the original unstructured grid.",
+    )
 
 
 class SteadyCapacitanceMonitor(HeatChargeMonitor):
