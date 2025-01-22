@@ -90,6 +90,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Cached property cleared in copying an object with `validate=False`.
 - Error when `JaxSimulation` passed to `ModeSolver.simulation`: now it will be converted to a regular `Simulation`, with a warning.
 - Thread-safe creation of `TIDY3D_DIR`.
+## [2.7.9] - 2025-01-22
+
+### Fixed
+- Potential task name mismatches between forward and adjoint simulations in batch tasks.
+- Magnitude of gradient computation in `CustomMedium` by accounting properly for full volume element when permittivity data is defined over fewer dimensions than the medium.
 
 ## [2.7.8] - 2024-11-27
 
@@ -1483,6 +1488,8 @@ which fields are to be projected is now determined automatically based on the me
 
 [Unreleased]: https://github.com/flexcompute/tidy3d/compare/v2.8.0rc1...pre/2.8
 [2.8.0rc1]: https://github.com/flexcompute/tidy3d/compare/v2.7.8...v2.8.0rc1
+[Unreleased]: https://github.com/flexcompute/tidy3d/compare/v2.7.9...develop
+[2.7.9]: https://github.com/flexcompute/tidy3d/compare/v2.7.8...v2.7.9
 [2.7.8]: https://github.com/flexcompute/tidy3d/compare/v2.7.7...v2.7.8
 [2.7.7]: https://github.com/flexcompute/tidy3d/compare/v2.7.6...v2.7.7
 [2.7.6]: https://github.com/flexcompute/tidy3d/compare/v2.7.5...v2.7.6
