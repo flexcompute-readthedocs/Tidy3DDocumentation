@@ -93,6 +93,7 @@ extensions = [
     "IPython.sphinxext.ipython_console_highlighting",
     "nbsphinx",  # Integrate Jupyter Notebooks and Sphinx
     "notfound.extension",
+    "multiproject",
     "myst_parser",
     # "sphinxcontrib.divparams", # TODO FIX
     "sphinx.ext.autodoc",  # Core Sphinx library for auto html doc generation from docstrings
@@ -190,6 +191,12 @@ man_pages = [(master_doc, "tidy3d", "tidy3d Documentation", [author], 1)]
 mathjax3_config = {
     "tex": {"tags": "ams", "useLabelIds": True},
 }
+multiproject_projects = {
+   "notebooks": {
+      "path": "notebooks/docs/"
+   },
+}
+
 myst_enable_extensions = [
     "amsmath",
     "dollarmath",
