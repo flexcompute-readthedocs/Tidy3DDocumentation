@@ -3,6 +3,24 @@ import pydantic.v1 as pd
 from tidy3d.components.base import Tidy3dBaseModel
 
 
+class ConstantMobilityModel(Tidy3dBaseModel):
+    """Constant mobility model
+
+    Example
+    -------
+    >>> import tidy3d as td
+    >>> mobility_model = td.ConstantMobilityModel(mu_n=1500, mu_p=500)
+    """
+
+    mu_n: pd.NonNegativeFloat = pd.Field(
+        ..., title="Electron mobility", description="Electron mobility", units="cm²/V-s"
+    )
+
+    mu_p: pd.NonNegativeFloat = pd.Field(
+        ..., title="Hole mobility", description="Hole mobility", units="cm²/V-s"
+    )
+
+
 class CaugheyThomasMobility(Tidy3dBaseModel):
     """The Caughey-Thomas temperature-dependent carrier mobility model.
 
@@ -92,59 +110,69 @@ class CaugheyThomasMobility(Tidy3dBaseModel):
 
     # mobilities
     mu_n_min: pd.PositiveFloat = pd.Field(
+        ...,
         title=r"$\mu_{min}$ Minimum electron mobility",
         description="Minimum electron mobility at reference temperature (300K) in cm^2/V-s. ",
     )
 
     mu_n: pd.PositiveFloat = pd.Field(
+        ...,
         title="Electron reference mobility",
         description="Reference electron mobility at reference temperature (300K) in cm^2/V-s",
     )
 
     mu_p_min: pd.PositiveFloat = pd.Field(
+        ...,
         title="Minimum hole mobility",
         description="Minimum hole mobility at reference temperature (300K) in cm^2/V-s. ",
     )
 
     mu_p: pd.PositiveFloat = pd.Field(
+        ...,
         title="Hole reference mobility",
         description="Reference hole mobility at reference temperature (300K) in cm^2/V-s",
     )
 
     # thermal exponent for reference mobility
     exp_t_mu: float = pd.Field(
-        title="Exponent for temperature dependent behavior of reference mobility"
+        ..., title="Exponent for temperature dependent behavior of reference mobility"
     )
 
     # doping exponent
     exp_d_n: pd.PositiveFloat = pd.Field(
+        ...,
         title="Exponent for doping dependence of electron mobility.",
         description="Exponent for doping dependence of electron mobility at reference temperature (300K).",
     )
 
     exp_d_p: pd.PositiveFloat = pd.Field(
+        ...,
         title="Exponent for doping dependence of hole mobility.",
         description="Exponent for doping dependence of hole mobility at reference temperature (300K).",
     )
 
     # reference doping
     ref_N: pd.PositiveFloat = pd.Field(
+        ...,
         title="Reference doping",
         description="Reference doping at reference temperature (300K) in #/cm^3.",
     )
 
     # temperature exponent
     exp_t_mu_min: float = pd.Field(
+        ...,
         title="Exponent of thermal dependence of minimum mobility.",
         description="Exponent of thermal dependence of minimum mobility.",
     )
 
     exp_t_d: float = pd.Field(
+        ...,
         title="Exponent of thermal dependence of reference doping.",
         description="Exponent of thermal dependence of reference doping.",
     )
 
     exp_t_d_exp: float = pd.Field(
+        ...,
         title="Exponent of thermal dependence of the doping exponent effect.",
         description="Exponent of thermal dependence of the doping exponent effect.",
     )

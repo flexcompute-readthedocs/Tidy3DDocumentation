@@ -8,7 +8,7 @@ from tidy3d.components.tcad.generation_recombination import (
     RadiativeRecombination,
     ShockleyReedHallRecombination,
 )
-from tidy3d.components.tcad.mobility import CaugheyThomasMobility
+from tidy3d.components.tcad.mobility import CaugheyThomasMobility, ConstantMobilityModel
 from tidy3d.components.tcad.monitors.charge import (
     SteadyCapacitanceMonitor,
     SteadyFreeCarrierMonitor,
@@ -19,7 +19,7 @@ from tidy3d.components.tcad.source.coupled import HeatFromElectricSource
 from tidy3d.components.tcad.source.heat import HeatSource, UniformHeatSource
 from tidy3d.components.types import Union
 
-MobilityModelType = Union[CaugheyThomasMobility]
+MobilityModelType = Union[CaugheyThomasMobility, ConstantMobilityModel]
 RecombinationModelType = Union[
     AugerRecombination, RadiativeRecombination, ShockleyReedHallRecombination
 ]

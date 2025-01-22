@@ -38,10 +38,17 @@ class ChargeToleranceSpec(Tidy3dBaseModel):
     )
 
 
-class SteadyChargeDCAnalysis(Tidy3dBaseModel):
+class IsothermalSteadyChargeDCAnalysis(Tidy3dBaseModel):
     """
     Configures relevant steady-state DC simulation parameters for a charge simulation.
     """
+
+    temperature: pd.PositiveFloat = pd.Field(
+        300,
+        title="Temperature",
+        description="Lattice temperature. Assumed constant throughout the device. "
+        "Carriers are assumed to be at thermodynamic equilibrium with the lattice.",
+    )
 
     tolerance_settings: ChargeToleranceSpec = pd.Field(
         default=ChargeToleranceSpec(), title="Tolerance settings"

@@ -59,6 +59,7 @@ class CHARGE_SIMULATION:
                 v1=6.92 * 1e-3,
                 n2=1.3e17,
                 c2=0.5,
+                min_N=1e15,
             ),
         ),
         name="Si_intrinsic",
@@ -631,6 +632,13 @@ def test_heat_charge_medium_validation(mediums):
         solid_medium.charge.updated_copy(conductivity=-1)
 
 
+def test_constant_mobility():
+    constant_mobility = td.ConstantMobilityModel(mu_n=1500, mu_p=500)
+
+    with pytest.raises(pd.ValidationError):
+        _ = constant_mobility.updated_copy(mu_p=-1)
+
+
 def test_heat_charge_structures_creation(structures):
     """Tests that different structures with different mediums can be created."""
     fluid_structure = structures["fluid_structure"]
@@ -944,8 +952,9 @@ class TestCharge:
     # Define charge settings as fixtures within the class
     @pytest.fixture(scope="class")
     def charge_tolerance(self):
-        return td.SteadyChargeDCAnalysis(
-            tolerance_settings=td.ChargeToleranceSpec(rel_tol=1e5, abs_tol=1e3, max_iters=400)
+        return td.IsothermalSteadyChargeDCAnalysis(
+            temperature=300,
+            tolerance_settings=td.ChargeToleranceSpec(rel_tol=1e5, abs_tol=1e3, max_iters=400),
         )
 
     @pytest.fixture(scope="class")

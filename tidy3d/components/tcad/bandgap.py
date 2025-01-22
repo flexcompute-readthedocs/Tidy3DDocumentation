@@ -35,12 +35,14 @@ class SlotboomBandGapNarrowing(Tidy3dBaseModel):
         .. [1] 'UNIFIED APPARENT BANDGAP NARROWING IN n- AND p-TYPE SILICON' Solid-State Electronics Vol. 35, No. 2, pp. 125-129, 1992"""
 
     v1: pd.PositiveFloat = pd.Field(
+        ...,
         title=r"$V_{1,bgn}$ parameter",
         description=r"$V_{1,bgn}$ parameter",
         units=VOLT,
     )
 
     n2: pd.PositiveFloat = pd.Field(
+        ...,
         title=r"$N_{2,bgn}$ parameter",
         description=r"$N_{2,bgn}$ parameter",
         units=PERCMCUBE,
@@ -49,4 +51,12 @@ class SlotboomBandGapNarrowing(Tidy3dBaseModel):
     c2: float = pd.Field(
         title=r"$C_{2,bgn}$ parameter",
         description=r"$C_{2,bgn}$ parameter",
+    )
+
+    min_N: pd.NonNegativeFloat = pd.Field(
+        ...,
+        title="Minimum total doping",
+        description="Bandgap narrowing is applied at location where total doping "
+        "is higher than 'min_N'.",
+        units=PERCMCUBE,
     )

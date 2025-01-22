@@ -27,11 +27,11 @@ class AugerRecombination(Tidy3dBaseModel):
     """
 
     c_n: pd.PositiveFloat = pd.Field(
-        title="Constant for electrons", description="Constant for electrons in cm^6/s"
+        ..., title="Constant for electrons", description="Constant for electrons in cm^6/s"
     )
 
     c_p: pd.PositiveFloat = pd.Field(
-        title="Constant for holes", description="Constant for holes in cm^6/s"
+        ..., title="Constant for holes", description="Constant for holes in cm^6/s"
     )
 
 
@@ -57,6 +57,7 @@ class RadiativeRecombination(Tidy3dBaseModel):
     """
 
     r_const: float = pd.Field(
+        ...,
         title="Radiation constant in cm^3/s",
         description="Radiation constant in cm^3/s",
     )
@@ -98,9 +99,9 @@ class ShockleyReedHallRecombination(Tidy3dBaseModel):
     """
 
     tau_n: pd.PositiveFloat = pd.Field(
-        title="Electron lifetime", description="Electron lifetime in seconds. TODOMARCCHECK"
+        ..., title="Electron lifetime", description="Electron lifetime in seconds. TODOMARCCHECK"
     )
 
     tau_p: pd.PositiveFloat = pd.Field(
-        title="Hole lifetime", description="Hole lifetime in seconds. TODOMARCCHECK."
+        ..., title="Hole lifetime", description="Hole lifetime in seconds. TODOMARCCHECK."
     )

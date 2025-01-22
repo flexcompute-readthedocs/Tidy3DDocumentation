@@ -12,7 +12,10 @@ from tidy3d.components.material.tcad.heat import (
     SolidMedium,
     SolidSpec,
 )
-from tidy3d.components.spice.analysis.dc import ChargeToleranceSpec, SteadyChargeDCAnalysis
+from tidy3d.components.spice.analysis.dc import (
+    ChargeToleranceSpec,
+    IsothermalSteadyChargeDCAnalysis,
+)
 from tidy3d.components.spice.sources.dc import DCCurrentSource, DCVoltageSource
 from tidy3d.components.spice.sources.types import VoltageSourceType
 from tidy3d.components.tcad.boundary.specification import (
@@ -45,6 +48,7 @@ from tidy3d.components.tcad.simulation.heat_charge import HeatChargeSimulation
 from tidy3d.components.tcad.types import (
     AugerRecombination,
     CaugheyThomasMobility,
+    ConstantMobilityModel,
     ConvectionBC,
     CurrentBC,
     HeatFluxBC,
@@ -567,6 +571,7 @@ __all__ = [
     "SteadyFreeCarrierData",
     "SteadyCapacitanceData",
     "CaugheyThomasMobility",
+    "ConstantMobilityModel",
     "SlotboomBandGapNarrowing",
     "ShockleyReedHallRecombination",
     "AugerRecombination",
@@ -630,6 +635,6 @@ __all__ = [
     "DCVoltageSource",
     "DCCurrentSource",
     "VoltageSourceType",
-    "SteadyChargeDCAnalysis",
+    "IsothermalSteadyChargeDCAnalysis",
     "ChargeToleranceSpec",
 ]
