@@ -6,6 +6,8 @@ import pydantic.v1 as pd
 
 from tidy3d.components.base import Tidy3dBaseModel
 
+from ....constants import KELVIN
+
 
 class ChargeToleranceSpec(Tidy3dBaseModel):
     """
@@ -48,6 +50,7 @@ class IsothermalSteadyChargeDCAnalysis(Tidy3dBaseModel):
         title="Temperature",
         description="Lattice temperature. Assumed constant throughout the device. "
         "Carriers are assumed to be at thermodynamic equilibrium with the lattice.",
+        units=KELVIN,
     )
 
     tolerance_settings: ChargeToleranceSpec = pd.Field(

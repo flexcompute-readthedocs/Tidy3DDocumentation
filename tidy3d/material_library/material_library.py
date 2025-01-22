@@ -1882,6 +1882,7 @@ cSi_MultiPhysics = VariantItem(
     medium=MultiPhysicsMedium(
         optical=cSi_Green2008.medium,
         charge=SemiconductorMedium(
+            permittivity=11.7,
             N_c=2.86e19,
             N_v=3.1e19,
             E_g=1.11,
@@ -1898,13 +1899,11 @@ cSi_MultiPhysics = VariantItem(
                 exp_t_d=2.4,
                 exp_t_d_exp=-0.146,
             ),
-            R=(
-                [
-                    ShockleyReedHallRecombination(tau_n=3.3e-6, tau_p=4e-6),
-                    RadiativeRecombination(r_const=1.6e-14),
-                    AugerRecombination(c_n=2.8e-31, c_p=9.9e-32),
-                ]
-            ),
+            R=[
+                ShockleyReedHallRecombination(tau_n=3.3e-6, tau_p=4e-6),
+                RadiativeRecombination(r_const=1.6e-14),
+                AugerRecombination(c_n=2.8e-31, c_p=9.9e-32),
+            ],
             delta_E_g=SlotboomBandGapNarrowing(
                 v1=6.92 * 1e-3,
                 n2=1.3e17,
