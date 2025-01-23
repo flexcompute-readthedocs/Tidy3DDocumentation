@@ -83,7 +83,8 @@ class GaussianDoping(AbstractDopingBox):
     Notes
     -----
     The Gaussian doping concentration :math:`N` is defined in the following manner:
-    - :math:`N=:math:`N_{\\text{max}` at locations more than :math:`width` um away from the sides of the box.
+
+    - :math:`N=N_{\\text{max}` at locations more than :math:``width`` um away from the sides of the box.
     - :math:`N=N_{\\text{ref}` at location on the box sides.
     - a Gaussian variation between :math:`N_{\\text{max}` and :math:`N_{\\text{ref}` at locations less than ``width`` um away from the sides.
 
@@ -95,7 +96,7 @@ class GaussianDoping(AbstractDopingBox):
 
         N = \\{N_{\\text{max}}\\} \\exp \\left[
         - \\ln \\left( \\frac{\\{N_{\\text{max}}\\}}{\\{N_{\\text{ref}}\\}} \\right)
-        \\left( \\frac{(x|y|z) - \\{(x|y|z)_{\\text{box}}\\}}{\\{\\text{width}\\}} \\right)^2
+        \\left( \\frac{(x|y|z) - \\{(x|y|z)_{\\text{box}}\\}}{\\text{width}} \\right)^2
         \\right]
 
     Example

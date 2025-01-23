@@ -184,7 +184,7 @@ class SteadyCapacitanceData(HeatChargeMonitorData):
 
     .. math::
 
-        C_{n,p} = \frac{Q_{n,p}(V + \\Delta V) - Q_{n,p}(V)}{\\Delta V}
+        C_{n,p} = \\frac{Q_{n,p}(V + \\Delta V) - Q_{n,p}(V)}{\\Delta V}
 
 
     This is only computed when a voltage source with more than two sources is included within the simulation and determines the :math:`\\Delta V`.
