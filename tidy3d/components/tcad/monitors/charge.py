@@ -52,4 +52,9 @@ class SteadyCapacitanceMonitor(HeatChargeMonitor):
     ... )
     """
 
-    unstructured: bool = True
+    # NOTE: for the time being supporting unstructured
+    unstructured: Literal[True] = pd.Field(
+        True,
+        title="Unstructured Grid",
+        description="Return data on the original unstructured grid.",
+    )
