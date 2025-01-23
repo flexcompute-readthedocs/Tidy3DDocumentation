@@ -5,7 +5,6 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## [2.8.0rc1]
 ## [Unreleased]
 
 ### Added
@@ -16,11 +15,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - New field `shadow` in `MeshOverrideStructure` that sets grid size in overlapping region according to structure list or minimal grid size.
 - Added :zap: CHARGE Solver API, basic `SPICE` & `MultiPhysicsMedium` functionality. 
 - Added :zap: Charge Solver API, basic `SPICE` & `MultiPhysicsMedium` functionality. 
+- `MultiphysicsMedium` allows for the modularization definition of physical properties. So in addition to the usual optical properties, one can now add heat properties or electric properties. The advantage is that it is now possible to define a medium with some frequency-dependent permittivity in the optical regime and some constant permittivity in valid for electrostatic simulations.
+- Added :zap: Charge Solver API. It is now possible to solve the Drift-Diffusion (DD) equations for semiconductors. These simulations can be set up with the new class `HeatChargeSimulation` (which supersedes `HeatSimulation`) in a way similar to that of Heat simulations. The solver has currently limited capabilities (which will be expanded in future releases): steady only, isothermal, Boltzmann statistics (non-degenerate semiconductors only).
 
 ### Changed
 - `ModeMonitor` and `ModeSolverMonitor` now use the default `td.ModeSpec()` with `num_modes=1` when `mode_spec` is not provided.
 - Update sidewall angle validator to clarify angle should be specified in radians.
 - Reduced the complex tolerance in the mode solver below which permittivity is considered lossless, in order to correctly compute very low-loss modes.
+-`HeatChargeSimulation` supersedes `HeatSimulation`. Though both of the can be used for Heat simulation interchangeably, the latter has been deprecated and will disappear in the future. 
 
 ### Fixed
 - NumPy 2.1 compatibility issue where `numpy.float64` values passed to xarray interpolation would raise TypeError.
