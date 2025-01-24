@@ -110,9 +110,8 @@ extensions = [
     "sphinx_sitemap",
     "sphinx_tabs.tabs",
     "sphinxemoji.sphinxemoji",
-    # "custom-meta",  # In _ext, these need to be at the end of the extensions list
-    # "custom-sitemap",  # In _ext, these need to be at the end of the extensions list
-    # "custom-robots",  # In _ext, these need to be at the end of the extensions list
+    "custom-sitemap",  # In _ext, these need to be at the end of the extensions list
+    "custom-robots",  # In _ext, these need to be at the end of the extensions list
 ]
 extlinks = {}
 favicons = [
