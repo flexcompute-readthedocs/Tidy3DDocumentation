@@ -87,6 +87,7 @@ exclude_patterns = [
     "scripts/*",
     "tests/*",
     ".github/*",
+    "*/misc/*"
 ]
 extensions = [
     "IPython.sphinxext.ipython_directive",
