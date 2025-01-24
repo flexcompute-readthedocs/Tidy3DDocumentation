@@ -142,7 +142,7 @@ class HeatChargeSimulationData(AbstractSimulationData):
     def plot_field(
         self,
         monitor_name: str,
-        field_name: str = None,
+        field_name: Optional[Literal["temperature", "potential"]] = None,
         val: RealFieldVal = "real",
         scale: Literal["lin", "log"] = "lin",
         structures_alpha: float = 0.2,
@@ -158,7 +158,7 @@ class HeatChargeSimulationData(AbstractSimulationData):
         ----------
         field_monitor_name : str
             Name of :class:`.TemperatureMonitorData` to plot.
-        field_name : str = None
+        field_name : Optional[Literal["temperature", "potential"]] = None
             Name of ``field`` component to plot (eg. `'temperature'`). Not required if monitor data contains only one field.
         val : Literal['real', 'abs', 'abs^2'] = 'real'
             Which part of the field to plot.
