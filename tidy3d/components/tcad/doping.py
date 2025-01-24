@@ -11,6 +11,8 @@ from tidy3d.components.geometry.base import Box
 from tidy3d.components.types import Bound, Union
 from tidy3d.constants import MICROMETER
 
+from ...constants import PERCMCUBE
+
 
 class AbstractDopingBox(Box):
     """Derived class from Box which redefines size so that
@@ -74,6 +76,7 @@ class ConstantDoping(AbstractDopingBox):
         default=0,
         title="Doping concentration density.",
         description="Doping concentration density in #/cm^3.",
+        units=PERCMCUBE,
     )
 
 

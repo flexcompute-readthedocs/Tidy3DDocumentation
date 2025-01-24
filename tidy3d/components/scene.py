@@ -2,7 +2,7 @@
 
 from __future__ import annotations
 
-from typing import Dict, List, Optional, Set, Tuple, Union
+from typing import Dict, List, Literal, Optional, Set, Tuple, Union
 
 import autograd.numpy as np
 
@@ -43,6 +43,7 @@ from .grid.grid import Coords, Grid
 from .material.multi_physics import MultiPhysicsMedium
 from .medium import (
     AbstractCustomMedium,
+    AbstractMedium,
     AbstractPerturbationMedium,
     Medium,
     Medium2D,
@@ -850,7 +851,7 @@ class Scene(Tidy3dBaseModel):
         hlim: Tuple[float, float] = None,
         vlim: Tuple[float, float] = None,
         grid: Grid = None,
-        property: str = "eps",
+        property: Literal["eps", "doping", "N_a", "N_d"] = "eps",
     ) -> Ax:
         """Plot each of scene's structures on a plane defined by one nonzero x,y,z coordinate.
         The permittivity is plotted in grayscale based on its value at the specified frequency.
@@ -882,7 +883,7 @@ class Scene(Tidy3dBaseModel):
             The x range if plotting on xy or xz planes, y range if plotting on yz plane.
         vlim : Tuple[float, float] = None
             The z range if plotting on xz or yz planes, y plane if plotting on xy plane.
-        property: str = "eps"
+        property: Literal["eps", "doping", "N_a", "N_d"] = "eps"
             Indicates the property to plot for the structures. Currently supported properties
             are ["eps", "doping", "N_a", "N_d"]
 
@@ -1236,7 +1237,7 @@ class Scene(Tidy3dBaseModel):
         """Constructs the plot parameters for a given medium in scene.plot_eps()."""
 
         plot_params = plot_params_structure.copy(update={"linewidth": 0})
-        if hasattr(medium, "viz_spec"):
+        if isinstance(medium, AbstractMedium):
             if medium.viz_spec is not None:
                 plot_params = plot_params.override_with_viz_spec(medium.viz_spec)
         if alpha is not None:

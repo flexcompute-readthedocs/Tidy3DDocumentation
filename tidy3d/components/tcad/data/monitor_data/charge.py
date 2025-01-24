@@ -35,7 +35,7 @@ class SteadyPotentialData(HeatChargeMonitorData):
 
     monitor: SteadyPotentialMonitor = pd.Field(
         ...,
-        title="Voltage monitor",
+        title="Electric potential monitor",
         description="Electric potential monitor associated with a `charge` simulation.",
     )
 
@@ -228,3 +228,8 @@ class SteadyCapacitanceData(HeatChargeMonitorData):
     def field_name(self, val: str) -> str:
         """Gets the name of the fields to be plot."""
         return ""
+
+    @property
+    def symmetry_expanded_copy(self) -> SteadyCapacitanceData:
+        """Return copy of self with symmetry applied."""
+        return self

@@ -134,7 +134,7 @@ class HeatChargeSimulationData(AbstractSimulationData):
         None,
         title="Device characteristics",
         description="Data characterizing the device. Current characteristics include: "
-        "'iv_curve' for and I-V curve and 'cv_curve' for a capacitance curve.",
+        "'steady_dc_hole_capacitance', 'steady_dc_electron_capacitance', and 'steady_dc_current_voltage'",
     )
 
     @equal_aspect

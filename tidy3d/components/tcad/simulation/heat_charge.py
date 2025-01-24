@@ -216,7 +216,7 @@ class HeatChargeSimulation(AbstractSimulation):
     ...     placement=td.MediumMediumInterface(mediums=[air.name, Si_p.name]),
     ... )
     >>> charge_sim = td.HeatChargeSimulation(
-    ...     structures=[]n_side, p_side,
+    ...     structures=[n_side, p_side],
     ...     medium=td.Medium(heat_spec=td.FluidSpec(), name="air"),
     ...     monitors=[td.SteadyFreeCarrierMonitor(
     ...         center=(0, 0, 0), size=(td.inf, td.inf, 0), name="charge_mnt", unstructured=True

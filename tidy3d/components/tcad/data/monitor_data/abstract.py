@@ -46,10 +46,9 @@ class HeatChargeMonitorData(AbstractMonitorData, ABC):
         description="Symmetry center of the original simulation in x, y, and z.",
     )
 
-    @property
+    @abstractmethod
     def symmetry_expanded_copy(self) -> HeatChargeMonitorData:
         """Return copy of self with symmetry applied."""
-        return self.copy()
 
     @abstractmethod
     def field_name(self, val: str) -> str:

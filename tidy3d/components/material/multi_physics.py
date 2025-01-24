@@ -5,11 +5,9 @@ import pydantic.v1 as pd
 from tidy3d.components.base import Tidy3dBaseModel
 from tidy3d.components.material.solver_types import (
     ChargeMediumType,
-    ElectricalMediumType,
     HeatMediumType,
     OpticalMediumType,
 )
-from tidy3d.exceptions import SetupError
 
 
 class MultiPhysicsMedium(Tidy3dBaseModel):
@@ -78,18 +76,18 @@ class MultiPhysicsMedium(Tidy3dBaseModel):
         None, title="Optical properties", description="Specifies optical properties."
     )
 
-    electrical: Optional[ElectricalMediumType] = pd.Field(
-        None,
-        title="Electrical properties",
-        description="Specifies electrical properties for RF simulations. This is currently not in use.",
-    )
+    # electrical: Optional[ElectricalMediumType] = pd.Field(
+    #     None,
+    #     title="Electrical properties",
+    #     description="Specifies electrical properties for RF simulations. This is currently not in use.",
+    # )
 
     heat: Optional[HeatMediumType] = pd.Field(
-        None, title="Heat properties", description="Specifies properties for Heat simulations"
+        None, title="Heat properties", description="Specifies properties for Heat simulations."
     )
 
     charge: Optional[ChargeMediumType] = pd.Field(
-        None, title="Charge properties", description="Specifies properties for Charge simulations"
+        None, title="Charge properties", description="Specifies properties for Charge simulations."
     )
 
     @property
@@ -100,13 +98,3 @@ class MultiPhysicsMedium(Tidy3dBaseModel):
             return self.optical.heat_spec
         else:
             return None
-
-    @pd.validator("electrical", always=True)
-    def check_electrical(cls, val):
-        """Make sure 'electrical' has not been set."""
-
-        if val is not None:
-            raise SetupError(
-                "'electrical' properties are not yet supported. Leave this parameter unset or set it to None"
-            )
-        return val
