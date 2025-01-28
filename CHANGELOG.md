@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [2.8.0rc2] - 2025-01-28
+
 ### Added
 - `VisualizationSpec` that allows `Medium` instances to specify color and transparency plotting attributes that override default ones.
 - `reduce_simulation` argument added to all web functions to allow automatically reducing structures only to the simulation domain, including truncating data in custom media, thus reducing the simulation upload size. Currently only implemented for mode solver simulation types.
@@ -1499,9 +1501,9 @@ which fields are to be projected is now determined automatically based on the me
 - Job and Batch classes for better simulation handling (eventually to fully replace webapi functions).
 - A large number of small improvements and bug fixes.
 
-[Unreleased]: https://github.com/flexcompute/tidy3d/compare/v2.8.0rc1...pre/2.8
+[Unreleased]: https://github.com/flexcompute/tidy3d/compare/v2.8.0rc2...pre/2.8
+[2.8.0rc2]: https://github.com/flexcompute/tidy3d/compare/v2.8.0rc1...v2.8.0rc2
 [2.8.0rc1]: https://github.com/flexcompute/tidy3d/compare/v2.7.8...v2.8.0rc1
-[Unreleased]: https://github.com/flexcompute/tidy3d/compare/v2.7.9...develop
 [2.7.9]: https://github.com/flexcompute/tidy3d/compare/v2.7.8...v2.7.9
 [2.7.8]: https://github.com/flexcompute/tidy3d/compare/v2.7.7...v2.7.8
 [2.7.7]: https://github.com/flexcompute/tidy3d/compare/v2.7.6...v2.7.7

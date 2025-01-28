@@ -3103,7 +3103,7 @@
         "snapping_points": [],
         "type": "GridSpec"
     },
-    "version": "2.8.0rc1",
+    "version": "2.8.0rc2",
     "plot_length_units": "\u03bcm",
     "lumped_elements": [
         {
