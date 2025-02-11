@@ -243,7 +243,7 @@ from .components.medium import (
     PerturbationPoleResidue,
     PoleResidue,
     Sellmeier,
-    SkinDepthFitterParam,
+    SurfaceImpedanceFitterParam,
     TwoPhotonAbsorption,
     medium_from_nk,
 )
@@ -409,7 +409,7 @@ __all__ = [
     "CustomDebye",
     "CustomAnisotropicMedium",
     "LossyMetalMedium",
-    "SkinDepthFitterParam",
+    "SurfaceImpedanceFitterParam",
     "RotationAroundAxis",
     "PerturbationMedium",
     "PerturbationPoleResidue",
